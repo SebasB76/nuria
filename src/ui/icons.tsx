@@ -1,10 +1,12 @@
+import { Image } from 'expo-image';
 import { useId } from 'react';
-import Svg, { Circle, ClipPath, Defs, Ellipse, G, LinearGradient, Path, Rect, Stop, Text as SvgText } from 'react-native-svg';
+import Svg, { Circle, ClipPath, Defs, G, Path, Rect, Text as SvgText } from 'react-native-svg';
 
 import { Level } from '@/data/places';
 import { C } from './theme';
 
 const useSvgId = () => 'i' + useId().replace(/[^a-zA-Z0-9]/g, '');
+const AVATAR = require('@/assets/images/nuria-avatar.jpg');
 const DROP = 'M20 2C20 2 4 19 4 30a16 16 0 0 0 32 0C36 19 20 2 20 2Z';
 
 // the risk level drawn as a drop that fills up: the fuller, the worse
@@ -26,27 +28,9 @@ export function Drop({ level, size = 24, dark, fill }: { level: Level; size?: nu
   );
 }
 
+// the bird illustration, cropped to the head so the eye still reads at tab-bar size
 export function NuriaAvatar({ size = 40 }: { size?: number }) {
-  const id = useSvgId();
-  return (
-    <Svg width={size} height={size} viewBox="0 0 64 64" accessibilityLabel="Nuria">
-      <Defs>
-        <LinearGradient id={id} x1="0" y1="0" x2="1" y2="1">
-          <Stop offset="0" stopColor={C.cel} />
-          <Stop offset="1" stopColor={C.navy} />
-        </LinearGradient>
-      </Defs>
-      <Circle cx={32} cy={32} r={32} fill={`url(#${id})`} />
-      <Path d="M13 17l-2 5M53 15l-2 5M50 47l-2 5M12 46l-2 5" stroke="#fff" strokeOpacity={0.45} strokeWidth={2} strokeLinecap="round" />
-      <Path d="M32 11C32 11 17 28 17 38.5a15 15 0 0 0 30 0C47 28 32 11 32 11z" fill="#fff" />
-      <Path d="M23.5 29c1.5-3.5 3.5-6 5.5-8" stroke="#CFEAF8" strokeWidth={2.6} fill="none" strokeLinecap="round" />
-      <Circle cx={27} cy={38} r={2.3} fill={C.navy} />
-      <Circle cx={37} cy={38} r={2.3} fill={C.navy} />
-      <Circle cx={23.5} cy={43} r={2.3} fill="#F6A6A0" opacity={0.75} />
-      <Circle cx={40.5} cy={43} r={2.3} fill="#F6A6A0" opacity={0.75} />
-      <Path d="M28 44q4 3.4 8 0" stroke={C.navy} strokeWidth={2} fill="none" strokeLinecap="round" />
-    </Svg>
-  );
+  return <Image source={AVATAR} style={{ width: size, height: size, borderRadius: size / 2 }} accessibilityLabel="Nuria" />;
 }
 
 export function Logo({ size = 28 }: { size?: number }) {
@@ -133,56 +117,6 @@ export function Bucket({ share, size = 84 }: { share: number; size?: number }) {
       <SvgText x={35} y={62} textAnchor="middle" fontWeight="800" fontSize={15} fill="#fff">
         {Math.round(share * 100)}%
       </SvgText>
-    </Svg>
-  );
-}
-
-// Cerro Santa Ana, the Guayas river and Nuria waving, for the welcome screen
-export function WelcomeArt({ width = 300 }: { width?: number }) {
-  return (
-    <Svg width={width} height={(width * 250) / 264} viewBox="0 0 264 250">
-      <Defs>
-        <LinearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
-          <Stop offset="0" stopColor="#7CC6EC" />
-          <Stop offset="1" stopColor="#E6F4FB" />
-        </LinearGradient>
-      </Defs>
-      <Rect width={264} height={250} fill="url(#sky)" />
-      <G fill="#fff">
-        <Ellipse cx={176} cy={70} rx={40} ry={22} />
-        <Ellipse cx={146} cy={78} rx={27} ry={17} />
-        <Ellipse cx={208} cy={80} rx={28} ry={15} />
-      </G>
-      <Ellipse cx={178} cy={90} rx={60} ry={7} fill="#D3E7F2" />
-      <Path d="M140 102l-5 13M156 100l-5 13M172 104l-5 13M188 100l-5 13M204 103l-5 13M220 99l-5 13M148 120l-4 10M180 121l-4 10M212 120l-4 10" stroke={C.celDeep} strokeWidth={2.6} strokeLinecap="round" />
-      <Path d="M0 196C24 150 62 118 102 112c28-4 50 22 74 66v40H0z" fill="#BFDDB4" />
-      <G stroke={C.ink} strokeWidth={1.2}>
-        <Rect x={16} y={178} width={17} height={15} fill="#F6C343" />
-        <Rect x={36} y={164} width={16} height={15} fill="#E8746A" />
-        <Rect x={54} y={150} width={17} height={15} fill="#5BB6E4" />
-        <Rect x={72} y={136} width={16} height={15} fill="#F29C5A" />
-        <Rect x={118} y={134} width={17} height={15} fill="#9AD18B" />
-        <Rect x={137} y={148} width={16} height={15} fill="#F6C343" />
-        <Rect x={154} y={163} width={16} height={15} fill="#E8746A" />
-        <Path d="M14 178l10.5-8 10.5 8M34 164l10-8 10 8M52 150l10.5-8 10.5 8M70 136l10-8 10 8M116 134l10.5-8 10.5 8M135 148l10-8 10 8M152 163l10-8 10 8" fill="#C4553F" />
-        <Rect x={96} y={76} width={12} height={38} fill="#fff" />
-        <Path d="M93 76h18l-3-8h-12z" fill={C.celDeep} />
-        <Rect x={99} y={64} width={6} height={4} fill="#F6C343" />
-      </G>
-      <Path d="M96 90h12M96 102h12" stroke={C.cel} strokeWidth={2.5} />
-      <Rect y={206} width={264} height={44} fill={C.cel} />
-      <Path d="M8 220c8-4 16-4 24 0s16 4 24 0M80 232c8-4 16-4 24 0s16 4 24 0M150 218c8-4 16-4 24 0M20 242c8-4 16-4 24 0" stroke="#9BD5F2" strokeWidth={2} fill="none" strokeLinecap="round" />
-      <G transform="translate(176 128) scale(1.35)">
-        <Ellipse cx={26} cy={64} rx={18} ry={4} fill={C.celDeep} opacity={0.35} />
-        <Path d="M26 2C26 2 6 24 6 38a20 20 0 0 0 40 0C46 24 26 2 26 2z" fill="#fff" stroke={C.ink} strokeWidth={1.6} />
-        <Path d="M15 26c2-4.5 4.5-8 7-10.5" stroke="#BFE3F5" strokeWidth={3} fill="none" strokeLinecap="round" />
-        <Circle cx={19.5} cy={38} r={2.6} fill={C.ink} />
-        <Circle cx={32.5} cy={38} r={2.6} fill={C.ink} />
-        <Circle cx={15} cy={44} r={2.8} fill="#F6A6A0" opacity={0.8} />
-        <Circle cx={37} cy={44} r={2.8} fill="#F6A6A0" opacity={0.8} />
-        <Path d="M21 45q5 4.2 10 0" stroke={C.ink} strokeWidth={2} fill="none" strokeLinecap="round" />
-        <Path d="M45 30c5-3 7-8 6-12" stroke={C.ink} strokeWidth={2} fill="none" strokeLinecap="round" />
-      </G>
     </Svg>
   );
 }

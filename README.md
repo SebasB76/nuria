@@ -1,7 +1,7 @@
 # Nuria
 
-A phone app that helps people in Guayaquil get through the El Niño rainy season. Nuria, a raindrop
-assistant, tells you if your street may flood today, when to go out, which way to drive to avoid
+A phone app that helps people in Guayaquil get through the El Niño rainy season. Nuria, an assistant
+drawn as a bird that watches the rain, tells you if your street may flood today, when to go out, which way to drive to avoid
 flooded streets, and whether your family is OK.
 
 Hackathon prototype. Not an official source: follow INAMHI and SNGR, and call 911 in an emergency.
