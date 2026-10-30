@@ -94,7 +94,7 @@ export function LevelPill({ level, size = 16 }: { level: Level; size?: number })
   );
 }
 
-export function TamyTip({ children, avatar }: { children: ReactNode; avatar: ReactNode }) {
+export function NuriaTip({ children, avatar }: { children: ReactNode; avatar: ReactNode }) {
   return (
     <View style={styles.tip}>
       {avatar}

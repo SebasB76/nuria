@@ -1,14 +1,14 @@
 import { sectorById } from '@/data/places';
 import { clock, todayLong } from '@/data/time';
 import { ApiMessage, chatCompletion } from './deepseek';
-import { Card, runTool, TamyEnv, TOOL_SPECS } from './tools';
+import { Card, runTool, NuriaEnv, TOOL_SPECS } from './tools';
 
 const MAX_ROUNDS = 4;
 
-function systemPrompt(env: TamyEnv) {
+function systemPrompt(env: NuriaEnv) {
   const { app } = env, home = sectorById(app.prefs.homeId);
-  return `You are Tamy, the assistant inside Aguaje, a mobile app that helps people in Guayaquil, Ecuador, get through the El Niño rainy season.
-Your name comes from "tamya", rain in Kichwa. You are a friendly raindrop: warm, calm, practical.
+  return `You are Nuria, the assistant of the Nuria app, which helps people in Guayaquil, Ecuador, get through the El Niño rainy season.
+You are a friendly raindrop: warm, calm, practical. In Spanish you speak of yourself in the feminine ("estoy lista").
 
 Context
 - Now: ${todayLong()}, ${clock(new Date())} in Guayaquil.
@@ -30,9 +30,9 @@ Safety (never break these)
 - If you are unsure, say so and give the safest option.`;
 }
 
-export type TamyReply = { text: string; cards: Card[] };
+export type NuriaReply = { text: string; cards: Card[] };
 
-export async function askTamy(history: ApiMessage[], env: TamyEnv, apiKey: string, signal?: AbortSignal): Promise<{ reply: TamyReply; history: ApiMessage[] }> {
+export async function askNuria(history: ApiMessage[], env: NuriaEnv, apiKey: string, signal?: AbortSignal): Promise<{ reply: NuriaReply; history: ApiMessage[] }> {
   const msgs: ApiMessage[] = [{ role: 'system', content: systemPrompt(env) }, ...history];
   const cards: Card[] = [];
   for (let round = 0; round < MAX_ROUNDS; round++) {

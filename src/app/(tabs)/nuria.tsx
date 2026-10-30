@@ -5,19 +5,19 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { router, useFocusEffect } from 'expo-router';
 
 import { ApiMessage } from '@/ai/deepseek';
-import { offlineTamy } from '@/ai/offline';
-import { askTamy, TamyReply, trimHistory } from '@/ai/tamy';
+import { offlineNuria } from '@/ai/offline';
+import { askNuria, NuriaReply, trimHistory } from '@/ai/nuria';
 import { Card } from '@/ai/tools';
 import { sectorById } from '@/data/places';
 import { useApp } from '@/state/AppState';
 import { useFamily } from '@/state/FamilyState';
 import { getApiKey } from '@/state/storage';
 import { ChatCard } from '@/ui/ChatCards';
-import { Icon, TamyAvatar } from '@/ui/icons';
+import { Icon, NuriaAvatar } from '@/ui/icons';
 import { RichText } from '@/ui/RichText';
 import { C, F } from '@/ui/theme';
 
-type Msg = { id: string; from: 'tamy' | 'me'; text: string; cards?: Card[]; note?: string };
+type Msg = { id: string; from: 'nuria' | 'me'; text: string; cards?: Card[]; note?: string };
 
 const CHIPS = [
   '¿Va a llover fuerte hoy?',
@@ -31,7 +31,7 @@ const CHIPS = [
   'Avísale a mi familia que estoy bien',
 ];
 
-export default function TamyScreen() {
+export default function NuriaScreen() {
   const app = useApp();
   const family = useFamily();
   const [hasKey, setHasKey] = useState<boolean | null>(null);
@@ -42,8 +42,8 @@ export default function TamyScreen() {
   const [msgs, setMsgs] = useState<Msg[]>([
     {
       id: 'hello',
-      from: 'tamy',
-      text: `¡Hola! Soy **Tamy** 💧. Mi nombre viene de «tamya», lluvia en kichwa. Vigilo el cielo, el río Guayas y lo que reportan tus vecinos.\n\nAhora mismo, ${home.name} está en **${level.name}**. ¿En qué te ayudo?`,
+      from: 'nuria',
+      text: `¡Hola! Soy **Nuria** 💧. Vigilo el cielo, el río Guayas y lo que reportan tus vecinos.\n\nAhora mismo, ${home.name} está en **${level.name}**. ¿En qué te ayudo?`,
     },
   ]);
   const api = useRef<ApiMessage[]>([]);
@@ -64,20 +64,20 @@ export default function TamyScreen() {
     setMsgs((m) => [...m, { id: 'u' + Date.now(), from: 'me', text: question }]);
     setBusy(true);
     const env = { app, family };
-    let reply: TamyReply, note: string | undefined;
+    let reply: NuriaReply, note: string | undefined;
     const key = await getApiKey();
     setHasKey(!!key);
     if (key) {
       try {
-        const r = await askTamy(trimHistory([...api.current, { role: 'user', content: question }]), env, key);
+        const r = await askNuria(trimHistory([...api.current, { role: 'user', content: question }]), env, key);
         api.current = r.history;
         reply = r.reply;
       } catch {
-        reply = await offlineTamy(question, env);
+        reply = await offlineNuria(question, env);
         note = 'Sin conexión con la IA: te respondí con lo básico.';
       }
-    } else reply = await offlineTamy(question, env);
-    setMsgs((m) => [...m, { id: 't' + Date.now(), from: 'tamy', text: reply.text, cards: reply.cards, note }]);
+    } else reply = await offlineNuria(question, env);
+    setMsgs((m) => [...m, { id: 't' + Date.now(), from: 'nuria', text: reply.text, cards: reply.cards, note }]);
     setBusy(false);
   };
 
@@ -91,12 +91,12 @@ export default function TamyScreen() {
   return (
     <SafeAreaView edges={['top']} style={{ flex: 1, backgroundColor: C.paper }}>
       <View style={styles.head}>
-        <TamyAvatar size={42} />
+        <NuriaAvatar size={42} />
         <View style={{ flex: 1 }}>
-          <Text style={styles.name}>Tamy</Text>
+          <Text style={styles.name}>Nuria</Text>
           <Text style={[styles.status, hasKey === false && { color: C.ink2 }]}>{hasKey === false ? '● modo sin conexión · respuestas básicas' : '● en línea'}</Text>
         </View>
-        <Pressable onPress={() => router.push('/settings')} hitSlop={10} accessibilityLabel="Ajustes de Tamy">
+        <Pressable onPress={() => router.push('/settings')} hitSlop={10} accessibilityLabel="Ajustes de Nuria">
           <Icon name="gear" size={22} color={C.ink2} />
         </Pressable>
       </View>
@@ -110,7 +110,7 @@ export default function TamyScreen() {
               </View>
             ) : (
               <View key={m.id} style={{ gap: 8, alignSelf: 'stretch' }}>
-                <View style={[styles.bub, styles.tamy]}>
+                <View style={[styles.bub, styles.nuria]}>
                   <RichText text={m.text} />
                   <Pressable onPress={() => speak(m)} style={styles.listen} hitSlop={6}>
                     <Icon name={speaking === m.id ? 'stop' : 'speaker'} size={14} color={C.celDeep} />
@@ -127,9 +127,9 @@ export default function TamyScreen() {
             ),
           )}
           {busy && (
-            <View style={[styles.bub, styles.tamy, { flexDirection: 'row', gap: 8, alignItems: 'center' }]}>
+            <View style={[styles.bub, styles.nuria, { flexDirection: 'row', gap: 8, alignItems: 'center' }]}>
               <ActivityIndicator size="small" color={C.celDeep} />
-              <Text style={styles.typing}>Tamy está revisando el cielo…</Text>
+              <Text style={styles.typing}>Nuria está revisando el cielo…</Text>
             </View>
           )}
         </ScrollView>
@@ -145,7 +145,7 @@ export default function TamyScreen() {
           <TextInput
             value={text}
             onChangeText={setText}
-            placeholder="Escríbele a Tamy…"
+            placeholder="Escríbele a Nuria…"
             placeholderTextColor={C.muted}
             style={styles.input}
             onSubmitEditing={() => ask(text)}
@@ -170,7 +170,7 @@ const styles = StyleSheet.create({
   bub: { maxWidth: '88%', borderRadius: 18, paddingVertical: 10, paddingHorizontal: 13 },
   me: { alignSelf: 'flex-end', backgroundColor: '#D6F0FF', borderTopRightRadius: 5 },
   meText: { fontFamily: F.body, fontSize: 15, lineHeight: 21, color: C.ink },
-  tamy: { alignSelf: 'flex-start', backgroundColor: '#fff', borderTopLeftRadius: 5, borderWidth: 1, borderColor: C.line },
+  nuria: { alignSelf: 'flex-start', backgroundColor: '#fff', borderTopLeftRadius: 5, borderWidth: 1, borderColor: C.line },
   listen: { flexDirection: 'row', alignItems: 'center', gap: 5, marginTop: 8, alignSelf: 'flex-start' },
   listenText: { fontFamily: F.bold, fontSize: 12.5, color: C.celDeep },
   note: { fontFamily: F.body, fontSize: 12, color: C.muted, marginLeft: 4 },

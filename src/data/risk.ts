@@ -84,10 +84,10 @@ export function todoFor(level: Level, h: Hourly, tide: Tide) {
   const { best, worst } = windows(h, tide), ht = nextHigh(tide);
   const win = (w: Window | null) => (w ? range(hourOf(h.time[w.k]), hourOf(h.time[w.k]) + 2) : '');
   return {
-    tranquilo: ['Revisa que la alcantarilla de tu cuadra no tenga basura.', 'Guarda tus papeles importantes en una funda plástica.', 'Activa los avisos de Tamy para tu barrio.'],
+    tranquilo: ['Revisa que la alcantarilla de tu cuadra no tenga basura.', 'Guarda tus papeles importantes en una funda plástica.', 'Activa los avisos de Nuria para tu barrio.'],
     ojo: [
       'Carga el celular y la batería externa.',
-      best ? `Si tienes que salir, hazlo de ${win(best)}.` : 'Planifica tus salidas con Tamy.',
+      best ? `Si tienes que salir, hazlo de ${win(best)}.` : 'Planifica tus salidas con Nuria.',
       ht ? `El río estará alto ${atHour(ht.t)}: si llueve a esa hora, el agua tarda en irse.` : 'Ten lista la mochila de emergencia.',
     ],
     cuidado: ['Sube papeles, medicinas y aparatos a un lugar alto.', 'Mueve el carro a una zona alta antes de la lluvia.', worst ? `No salgas de ${win(worst)}.` : 'Evita los pasos a desnivel.'],

@@ -33,6 +33,6 @@ export const DAD_DESTINATION: Point = { lat: -2.1705, lon: -79.8365 };
 export type Privacy = 'always' | 'emergency' | 'paused';
 export const PRIVACY_TEXT: Record<Privacy, string> = {
   always: 'Tu familia ve dónde estás mientras compartes. Puedes pausarlo cuando quieras.',
-  emergency: 'Tu familia solo ve dónde estás si tú pides ayuda o Tamy detecta peligro en tu zona.',
+  emergency: 'Tu familia solo ve dónde estás si tú pides ayuda o Nuria detecta peligro en tu zona.',
   paused: 'Nadie ve dónde estás. Tu familia solo ve si confirmaste que estás bien.',
 };

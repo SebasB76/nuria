@@ -20,7 +20,7 @@ export function reportMarks(reports: Report[], hits: Report[] = []): MapScene['r
     lon: r.lon,
     icon: REPORT_KINDS[r.kind].icon,
     text: r.mine ? 'Tu reporte: ' + r.text.toLowerCase() : r.text,
-    sub: r.mine ? 'ahora · Tamy lo está revisando' : `${r.ago} · ${r.confirmations} vecinos lo confirmaron · ejemplo`,
+    sub: r.mine ? 'ahora · Nuria lo está revisando' : `${r.ago} · ${r.confirmations} vecinos lo confirmaron · ejemplo`,
     hit: hits.some((h) => h.id === r.id),
     mine: r.mine,
   }));

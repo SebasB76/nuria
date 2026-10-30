@@ -27,8 +27,8 @@ export const DEFAULT_PREFS: Prefs = {
   tasksDone: [0, 1],
 };
 
-const PREFS_KEY = 'aguaje.prefs';
-const API_KEY = 'aguaje.deepseekKey';
+const PREFS_KEY = 'nuria.prefs';
+const API_KEY = 'nuria.deepseekKey';
 
 export async function loadPrefs(): Promise<Prefs> {
   try {

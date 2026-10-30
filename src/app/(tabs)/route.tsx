@@ -8,8 +8,8 @@ import { MapEvent, MapScene } from '@/map/types';
 import { useApp } from '@/state/AppState';
 import { locateMe } from '@/state/location';
 import { ScenarioBanner } from '@/ui/common';
-import { Icon, TamyAvatar } from '@/ui/icons';
-import { Card, Header, Screen, Segmented, T, TamyTip } from '@/ui/kit';
+import { Icon, NuriaAvatar } from '@/ui/icons';
+import { Card, Header, Screen, Segmented, T, NuriaTip } from '@/ui/kit';
 import { PlaceSheet } from '@/ui/Sheets';
 import { C, F } from '@/ui/theme';
 import { useToast } from '@/ui/Toast';
@@ -100,12 +100,12 @@ export default function RouteScreen() {
 
       {plan && status !== 'same' && (
         <>
-          <TamyTip avatar={<TamyAvatar size={30} />}>
+          <NuriaTip avatar={<NuriaAvatar size={30} />}>
             <Text style={styles.tip}>
-              <Text style={{ fontFamily: F.black, color: '#BFE3F5' }}>Tamy: </Text>
+              <Text style={{ fontFamily: F.black, color: '#BFE3F5' }}>Nuria: </Text>
               {routeTip(plan)}
             </Text>
-          </TamyTip>
+          </NuriaTip>
           {plan.list.map((x, i) => (
             <Pressable key={i} onPress={() => setSel(i)} style={[styles.rc, i === 0 && styles.rcBest, i === sel && styles.rcOn]}>
               <View style={styles.rh}>

@@ -67,7 +67,7 @@ export function FamilyProvider({ children }: { children: ReactNode }) {
             const d = next.find((m) => m.id === 'dad')!;
             if (!warned.current && d.status !== 'ok' && zoneRef.current(d).wet) {
               warned.current = true;
-              setTimeout(() => toast('Tamy: Papá está cerca de una calle con agua y no ha confirmado que está bien.'), 0);
+              setTimeout(() => toast('Nuria: Papá está cerca de una calle con agua y no ha confirmado que está bien.'), 0);
             }
             return next;
           });
@@ -85,7 +85,7 @@ export function FamilyProvider({ children }: { children: ReactNode }) {
     later(3000, () => patch('daughter', { status: 'ok', okAgo: 0 }));
     later(6000, () => {
       setMembers((ms) => ms.map((m) => (m.id === 'dad' && m.status === 'wait' ? { ...m, status: 'unknown' } : m)));
-      toast('Papá no responde. Tamy le escribió por WhatsApp y te avisa apenas conteste.');
+      toast('Papá no responde. Nuria le escribió por WhatsApp y te avisa apenas conteste.');
     });
   }, [patch, toast]);
 

@@ -1,18 +1,18 @@
 {
   "expo": {
-    "name": "Aguaje",
-    "slug": "aguaje",
+    "name": "Nuria",
+    "slug": "nuria",
     "version": "0.1.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "aguaje",
+    "scheme": "nuria",
     "userInterfaceStyle": "light",
     "ios": {
-      "bundleIdentifier": "com.aguaje.app",
+      "bundleIdentifier": "com.nuria.app",
       "supportsTablet": false
     },
     "android": {
-      "package": "com.aguaje.app",
+      "package": "com.nuria.app",
       "adaptiveIcon": {
         "backgroundColor": "#0E3550",
         "foregroundImage": "./assets/images/android-icon-foreground.png",
@@ -38,14 +38,14 @@
       [
         "expo-location",
         {
-          "locationWhenInUsePermission": "Aguaje usa tu ubicación para darte la ruta segura y el riesgo de tu calle."
+          "locationWhenInUsePermission": "Nuria usa tu ubicación para darte la ruta segura y el riesgo de tu calle."
         }
       ],
       [
         "expo-image-picker",
         {
-          "cameraPermission": "Aguaje usa la cámara para que reportes una calle con agua.",
-          "photosPermission": "Aguaje usa tus fotos para que reportes una calle con agua."
+          "cameraPermission": "Nuria usa la cámara para que reportes una calle con agua.",
+          "photosPermission": "Nuria usa tus fotos para que reportes una calle con agua."
         }
       ]
     ]

@@ -45,5 +45,5 @@ Docs: https://docs.expo.dev/eas/index.md
 - UI copy is Spanish from Ecuador (tú); code, comments and commits are English.
 - `src/data` holds the pure logic (risk, routes, time words); screens only render it.
 - The map is Leaflet inside a WebView (`src/map`); `LeafletMap.web.tsx` is the iframe twin for the web build and the E2E suite.
-- Tamy's tools live in `src/ai/tools.ts`; every tool returns data for the model and an optional card for the chat.
+- Nuria's tools live in `src/ai/tools.ts`; every tool returns data for the model and an optional card for the chat.
 - Run `npm run typecheck`, `npx eslint src e2e` and, once before a PR, `npm run e2e`.

@@ -43,7 +43,7 @@ export default function SettingsScreen() {
     await setStoredKey(key.trim());
     setStored(!!key.trim());
     setKey('');
-    toast(key.trim() ? 'Guardé la key en el celular. Tamy ya usa la IA.' : 'Borré la key del celular.');
+    toast(key.trim() ? 'Guardé la key en el celular. Nuria ya usa la IA.' : 'Borré la key del celular.');
   };
   const test = async () => {
     setTesting(true);
@@ -105,9 +105,9 @@ export default function SettingsScreen() {
       </Card>
 
       <Card style={{ gap: 10 }}>
-        <T kind="bold">Tamy con IA (DeepSeek)</T>
+        <T kind="bold">Nuria con IA (DeepSeek)</T>
         <T kind="soft">
-          {stored ? 'Hay una key guardada en este celular.' : envKey ? 'Tamy usa la key del archivo .env.' : 'Sin key: Tamy responde con lo básico, sin IA.'}
+          {stored ? 'Hay una key guardada en este celular.' : envKey ? 'Nuria usa la key del archivo .env.' : 'Sin key: Nuria responde con lo básico, sin IA.'}
         </T>
         <TextInput
           value={key}
@@ -151,13 +151,13 @@ export default function SettingsScreen() {
             'Subida y bajada del río: modelo de marea de Open-Meteo.',
             'Nubes: satélite GOES-19 de la NOAA, vía NASA.',
             'Calles y rutas: OpenStreetMap.',
-            'Tamy: DeepSeek, con los datos de la app.',
+            'Nuria: DeepSeek, con los datos de la app.',
             'Terreno de cada barrio, reportes de vecinos y familia: datos de ejemplo.',
           ]}
         />
       </Card>
       <T kind="fine">
-        Aguaje {Constants.expoConfig?.version} · prototipo para hackathon{'\n'}No es una fuente oficial. En una emergencia, llama al 911.
+        Nuria {Constants.expoConfig?.version} · prototipo para hackathon{'\n'}No es una fuente oficial. En una emergencia, llama al 911.
       </T>
 
       <SectorSheet visible={!!editing} onClose={() => setEditing(null)} value={editing ? app.prefs[editing] : ''} onPick={(id) => editing && app.updatePrefs({ [editing]: id })} />

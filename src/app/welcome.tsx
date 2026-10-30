@@ -39,13 +39,12 @@ export default function WelcomeScreen() {
       <View style={{ flex: 1, backgroundColor: '#E6F4FB' }}>
         <WelcomeArt width={width} />
         <SafeAreaView edges={['bottom']} style={styles.intro}>
-          <Text style={styles.big}>Hola, soy Tamy</Text>
+          <Text style={styles.big}>Hola, soy Nuria</Text>
           <T style={{ fontSize: 17, lineHeight: 24 }}>
             Te aviso antes de que llueva fuerte en tu barrio, te digo por dónde ir sin mojarte y te ayudo a cuidar a tu familia este invierno.
           </T>
           <View style={{ flex: 1 }} />
           <Button label="Empezar" onPress={() => setStep(1)} />
-          <T kind="fine">Mi nombre viene de «tamya», lluvia en kichwa.</T>
         </SafeAreaView>
       </View>
     );

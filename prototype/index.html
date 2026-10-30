@@ -3,10 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Aguaje · Tu copiloto ante El Niño en Guayaquil (prototipo)</title>
-<meta name="description" content="Prototipo de Aguaje: mira si va a llover fuerte en tu barrio, a qué hora y cuándo conviene salir. Con Tamy, un asistente de IA en la web y en WhatsApp.">
-<meta property="og:title" content="Aguaje · Tu copiloto ante El Niño en Guayaquil">
-<meta property="og:description" content="Nubes en vivo, riesgo por barrio en palabras simples y Tamy, un asistente de IA en la web y en WhatsApp.">
+<title>Nuria · Tu copiloto ante El Niño en Guayaquil (prototipo)</title>
+<meta name="description" content="Prototipo de Nuria: mira si va a llover fuerte en tu barrio, a qué hora y cuándo conviene salir. Con Nuria, una asistente de IA en la web y en WhatsApp.">
+<meta property="og:title" content="Nuria · Tu copiloto ante El Niño en Guayaquil">
+<meta property="og:description" content="Nubes en vivo, riesgo por barrio en palabras simples y Nuria, una asistente de IA en la web y en WhatsApp.">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <style>
 :root{
@@ -223,7 +223,7 @@ details.srcs p{margin:6px 0 0}
 .fbb button{background:var(--surface-3);border:1px solid var(--line-2);color:var(--text);border-radius:999px;padding:6px 11px;font-size:12.5px;font-weight:650;cursor:pointer}
 .fbanner .x{position:absolute;top:8px;right:8px;background:none;border:0;color:var(--text-2);font-size:18px;cursor:pointer}
 
-/* Tamy */
+/* Nuria */
 .agent-grid{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,.9fr);gap:26px;align-items:start}
 @media (max-width:1020px){.agent-grid{grid-template-columns:1fr}}
 .persona{display:flex;gap:16px;align-items:center;margin-bottom:18px}
@@ -343,22 +343,22 @@ footer{border-top:1px solid var(--line);padding:30px 0 50px;color:var(--muted);f
 <header class="top"><div class="wrap">
   <a class="logo" href="#">
     <svg width="30" height="30" viewBox="0 0 32 32" aria-hidden="true"><defs><linearGradient id="lg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2fd3c6"/><stop offset="1" stop-color="#3987e5"/></linearGradient></defs><rect width="32" height="32" rx="9" fill="url(#lg)"/><path d="M16 5c3.6 4.4 6 7.7 6 10.6a6 6 0 0 1-12 0C10 12.7 12.4 9.4 16 5z" fill="#04211f" opacity=".85"/><path d="M5 23c2.2-1.6 4.4-1.6 6.6 0s4.4 1.6 6.6 0 4.4-1.6 6.6 0 2.2 1.6 2.2 1.6" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round"/></svg>
-    Aguaje <span class="tag demo" style="margin-left:4px">Prototipo</span>
+    Nuria <span class="tag demo" style="margin-left:4px">Prototipo</span>
   </a>
   <nav class="links">
-    <a href="#app">Mapa en vivo</a><a href="#ruta">Ruta segura</a><a href="#familia">Mi familia</a><a class="hl" href="flujo.html">Pantallas de la app</a><a href="#tamy">Tamy</a><a href="#compara">Comparativa</a><a href="#como">Cómo lo construimos</a>
+    <a href="#app">Mapa en vivo</a><a href="#ruta">Ruta segura</a><a href="#familia">Mi familia</a><a class="hl" href="flujo.html">Pantallas de la app</a><a href="#nuria">Nuria</a><a href="#compara">Comparativa</a><a href="#como">Cómo lo construimos</a>
   </nav>
 </div></header>
 
 <section class="hero"><div class="wrap">
   <span class="tag live">Nubes y pronóstico en vivo</span>
   <h1>Tu copiloto ante El Niño, <em>calle por calle</em> en Guayaquil.</h1>
-  <p class="lead">Aguaje junta el satélite, el pronóstico, la marea del Guayas y lo que reportan tus vecinos. Tamy, su asistente de IA, te dice qué hacer y cuándo: en la web y en WhatsApp.</p>
+  <p class="lead">Nuria junta el satélite, el pronóstico, la marea del Guayas y lo que reportan tus vecinos. Nuria, su asistente de IA, te dice qué hacer y cuándo: en la web y en WhatsApp.</p>
   <div class="cta">
     <a class="btn primary" href="#app">Ver mi barrio ahora</a>
     <a class="btn" href="#ruta">Buscar una ruta segura</a>
     <a class="btn" href="flujo.html">Ver las pantallas de la app</a>
-    <a class="btn" href="#tamy">Hablar con Tamy</a>
+    <a class="btn" href="#nuria">Hablar con Nuria</a>
   </div>
 
   <div class="stats">
@@ -407,7 +407,7 @@ footer{border-top:1px solid var(--line);padding:30px 0 50px;color:var(--muted);f
       </div>
       <div class="callout" id="radarCallout">
         <button class="x" aria-label="Cerrar">×</button>
-        <b>Guayaquil no tiene radar de lluvia.</b> En toda la Costa de Ecuador no hay un radar meteorológico. Por eso las apps de radar, como RainViewer, no ven la lluvia aquí: la zona oscura es lo que ningún radar cubre. Aguaje usa el satélite, que toma una foto de las nubes cada 10 minutos.
+        <b>Guayaquil no tiene radar de lluvia.</b> En toda la Costa de Ecuador no hay un radar meteorológico. Por eso las apps de radar, como RainViewer, no ven la lluvia aquí: la zona oscura es lo que ningún radar cubre. Nuria usa el satélite, que toma una foto de las nubes cada 10 minutos.
       </div>
       <div class="legend" id="legend"></div>
       <div class="time-bar">
@@ -489,13 +489,13 @@ footer{border-top:1px solid var(--line);padding:30px 0 50px;color:var(--muted);f
   </div>
 </div></section>
 
-<section class="block" id="tamy"><div class="wrap">
+<section class="block" id="nuria"><div class="wrap">
   <div class="kicker">Asistente de IA</div>
-  <h2>Conoce a Tamy</h2>
+  <h2>Conoce a Nuria</h2>
   <div class="persona">
     <div id="avatarBig"></div>
     <div>
-      <div class="t2" style="max-width:780px;font-size:16px">Tamy viene de <i>tamya</i>, que significa <b>lluvia</b> en kichwa. Vigila el cielo, la marea y tu calle. Habla simple, nunca exagera y siempre te da una acción concreta. Si algo es oficial, te manda al INAMHI o a la SNGR.</div>
+      <div class="t2" style="max-width:780px;font-size:16px">Nuria vigila el cielo, la marea y tu calle. Habla simple, nunca exagera y siempre te da una acción concreta. Si algo es oficial, te manda al INAMHI o a la SNGR.</div>
       <div class="traits"><span class="tag">Habla con calma</span><span class="tag">Va al grano</span><span class="tag">Conoce tu barrio</span><span class="tag">Entiende audios y fotos</span><span class="tag">Te avisa antes</span></div>
     </div>
   </div>
@@ -505,17 +505,17 @@ footer{border-top:1px solid var(--line);padding:30px 0 50px;color:var(--muted);f
       <div class="chat" id="chat">
         <div class="chat-h">
           <div id="avatarSm"></div>
-          <div><div class="nm">Tamy</div><div class="st">● en línea</div></div>
+          <div><div class="nm">Nuria</div><div class="st">● en línea</div></div>
           <div class="ctx">Tu barrio: <b id="chatSector">–</b><br><span class="muted">usa el pronóstico en vivo</span></div>
         </div>
         <div class="msgs" id="msgs" aria-live="polite"></div>
         <div class="chips" id="chips"></div>
         <form class="composer" id="composer">
-          <input id="q" autocomplete="off" placeholder="Pregúntale a Tamy… ej. ¿llueve hoy en el Guasmo?">
+          <input id="q" autocomplete="off" placeholder="Pregúntale a Nuria… ej. ¿llueve hoy en el Guasmo?">
           <button aria-label="Enviar">➤</button>
         </form>
       </div>
-      <p class="src-line" style="margin-top:10px">En este prototipo Tamy responde un set de preguntas con datos en vivo. En la versión real es un modelo de lenguaje con herramientas: pronóstico, marea, riesgo, avisos oficiales y reportes.</p>
+      <p class="src-line" style="margin-top:10px">En este prototipo Nuria responde un set de preguntas con datos en vivo. En la versión real es un modelo de lenguaje con herramientas: pronóstico, marea, riesgo, avisos oficiales y reportes.</p>
     </div>
 
     <div>
@@ -523,7 +523,7 @@ footer{border-top:1px solid var(--line);padding:30px 0 50px;color:var(--muted);f
         <div class="wa-h">
           <span style="color:#aebac1">‹</span>
           <div id="avatarWa"></div>
-          <div><div class="nm">Tamy · Aguaje <span class="ver">✓</span></div><div class="st">cuenta de empresa</div></div>
+          <div><div class="nm">Nuria · Nuria <span class="ver">✓</span></div><div class="st">cuenta de empresa</div></div>
         </div>
         <div class="wa-body" id="waBody">
           <div class="wa-day">LUNES 26 DE OCTUBRE</div>
@@ -538,7 +538,7 @@ footer{border-top:1px solid var(--line);padding:30px 0 50px;color:var(--muted);f
         </div>
         <div class="wa-input"><div>Mensaje</div><span>🎤</span></div>
       </div></div>
-      <p class="caption"><b>Simulación:</b> así te habría avisado Tamy el lunes 26 de octubre. Ese día cayeron 63 mm en una hora y la marea alta frenó los desagües. El INAMHI emitió su alerta unas dos horas antes.</p>
+      <p class="caption"><b>Simulación:</b> así te habría avisado Nuria el lunes 26 de octubre. Ese día cayeron 63 mm en una hora y la marea alta frenó los desagües. El INAMHI emitió su alerta unas dos horas antes.</p>
     </div>
   </div>
 </div></section>
@@ -546,20 +546,20 @@ footer{border-top:1px solid var(--line);padding:30px 0 50px;color:var(--muted);f
 <section class="block" id="compara"><div class="wrap">
   <div class="kicker">Qué hacemos mejor</div>
   <h2>RainViewer y Amaru, y lo que agregamos</h2>
-  <p class="sub">RainViewer es un mapa de radar global. Amaru es una app gratuita de riesgo de inundación para 13 países, que se volvió viral en Ecuador tras la lluvia del 26 de octubre. Aguaje se enfoca en Guayaquil y en una pregunta: <b>¿qué hago y a qué hora?</b></p>
+  <p class="sub">RainViewer es un mapa de radar global. Amaru es una app gratuita de riesgo de inundación para 13 países, que se volvió viral en Ecuador tras la lluvia del 26 de octubre. Nuria se enfoca en Guayaquil y en una pregunta: <b>¿qué hago y a qué hora?</b></p>
 
   <div class="cards">
     <div class="feat"><div class="ic">🛰️</div><h4>Satélite donde no hay radar</h4><p>Una foto de las nubes cada 10 minutos. Vemos las nubes de tormenta que crecen antes de que llueva. RainViewer depende de radares, y la Costa no tiene.</p></div>
-    <div class="feat"><div class="ic">🌊</div><h4>La marea dentro del consejo</h4><p>En Guayaquil, cuando el río está alto, se tapan las salidas de los desagües. Tamy cruza lluvia y marea y te dice la mejor hora para moverte.</p></div>
-    <div class="feat"><div class="ic">💬</div><h4>Tamy en WhatsApp</h4><p>Sin descargar otra app. Entiende audios y fotos, avisa antes de la lluvia y te dice qué hacer, no solo qué color tiene el mapa.</p></div>
-    <div class="feat"><div class="ic">🧠</div><h4>Memoria de cada calle</h4><p>Cruzamos cada tormenta con los reportes de vecinos y de Segura EP. Así Tamy puede decir: «con una lluvia así y el río alto, tu calle se llenó hasta la rodilla».</p></div>
+    <div class="feat"><div class="ic">🌊</div><h4>La marea dentro del consejo</h4><p>En Guayaquil, cuando el río está alto, se tapan las salidas de los desagües. Nuria cruza lluvia y marea y te dice la mejor hora para moverte.</p></div>
+    <div class="feat"><div class="ic">💬</div><h4>Nuria en WhatsApp</h4><p>Sin descargar otra app. Entiende audios y fotos, avisa antes de la lluvia y te dice qué hacer, no solo qué color tiene el mapa.</p></div>
+    <div class="feat"><div class="ic">🧠</div><h4>Memoria de cada calle</h4><p>Cruzamos cada tormenta con los reportes de vecinos y de Segura EP. Así Nuria puede decir: «con una lluvia así y el río alto, tu calle se llenó hasta la rodilla».</p></div>
     <div class="feat"><div class="ic">🧭</div><h4>Ruta segura</h4><p>El mejor camino y otras opciones hasta donde vas, con la hora en que menos llueve. Si un camino pasa por agua reportada, buscamos uno que la rodee.</p></div>
     <div class="feat"><div class="ic">🤝</div><h4>Antes, durante y después</h4><p>Tu familia en el mapa, en tiempo real, y el aviso de «estoy bien». Una tarea por semana para la temporada de El Niño y, después de la lluvia, guía para documentar daños y pedir ayudas.</p></div>
   </div>
 
   <div class="tbl-wrap">
     <table class="cmp">
-      <thead><tr><th>Capacidad</th><th>RainViewer</th><th>Amaru</th><th class="us">Aguaje (propuesta)</th></tr></thead>
+      <thead><tr><th>Capacidad</th><th>RainViewer</th><th>Amaru</th><th class="us">Nuria (propuesta)</th></tr></thead>
       <tbody>
         <tr><td>Lluvia en vivo en Guayaquil</td><td><span class="n">✕</span>Sin cobertura de radar en la Costa</td><td><span class="p">~</span>Usa RainViewer y pronósticos</td><td class="us"><span class="y">✓</span>Satélite GOES-19 cada 10 min y lluvia estimada por satélite</td></tr>
         <tr><td>Pronóstico por hora</td><td><span class="y">✓</span>24 h gratis, 72 h de pago</td><td><span class="y">✓</span>Open-Meteo y MET Norway</td><td class="us"><span class="y">✓</span>Varios modelos, por barrio</td></tr>
@@ -567,7 +567,7 @@ footer{border-top:1px solid var(--line);padding:30px 0 50px;color:var(--muted);f
         <tr><td>Ríos y crecidas</td><td><span class="n">✕</span></td><td><span class="y">✓</span>850 estaciones (Google Flood Forecasting)</td><td class="us"><span class="y">✓</span>Google Flood Forecasting y estaciones del INAMHI</td></tr>
         <tr><td>Riesgo por zona</td><td><span class="n">✕</span></td><td><span class="y">✓</span>Índice 0–100 con 4 niveles</td><td class="us"><span class="y">✓</span>4 niveles en palabras (Tranquilo, Ojo, Cuidado, Peligro) y memoria por calle</td></tr>
         <tr><td>Reportes de vecinos</td><td><span class="n">✕</span></td><td><span class="y">✓</span>Revisados con IA</td><td class="us"><span class="y">✓</span>Revisados con IA, enviados por WhatsApp con foto o audio</td></tr>
-        <tr><td>Asistente de IA que conversa</td><td><span class="p">~</span>«AI insights» en el plan de pago</td><td><span class="n">–</span>No aparece en la prensa</td><td class="us"><span class="y">✓</span>Tamy, en la web y en WhatsApp</td></tr>
+        <tr><td>Asistente de IA que conversa</td><td><span class="p">~</span>«AI insights» en el plan de pago</td><td><span class="n">–</span>No aparece en la prensa</td><td class="us"><span class="y">✓</span>Nuria, en la web y en WhatsApp</td></tr>
         <tr><td>Ruta segura</td><td><span class="n">✕</span></td><td><span class="y">✓</span>Revisa cómo está una ruta antes de viajar</td><td class="us"><span class="y">✓</span>Mejor camino y alternativas, mejor hora para salir y desvíos por agua reportada</td></tr>
         <tr><td>Familia en tiempo real</td><td><span class="n">✕</span></td><td><span class="n">–</span>No aparece en la prensa</td><td class="us"><span class="y">✓</span>Dónde está cada uno, si está bien y si su zona tiene riesgo, con pedido de ayuda</td></tr>
         <tr><td>Alertas</td><td><span class="y">✓</span>Por intensidad de lluvia</td><td><span class="y">✓</span>Por lugar y por ruta</td><td class="us"><span class="y">✓</span>Por lugar, ruta y horario, con la acción a tomar</td></tr>
@@ -596,7 +596,7 @@ footer{border-top:1px solid var(--line);padding:30px 0 50px;color:var(--muted);f
       <li>Calles y caminos: OpenStreetMap (OSRM)</li>
       <li>Terreno (Copernicus DEM) y red de drenaje</li>
     </ul></div>
-    <div class="col"><h4><span class="num">2</span>Motor Aguaje</h4><ul>
+    <div class="col"><h4><span class="num">2</span>Motor Nuria</h4><ul>
       <li>Detecta nubes de tormenta que crecen y estima cuándo llegan</li>
       <li>Riesgo por barrio, cada 10 min</li>
       <li>Mejor hora para salir: cruza lluvia y marea</li>
@@ -604,14 +604,14 @@ footer{border-top:1px solid var(--line);padding:30px 0 50px;color:var(--muted);f
       <li>Memoria de inundaciones por calle</li>
       <li>Revisión de reportes con IA: foto, ubicación y otros reportes cerca</li>
     </ul></div>
-    <div class="col"><h4><span class="num">3</span>Tamy</h4><ul>
+    <div class="col"><h4><span class="num">3</span>Nuria</h4><ul>
       <li>Modelo de lenguaje con herramientas: pronóstico, marea, riesgo, avisos oficiales, reportes y aviso a la familia</li>
       <li>Reglas fijas: nunca contradice al INAMHI ni a la SNGR, siempre da una acción, habla simple</li>
       <li>Entiende audios y fotos</li>
       <li>Recuerda tus lugares: casa, trabajo, colegio</li>
     </ul></div>
     <div class="col"><h4><span class="num">4</span>Canales</h4><ul>
-      <li>WhatsApp: Tamy como agente en WhatsApp Business, con alertas, audios y fotos</li>
+      <li>WhatsApp: Nuria como agente en WhatsApp Business, con alertas, audios y fotos</li>
       <li>Web y app instalable con el mapa</li>
       <li>Panel para el municipio y las empresas: mapa de reportes y avisos a empleados y clientes</li>
     </ul></div>
@@ -619,7 +619,7 @@ footer{border-top:1px solid var(--line);padding:30px 0 50px;color:var(--muted);f
 
   <div class="phases">
     <div class="phase"><div class="k">Fase 1</div><h4>MVP para Guayaquil</h4><ul>
-      <li>Mapa con nubes, pronóstico y marea</li><li>Riesgo por barrio en palabras simples</li><li>Tamy en WhatsApp con alertas por barrio</li><li>Guayaquil, Samborondón, Durán y Daule</li></ul></div>
+      <li>Mapa con nubes, pronóstico y marea</li><li>Riesgo por barrio en palabras simples</li><li>Nuria en WhatsApp con alertas por barrio</li><li>Guayaquil, Samborondón, Durán y Daule</li></ul></div>
     <div class="phase"><div class="k">Fase 2</div><h4>Ver lo que el radar no ve</h4><ul>
       <li>Aviso de tormenta con el satélite</li><li>Memoria de inundaciones por calle</li><li>Caminos seguros y reportes con foto</li></ul></div>
     <div class="phase"><div class="k">Fase 3</div><h4>Red propia y toda la Costa</h4><ul>
@@ -642,7 +642,7 @@ footer{border-top:1px solid var(--line);padding:30px 0 50px;color:var(--muted);f
 </div></section>
 
 <footer><div class="wrap">
-  <b style="color:var(--text-2)">Aguaje es un prototipo y no es una fuente oficial.</b> Sigue los avisos del INAMHI y de la SNGR. En una emergencia, llama al 911. Los datos de terreno, los reportes de vecinos y la conversación de WhatsApp son de ejemplo.
+  <b style="color:var(--text-2)">Nuria es un prototipo y no es una fuente oficial.</b> Sigue los avisos del INAMHI y de la SNGR. En una emergencia, llama al 911. Los datos de terreno, los reportes de vecinos y la conversación de WhatsApp son de ejemplo.
   <br>Mapa base © Esri y OpenStreetMap · Nubes NOAA GOES-19 vía NASA GIBS · Radar RainViewer · Pronóstico y marea Open-Meteo · Caminos OSRM y OpenStreetMap.
 </div></footer>
 
@@ -725,7 +725,7 @@ function drop(l, size=24){
 }
 function avatar(size){
   const g = 'tg'+(++uid);
-  return `<svg width="${size}" height="${size}" viewBox="0 0 64 64" role="img" aria-label="Tamy"><defs><linearGradient id="${g}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2fd3c6"/><stop offset="1" stop-color="#2a5fd6"/></linearGradient></defs>
+  return `<svg width="${size}" height="${size}" viewBox="0 0 64 64" role="img" aria-label="Nuria"><defs><linearGradient id="${g}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2fd3c6"/><stop offset="1" stop-color="#2a5fd6"/></linearGradient></defs>
   <circle cx="32" cy="32" r="32" fill="url(#${g})"/>
   <path d="M13 17l-2 5M53 15l-2 5M50 47l-2 5M12 46l-2 5" stroke="#fff" stroke-opacity=".45" stroke-width="2" stroke-linecap="round"/>
   <path d="M32 11C32 11 17 28 17 38.5a15 15 0 0 0 30 0C47 28 32 11 32 11z" fill="#fff"/>
@@ -840,8 +840,8 @@ function renderPanel(){
 
   const ht = nextHigh();
   const todo = {
-    tranquilo: ['Revisa que la alcantarilla de tu cuadra no tenga basura.', 'Guarda tus papeles importantes en una funda plástica.', 'Activa los avisos de Tamy para tu barrio.'],
-    ojo: ['Carga el celular y la batería externa.', best ? `Si tienes que salir, hazlo de ${range(hourOf(h.time[best.k]), hourOf(h.time[best.k])+2)}.` : 'Planifica tus salidas con Tamy.', ht ? `El río estará alto ${atHour(ht.t)}: si llueve a esa hora, el agua tarda en irse.` : 'Ten lista la mochila de emergencia.'],
+    tranquilo: ['Revisa que la alcantarilla de tu cuadra no tenga basura.', 'Guarda tus papeles importantes en una funda plástica.', 'Activa los avisos de Nuria para tu barrio.'],
+    ojo: ['Carga el celular y la batería externa.', best ? `Si tienes que salir, hazlo de ${range(hourOf(h.time[best.k]), hourOf(h.time[best.k])+2)}.` : 'Planifica tus salidas con Nuria.', ht ? `El río estará alto ${atHour(ht.t)}: si llueve a esa hora, el agua tarda en irse.` : 'Ten lista la mochila de emergencia.'],
     cuidado: ['Sube papeles, medicinas y aparatos a un lugar alto.', 'Mueve el carro a una zona alta antes de la lluvia.', worst ? `No salgas de ${range(hourOf(h.time[worst.k]), hourOf(h.time[worst.k])+2)}.` : 'Evita los pasos a desnivel.'],
     peligro: ['Quédate en un lugar alto y seguro.', 'No camines ni manejes por calles con agua que corre.', 'Si el agua entra a tu casa, corta la luz y llama al 911.']
   }[l.key];
@@ -970,7 +970,7 @@ const MY_REPORTS = [];
 function addMyReport(kind, depth, icon){
   const s = state.sector, ll = [s.lat + (Math.random()-.5)*.006, s.lon + (Math.random()-.5)*.006];
   L.marker(ll, {icon:L.divIcon({className:'', html:'<div class="rep mine">📍</div>', iconSize:[30,30], iconAnchor:[15,15]})})
-    .bindPopup(`<b>Tu reporte: ${kind}</b><br>${depth?('Hasta: '+depth.toLowerCase()+'<br>'):''}<span style="color:var(--muted)">ahora · Tamy lo está revisando</span>`).addTo(reportLayer);
+    .bindPopup(`<b>Tu reporte: ${kind}</b><br>${depth?('Hasta: '+depth.toLowerCase()+'<br>'):''}<span style="color:var(--muted)">ahora · Nuria lo está revisando</span>`).addTo(reportLayer);
   MY_REPORTS.push({lat:ll[0], lon:ll[1], icon, text:kind+(depth?' ('+depth.toLowerCase()+')':''), mine:true});
   if(rt.res) runRoute(false);
 }
@@ -1110,7 +1110,7 @@ function renderRoute(res){
   if(rt.offSel==='best') tip = `Sal ${departWords(off)}: es cuando menos llueve en tu camino.`;
   else if(later.o!==off && later.c < b.a.cost - 2) tip = `Si puedes, sal ${departWords(later.o)}: habrá menos lluvia en el camino.`;
   else tip = off===0 ? 'Es un buen momento para salir.' : `Saliendo ${departWords(off)} vas bien.`;
-  $('#rOut').innerHTML = `<div class="rtip">${avatar(26)}<div><b>Tamy:</b> ${tip}</div></div>` + list.map((x,i)=>`
+  $('#rOut').innerHTML = `<div class="rtip">${avatar(26)}<div><b>Nuria:</b> ${tip}</div></div>` + list.map((x,i)=>`
     <button class="rcard${i===0?' best':''}${i===rt.sel?' on':''}" data-i="${i}">
       <div class="rh"><span class="ln" style="background:${i===0?'var(--brand)':'#8a96a0'}"></span>${i===0?'Ruta recomendada':'Alternativa '+i}<span class="badge">${i===0?'Más segura':compareTag(x,b)}</span></div>
       <div class="via">${x.r.name ? 'Por '+x.r.name : 'Por la ruta marcada'} · ~${Math.round(x.r.dur/60)} min · ${nf1.format(x.r.dist/1000)} km</div>
@@ -1247,7 +1247,7 @@ function askFamily(){
   FAMILY.filter(m=>!m.me && m.status!=='help').forEach(m=> m.status = 'wait');
   updateFamily();
   [['mama',1500],['hija',3000]].forEach(([id,ms])=> setTimeout(()=>{ const m = member(id); if(m.status==='wait'){ m.status = 'ok'; m.okAgo = 0; updateFamily(); } }, ms));
-  setTimeout(()=>{ const p = member('papa'); if(p.status==='wait'){ p.status = 'unknown'; updateFamily(); toast('Papá no responde. Tamy le escribió por WhatsApp y te avisa apenas conteste.'); } }, 6000);
+  setTimeout(()=>{ const p = member('papa'); if(p.status==='wait'){ p.status = 'unknown'; updateFamily(); toast('Papá no responde. Nuria le escribió por WhatsApp y te avisa apenas conteste.'); } }, 6000);
 }
 $('#fAsk').onclick = askFamily;
 $('#fSos').onclick = ()=>{ const p = member('papa'); p.status = 'help'; updateFamily(); showSos(p); fmap.flyTo([p.lat,p.lon], 15, {duration:1}); };
@@ -1256,7 +1256,7 @@ document.querySelectorAll('#fPriv button').forEach(b=> b.onclick = ()=>{
   fam.privacy = b.dataset.p;
   $('#fPrivTxt').textContent = {
     always:'Tu familia ve dónde estás mientras compartes. Puedes pausarlo cuando quieras.',
-    emergency:'Tu familia solo ve dónde estás si tú pides ayuda o Tamy detecta peligro en tu zona.',
+    emergency:'Tu familia solo ve dónde estás si tú pides ayuda o Nuria detecta peligro en tu zona.',
     paused:'Nadie ve dónde estás. Tu familia solo ve si confirmaste que estás bien.'
   }[fam.privacy];
   updateFamily();
@@ -1273,21 +1273,21 @@ async function initFamily(){
     const q = fam.path[++fam.step]; p.lat = q.lat; p.lon = q.lon;
     drawFamily();
     if(fam.step % 4===0) renderFamily();
-    if(!fam.warned && zoneOf(p).wet && p.status!=='ok'){ fam.warned = true; renderFamily(); toast('Tamy: Papá está cerca de una calle con agua y no ha confirmado que está bien.'); }
+    if(!fam.warned && zoneOf(p).wet && p.status!=='ok'){ fam.warned = true; renderFamily(); toast('Nuria: Papá está cerca de una calle con agua y no ha confirmado que está bien.'); }
   }, 1200);
 }
 
-/* ---------- Tamy chat ---------- */
+/* ---------- Nuria chat ---------- */
 const msgs = $('#msgs');
 function toast(t){ const el = $('#toast'); el.textContent = t; el.classList.add('show'); clearTimeout(el._t); el._t = setTimeout(()=>el.classList.remove('show'), 2600); }
 function addMsg(html, who='g'){
   const d = document.createElement('div'); d.className = 'm '+who;
-  d.innerHTML = who==='g' ? `<div class="who">${avatar(18)} Tamy</div>${html}` : html;
+  d.innerHTML = who==='g' ? `<div class="who">${avatar(18)} Nuria</div>${html}` : html;
   msgs.appendChild(d); msgs.scrollTop = msgs.scrollHeight; return d;
 }
-function tamySay(html, delay=650){
+function nuriaSay(html, delay=650){
   const t = addMsg('<span class="typing"><i></i><i></i><i></i></span>');
-  return new Promise(res=> setTimeout(()=>{ t.innerHTML = `<div class="who">${avatar(18)} Tamy</div>${html}`; msgs.scrollTop = msgs.scrollHeight; res(t); }, delay));
+  return new Promise(res=> setTimeout(()=>{ t.innerHTML = `<div class="who">${avatar(18)} Nuria</div>${html}`; msgs.scrollTop = msgs.scrollHeight; res(t); }, delay));
 }
 function miniDay(s){
   const h = s.hourly, i = nowIndex(h.time), n = Math.min(15, h.time.length-i), H = [8,28,52,76,100];
@@ -1298,13 +1298,13 @@ function miniDay(s){
 const intents = {
   async lluvia(){
     const s = state.sector, l = state.risk[s.id].level;
-    await tamySay(`<p>En <b>${s.name}</b>: ${headline(s).replace(/^./, c=>c.toLowerCase())}</p>${miniDay(s)}<p>Tu barrio está en ${lvlPill(l)}: ${l.desc.replace(/^./, c=>c.toLowerCase())}</p>`);
+    await nuriaSay(`<p>En <b>${s.name}</b>: ${headline(s).replace(/^./, c=>c.toLowerCase())}</p>${miniDay(s)}<p>Tu barrio está en ${lvlPill(l)}: ${l.desc.replace(/^./, c=>c.toLowerCase())}</p>`);
     offer(['¿A qué hora salgo?','¿Qué hago si entra agua a mi casa?']);
   },
   async salir(){
     const s = state.sector, {best, worst, h} = windows(s), ht = nextHigh();
     const b = best && hourOf(h.time[best.k]), w = worst && hourOf(h.time[worst.k]);
-    await tamySay(`<p>${best ? `Sal de <b>${range(b, b+2)}</b>. Es el momento más tranquilo en ${s.name}.` : 'Hoy no veo un buen momento. Si puedes, quédate donde estás.'}</p>
+    await nuriaSay(`<p>${best ? `Sal de <b>${range(b, b+2)}</b>. Es el momento más tranquilo en ${s.name}.` : 'Hoy no veo un buen momento. Si puedes, quédate donde estás.'}</p>
       ${worst && rainCat(worst.peak).n>=2 ? `<p>Evita salir de <b>${range(w, w+2)}</b>: es lo más fuerte de la lluvia.</p>` : ''}
       ${ht ? `<p>🌊 El río estará alto ${atHour(ht.t)}. Si llueve cerca de esa hora, el agua se queda más tiempo en la calle.</p>` : ''}`);
     offer(['¿Por dónde me voy más seguro?','Avísale a mi familia que estoy bien']);
@@ -1315,26 +1315,26 @@ const intents = {
     document.querySelectorAll('#rWhen button').forEach(x=>x.classList.toggle('on', x.dataset.off==='0'));
     let res = null;
     try{ res = await planRoute(from, to, 0); }catch(e){}
-    if(!res){ await tamySay('<p>No pude calcular la ruta ahora. Prueba en un momento en la sección «Ruta segura».</p>'); offer(); return; }
+    if(!res){ await nuriaSay('<p>No pude calcular la ruta ahora. Prueba en un momento en la sección «Ruta segura».</p>'); offer(); return; }
     rt.res = res; rt.sel = 0; drawRoutes(res, true); renderRoute(res);
     const b = res.list[0], alt = res.list[1];
     const why = !alt ? '' : alt.a.hits.length ? 'pasa por agua reportada' : alt.r.dur > b.r.dur ? 'es más larga' : 'tiene más lluvia en el camino';
-    const m = await tamySay(`<p>De <b>${from.name}</b> al <b>${to.name}</b>, te recomiendo ir ${b.r.name ? 'por <b>'+b.r.name+'</b>' : 'por la ruta marcada'}: unos ${Math.round(b.r.dur/60)} minutos sin contar el tráfico.</p><ul>${routeReasons(b).map(([ic,t])=>`<li>${ic} ${t}</li>`).join('')}</ul>${alt ? `<p>La otra opción ${why}.</p>` : ''}<div class="opts"><button>Ver la ruta en el mapa</button></div>`);
+    const m = await nuriaSay(`<p>De <b>${from.name}</b> al <b>${to.name}</b>, te recomiendo ir ${b.r.name ? 'por <b>'+b.r.name+'</b>' : 'por la ruta marcada'}: unos ${Math.round(b.r.dur/60)} minutos sin contar el tráfico.</p><ul>${routeReasons(b).map(([ic,t])=>`<li>${ic} ${t}</li>`).join('')}</ul>${alt ? `<p>La otra opción ${why}.</p>` : ''}<div class="opts"><button>Ver la ruta en el mapa</button></div>`);
     m.querySelector('.opts button').onclick = ()=> document.getElementById('ruta').scrollIntoView({behavior:'smooth'});
     offer(['¿A qué hora salgo?','Reportar una calle inundada']);
   },
   async donde(){
     const lines = FAMILY.filter(m=>!m.me).map(m=>{ const z = zoneOf(m); return `<li><b>${m.rel}</b>: ${STATUS[m.status].t.toLowerCase()}. ${m.moving ? 'Va en camino; ahora está en' : m.note ? m.note+', en' : 'Está en'} ${z.s.name} (${z.l.name.toLowerCase()})${z.wet ? '. ⚠️ Está cerca de agua reportada' : ''}.</li>`; }).join('');
     const pending = FAMILY.filter(m=>!m.me && m.status!=='ok');
-    const m = await tamySay(`<p>Así está tu familia ahora:</p><ul>${lines}</ul>${pending.length ? `<p>${pending.map(x=>x.rel).join(' y ')} no ha${pending.length>1?'n':''} confirmado. ¿Le pregunto si está bien?</p>` : ''}<div class="opts">${pending.length ? '<button data-a="ask">Sí, pregúntale</button>' : ''}<button data-a="map">Ver en el mapa</button></div>`);
+    const m = await nuriaSay(`<p>Así está tu familia ahora:</p><ul>${lines}</ul>${pending.length ? `<p>${pending.map(x=>x.rel).join(' y ')} no ha${pending.length>1?'n':''} confirmado. ¿Le pregunto si está bien?</p>` : ''}<div class="opts">${pending.length ? '<button data-a="ask">Sí, pregúntale</button>' : ''}<button data-a="map">Ver en el mapa</button></div>`);
     m.querySelectorAll('.opts button').forEach(b=> b.onclick = ()=>{
-      if(b.dataset.a==='ask'){ b.disabled = true; askFamily(); toast('Tamy le preguntó a tu familia si está bien.'); }
+      if(b.dataset.a==='ask'){ b.disabled = true; askFamily(); toast('Nuria le preguntó a tu familia si está bien.'); }
       else document.getElementById('familia').scrollIntoView({behavior:'smooth'});
     });
     offer(['Avísale a mi familia que estoy bien','¿Por dónde me voy más seguro?']);
   },
   async casa(){
-    await tamySay(`<p>Si entra agua a tu casa, haz esto en orden:</p><ol>
+    await nuriaSay(`<p>Si entra agua a tu casa, haz esto en orden:</p><ol>
       <li><b>Corta la luz</b> desde el breaker, solo si llegas sin pisar agua.</li>
       <li>Sube papeles, medicinas y aparatos a un lugar alto.</li>
       <li>No camines por agua que corre: con 15 cm te puede tumbar y con 30 cm puede arrastrar un carro.</li>
@@ -1345,30 +1345,30 @@ const intents = {
   },
   async mochila(){
     const items = ['Agua: 4 litros por persona por día, para 3 días','Comida que no se dañe y un abrelatas','Linterna y pilas','Cargador y batería externa','Botiquín y tus medicinas','Copias de cédula y papeles en funda plástica','Dinero en efectivo','Silbato','Una muda de ropa seca','Comida y agua para tu mascota'];
-    const m = await tamySay(`<p>Tu mochila de emergencia. Marca lo que ya tienes:</p><div class="check">${items.map(t=>`<label><input type="checkbox"> ${t}</label>`).join('')}</div><div class="prog"><i></i></div><div class="muted prog-txt" style="font-size:12.5px;margin-top:4px">0 de ${items.length} listos</div>`);
+    const m = await nuriaSay(`<p>Tu mochila de emergencia. Marca lo que ya tienes:</p><div class="check">${items.map(t=>`<label><input type="checkbox"> ${t}</label>`).join('')}</div><div class="prog"><i></i></div><div class="muted prog-txt" style="font-size:12.5px;margin-top:4px">0 de ${items.length} listos</div>`);
     const boxes = m.querySelectorAll('input'), bar = m.querySelector('.prog i'), txt = m.querySelector('.prog-txt');
-    boxes.forEach(b=> b.onchange = ()=>{ const n = [...boxes].filter(x=>x.checked).length; bar.style.width = (n/items.length*100)+'%'; txt.textContent = `${n} de ${items.length} listos`; if(n===items.length) toast('¡Mochila lista! Tamy te recuerda revisarla cada mes.'); });
+    boxes.forEach(b=> b.onchange = ()=>{ const n = [...boxes].filter(x=>x.checked).length; bar.style.width = (n/items.length*100)+'%'; txt.textContent = `${n} de ${items.length} listos`; if(n===items.length) toast('¡Mochila lista! Nuria te recuerda revisarla cada mes.'); });
     offer(['¿Cómo va El Niño esta temporada?']);
   },
   async reportar(){
-    const m = await tamySay(`<p>Gracias por ayudar a tus vecinos. ¿Qué ves en <b>${state.sector.name}</b>?</p><div class="opts">${['🌊 Agua en la calle','🚧 Calle cerrada','🕳️ Alcantarilla tapada','⛰️ Deslave'].map(o=>`<button>${o}</button>`).join('')}</div>`);
+    const m = await nuriaSay(`<p>Gracias por ayudar a tus vecinos. ¿Qué ves en <b>${state.sector.name}</b>?</p><div class="opts">${['🌊 Agua en la calle','🚧 Calle cerrada','🕳️ Alcantarilla tapada','⛰️ Deslave'].map(o=>`<button>${o}</button>`).join('')}</div>`);
     m.querySelectorAll('button').forEach(b=> b.onclick = async ()=>{
       m.querySelectorAll('button').forEach(x=>x.disabled=true);
       const kind = b.textContent; addMsg(kind, 'u');
       if(kind.includes('Agua')){
-        const m2 = await tamySay(`<p>¿Hasta dónde llega el agua?</p><div class="opts">${['Tobillo','Rodilla','Cintura'].map(o=>`<button>${o}</button>`).join('')}</div>`);
+        const m2 = await nuriaSay(`<p>¿Hasta dónde llega el agua?</p><div class="opts">${['Tobillo','Rodilla','Cintura'].map(o=>`<button>${o}</button>`).join('')}</div>`);
         m2.querySelectorAll('button').forEach(c=> c.onclick = ()=>{ m2.querySelectorAll('button').forEach(x=>x.disabled=true); addMsg(c.textContent,'u'); finish(kind, c.textContent); });
       } else finish(kind);
     });
     async function finish(kind, depth){
       addMyReport(kind.replace(/^\S+\s/,''), depth, kind.split(' ')[0]);
-      await tamySay(`<p>Listo ✅. Tu reporte ya está en el mapa. Lo reviso y lo comparo con otros reportes cerca antes de avisar al barrio.</p><p class="muted" style="font-size:12.5px">Por WhatsApp puedes mandarme una foto o un audio y yo hago el resto.</p>`);
+      await nuriaSay(`<p>Listo ✅. Tu reporte ya está en el mapa. Lo reviso y lo comparo con otros reportes cerca antes de avisar al barrio.</p><p class="muted" style="font-size:12.5px">Por WhatsApp puedes mandarme una foto o un audio y yo hago el resto.</p>`);
       toast('Tu reporte aparece en el mapa, arriba.');
       offer(['¿Qué hago si entra agua a mi casa?']);
     }
   },
   async nino(){
-    await tamySay(`<p>Así va El Niño en Guayaquil:</p><ul>
+    await nuriaSay(`<p>Así va El Niño en Guayaquil:</p><ul>
       <li>El INAMHI anunció el <b>23 de octubre</b> que El Niño entra en su fase más fuerte.</li>
       <li>En septiembre y octubre ya llovió <b>2 de cada 3 partes</b> de lo que llueve en un invierno normal completo.</li>
       <li>Los expertos esperan lluvias muy fuertes <b>por lo menos hasta abril</b>.</li></ul>
@@ -1379,12 +1379,12 @@ const intents = {
   },
   async familia(){
     const s = state.sector, l = state.risk[s.id].level, later = hourKey(new Date(localNow().getTime()+2*3600e3));
-    const m = await tamySay(`<p>Te preparé este mensaje para tu grupo «Familia»:</p><div class="mini" style="background:#005c4b;border-color:transparent">Estoy bien 🙏. Estoy en ${s.name}. Aquí estamos en «${l.name}». Les escribo de nuevo ${atHour(later)}.</div><div class="opts"><button>Enviar por WhatsApp</button><button>Cambiar el mensaje</button></div>`);
+    const m = await nuriaSay(`<p>Te preparé este mensaje para tu grupo «Familia»:</p><div class="mini" style="background:#005c4b;border-color:transparent">Estoy bien 🙏. Estoy en ${s.name}. Aquí estamos en «${l.name}». Les escribo de nuevo ${atHour(later)}.</div><div class="opts"><button>Enviar por WhatsApp</button><button>Cambiar el mensaje</button></div>`);
     m.querySelectorAll('button').forEach(b=> b.onclick = ()=>{ m.querySelectorAll('button').forEach(x=>x.disabled=true); toast('En el prototipo no enviamos mensajes reales.'); });
     offer(['¿A qué hora salgo?']);
   },
   async fallback(){
-    await tamySay(`<p>En este prototipo respondo sobre la lluvia, a qué hora salir, qué hacer si entra agua, la mochila, reportes, El Niño y avisos a tu familia.</p><p>En la versión real entiendo cualquier pregunta, porque uso un modelo de lenguaje con el pronóstico, la marea y los avisos oficiales.</p>`);
+    await nuriaSay(`<p>En este prototipo respondo sobre la lluvia, a qué hora salir, qué hacer si entra agua, la mochila, reportes, El Niño y avisos a tu familia.</p><p>En la versión real entiendo cualquier pregunta, porque uso un modelo de lenguaje con el pronóstico, la marea y los avisos oficiales.</p>`);
     offer();
   }
 };
@@ -1427,7 +1427,7 @@ new IntersectionObserver((es,ob)=>{ if(es[0].isIntersecting){ playWhatsApp(); ob
   fillPlaces(); drawRouteReports(); initFamily();
   new IntersectionObserver((es,ob)=>{ if(es[0].isIntersecting){ ob.disconnect(); if(!rt.res) runRoute(); } }, {threshold:.25}).observe($('#ruta'));
   const l = state.risk[state.sector.id].level;
-  await tamySay(`<p>¡Hola! Soy <b>Tamy</b> 💧. Mi nombre viene de <i>tamya</i>, lluvia en kichwa. Vigilo el cielo, la marea del Guayas y lo que reportan tus vecinos.</p><p>Ahora mismo, ${state.sector.name} está en ${lvlPill(l)}. ¿En qué te ayudo?</p>`, 300);
+  await nuriaSay(`<p>¡Hola! Soy <b>Nuria</b> 💧. Vigilo el cielo, la marea del Guayas y lo que reportan tus vecinos.</p><p>Ahora mismo, ${state.sector.name} está en ${lvlPill(l)}. ¿En qué te ayudo?</p>`, 300);
   offer();
   new IntersectionObserver((es,ob)=>{ if(es[0].isIntersecting){ ob.disconnect(); setTimeout(()=>{ if(msgs.children.length===1) ask('¿Va a llover fuerte hoy?','lluvia'); }, 700); } }, {threshold:.5}).observe($('#chat'));
   let rt; addEventListener('resize', ()=>{ clearTimeout(rt); rt = setTimeout(renderPanel, 150); });

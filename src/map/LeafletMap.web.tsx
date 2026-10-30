@@ -16,8 +16,8 @@ export function LeafletMap({ scene, onEvent, style }: { scene: MapScene; onEvent
 
   useEffect(() => {
     const listen = (e: MessageEvent) => {
-      if (e.source !== ref.current?.contentWindow || !e.data?.aguaje) return;
-      const ev = e.data.aguaje as MapEvent;
+      if (e.source !== ref.current?.contentWindow || !e.data?.nuria) return;
+      const ev = e.data.nuria as MapEvent;
       if (ev.type === 'ready') setReady(true);
       handler.current?.(ev);
     };

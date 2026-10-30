@@ -1,9 +1,8 @@
 # Nuria
 
-
-A phone app that helps people in Guayaquil get through the El Niño rainy season. Tamy, a raindrop
-assistant ("tamya" is rain in Kichwa), tells you if your street may flood today, when to go out,
-which way to drive to avoid flooded streets, and whether your family is OK.
+A phone app that helps people in Guayaquil get through the El Niño rainy season. Nuria, a raindrop
+assistant, tells you if your street may flood today, when to go out, which way to drive to avoid
+flooded streets, and whether your family is OK.
 
 Hackathon prototype. Not an official source: follow INAMHI and SNGR, and call 911 in an emergency.
 
@@ -14,9 +13,9 @@ Hackathon prototype. Not an official source: follow INAMHI and SNGR, and call 91
   Guayas river tide (a high river makes street water drain slower).
 - **Mapa**: live GOES-19 satellite clouds over the city, every barrio with its risk drop, and
   neighbor reports.
-- **Tamy**: chat backed by DeepSeek with tool calling over the app's own data (risk, rain, tide,
+- **Nuria**: chat backed by DeepSeek with tool calling over the app's own data (risk, rain, tide,
   safe route, family, reports, season). Without a key or connection it falls back to scripted
-  answers, so a demo never goes silent. Tamy can read answers aloud.
+  answers, so a demo never goes silent. Nuria can read answers aloud.
 - **Ruta**: driving routes from OSRM scored by rain on the way, reported water and low ground,
   with a detour around flooded points and the best hour to leave.
 - **Familia**: where each family member is, whether they confirmed they are OK, and an SOS flow.
