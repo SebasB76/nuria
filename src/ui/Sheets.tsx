@@ -7,6 +7,7 @@ import { NamedPoint } from '@/data/route';
 import { useApp } from '@/state/AppState';
 import { Drop, Icon } from './icons';
 import { C, F } from './theme';
+import { PressableScale } from './PressableScale';
 
 export function Sheet({ visible, onClose, title, children }: { visible: boolean; onClose: () => void; title: string; children: ReactNode }) {
   const insets = useSafeAreaInsets();
@@ -31,14 +32,14 @@ export function Sheet({ visible, onClose, title, children }: { visible: boolean;
 
 export function Row({ left, title, sub, onPress, on }: { left?: ReactNode; title: string; sub?: string; onPress: () => void; on?: boolean }) {
   return (
-    <Pressable onPress={onPress} style={({ pressed }) => [styles.row, on && styles.rowOn, pressed && { opacity: 0.8 }]}>
+    <PressableScale onPress={onPress} style={[styles.row, on && styles.rowOn]}>
       {left}
       <View style={{ flex: 1 }}>
         <Text style={styles.rowTitle}>{title}</Text>
         {sub ? <Text style={styles.rowSub}>{sub}</Text> : null}
       </View>
       {on && <Icon name="check" size={18} color={C.tranquilo} strokeWidth={2.6} />}
-    </Pressable>
+    </PressableScale>
   );
 }
 
@@ -93,14 +94,14 @@ export function PlaceSheet({
   return (
     <Sheet visible={visible} onClose={onClose} title={title}>
       <View style={{ flexDirection: 'row', gap: 8, marginBottom: 4 }}>
-        <Pressable style={styles.action} onPress={() => (onClose(), onLocate())}>
+        <PressableScale style={styles.action} onPress={() => (onClose(), onLocate())}>
           <Icon name="locate" size={18} color={C.celDeep} />
           <Text style={styles.actionText}>Mi ubicación</Text>
-        </Pressable>
-        <Pressable style={styles.action} onPress={() => (onClose(), onPickOnMap())}>
+        </PressableScale>
+        <PressableScale style={styles.action} onPress={() => (onClose(), onPickOnMap())}>
           <Icon name="pin" size={18} color={C.celDeep} />
           <Text style={styles.actionText}>Elegir en el mapa</Text>
-        </Pressable>
+        </PressableScale>
       </View>
       {groups.map(([g, list]) =>
         list.length ? (

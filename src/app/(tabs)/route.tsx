@@ -1,3 +1,4 @@
+import * as Haptics from 'expo-haptics';
 import { useEffect, useMemo, useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
@@ -13,6 +14,7 @@ import { Card, Header, Screen, Segmented, T, NuriaTip } from '@/ui/kit';
 import { PlaceSheet } from '@/ui/Sheets';
 import { C, F } from '@/ui/theme';
 import { useToast } from '@/ui/Toast';
+import { PressableScale } from '@/ui/PressableScale';
 
 type End = 'from' | 'to';
 const WHEN: { label: string; value: Departure }[] = [
@@ -31,7 +33,10 @@ export default function RouteScreen() {
   // the selected card belongs to one plan; a new plan starts again on the recommended route
   const [picked, setPicked] = useState<{ plan: typeof plan; i: number }>({ plan: null, i: 0 });
   const sel = picked.plan === plan ? picked.i : 0;
-  const setSel = (i: number) => setPicked({ plan, i });
+  const setSel = (i: number) => {
+    if (i !== sel) Haptics.selectionAsync().catch(() => {});
+    setPicked({ plan, i });
+  };
 
   useEffect(() => {
     if (!plan && status === 'idle') app.runRoute();
@@ -74,9 +79,9 @@ export default function RouteScreen() {
       <Card style={{ gap: 2, paddingVertical: 6 }}>
         <EndRow badge="A" label="Sales de" name={req.from.name} onPress={() => setSheet('from')} />
         <View style={styles.sep}>
-          <Pressable onPress={() => app.runRoute({ from: req.to, to: req.from })} style={styles.swap} accessibilityLabel="Invertir salida y destino">
+          <PressableScale onPress={() => app.runRoute({ from: req.to, to: req.from })} style={styles.swap} hitSlop={8} accessibilityLabel="Invertir salida y destino">
             <Icon name="swap" size={16} color={C.navy} />
-          </Pressable>
+          </PressableScale>
         </View>
         <EndRow badge="B" label="Vas a" name={req.to.name} onPress={() => setSheet('to')} />
       </Card>
@@ -107,7 +112,7 @@ export default function RouteScreen() {
             </Text>
           </NuriaTip>
           {plan.list.map((x, i) => (
-            <Pressable key={i} onPress={() => setSel(i)} style={[styles.rc, i === 0 && styles.rcBest, i === sel && styles.rcOn]}>
+            <PressableScale key={i} onPress={() => setSel(i)} style={[styles.rc, i === 0 && styles.rcBest, i === sel && styles.rcOn]}>
               <View style={styles.rh}>
                 <View style={[styles.line, { backgroundColor: i === 0 ? '#2fd3c6' : '#8a96a0' }]} />
                 <Text style={styles.rTitle}>{i === 0 ? 'Ruta recomendada' : 'Alternativa ' + i}</Text>
@@ -123,7 +128,7 @@ export default function RouteScreen() {
                   </Text>
                 ))}
               </View>
-            </Pressable>
+            </PressableScale>
           ))}
           <T kind="fine">Los minutos no incluyen el tráfico. Nunca cruces una calle con agua que corre.</T>
         </>
@@ -144,7 +149,7 @@ export default function RouteScreen() {
 
 function EndRow({ badge, label, name, onPress }: { badge: string; label: string; name: string; onPress: () => void }) {
   return (
-    <Pressable onPress={onPress} style={styles.end}>
+    <PressableScale onPress={onPress} style={styles.end}>
       <View style={[styles.ab, badge === 'A' ? { backgroundColor: '#fff', borderWidth: 2, borderColor: C.ink } : { backgroundColor: '#2fd3c6' }]}>
         <Text style={styles.abText}>{badge}</Text>
       </View>
@@ -155,7 +160,7 @@ function EndRow({ badge, label, name, onPress }: { badge: string; label: string;
         </Text>
       </View>
       <Icon name="chevron" size={18} color={C.ink2} />
-    </Pressable>
+    </PressableScale>
   );
 }
 

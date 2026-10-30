@@ -1,6 +1,8 @@
+import * as Haptics from 'expo-haptics';
 import { router } from 'expo-router';
 import { useMemo, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { useReducedMotion } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { dist, LEVELS, PLACES, sectorById } from '@/data/places';
@@ -12,6 +14,7 @@ import { useApp } from '@/state/AppState';
 import { Drop, Icon } from '@/ui/icons';
 import { Chip } from '@/ui/kit';
 import { C, F } from '@/ui/theme';
+import { PressableScale } from '@/ui/PressableScale';
 
 type Layer = 'clouds' | 'sectors' | 'reports';
 const LAYER_LABEL: Record<Layer, string> = { clouds: '☁️ Nubes', sectors: '💧 Barrios', reports: '📣 Reportes' };
@@ -20,7 +23,9 @@ export default function MapScreen() {
   const app = useApp();
   const insets = useSafeAreaInsets();
   const [layers, setLayers] = useState<Record<Layer, boolean>>({ clouds: true, sectors: true, reports: true });
-  const [playing, setPlaying] = useState(true);
+  const reduced = useReducedMotion();
+  // with reduced motion the clouds start still; the person can still play them
+  const [playing, setPlaying] = useState(!reduced);
   const [cloudLabel, setCloudLabel] = useState('Cargando la foto del satélite…');
   const [view, setView] = useState<MapScene['view']>(cityView());
   const [sheetH, setSheetH] = useState(240);
@@ -39,7 +44,10 @@ export default function MapScreen() {
   );
 
   const onEvent = (e: MapEvent) => {
-    if (e.type === 'sector') app.setFocusId(e.id);
+    if (e.type === 'sector' && e.id !== app.focusId) {
+      Haptics.selectionAsync().catch(() => {});
+      app.setFocusId(e.id);
+    }
     if (e.type === 'clouds') setCloudLabel(e.label);
   };
 
@@ -49,10 +57,10 @@ export default function MapScreen() {
 
       <View style={[styles.top, { top: insets.top + 8 }]} pointerEvents="box-none">
         {layers.clouds && (
-          <Pressable style={styles.float} onPress={() => setPlaying(!playing)} accessibilityLabel={playing ? 'Pausar las nubes' : 'Ver cómo se mueven las nubes'}>
+          <PressableScale style={styles.float} onPress={() => setPlaying(!playing)} accessibilityLabel={playing ? 'Pausar las nubes' : 'Ver cómo se mueven las nubes'}>
             <Icon name={playing ? 'pause' : 'play'} size={14} color={C.ink} strokeWidth={2.6} />
             <Text style={styles.floatText}>{cloudLabel}</Text>
-          </Pressable>
+          </PressableScale>
         )}
         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 6 }}>
           {(Object.keys(LAYER_LABEL) as Layer[]).map((k) => (
@@ -62,10 +70,10 @@ export default function MapScreen() {
         </ScrollView>
       </View>
 
-      <Pressable style={[styles.fab, { bottom: sheetH + 18 }]} onPress={() => router.push('/report')} accessibilityLabel="Reportar mi calle">
+      <PressableScale style={[styles.fab, { bottom: sheetH + 18 }]} onPress={() => router.push('/report')} accessibilityLabel="Reportar mi calle">
         <Icon name="camera" size={20} color="#fff" />
         <Text style={styles.fabText}>Reportar</Text>
-      </Pressable>
+      </PressableScale>
 
       <View style={styles.sheet} onLayout={(e) => setSheetH(e.nativeEvent.layout.height)}>
         <View style={styles.grab} />

@@ -14,6 +14,7 @@ import { RainStrip } from '@/ui/RainStrip';
 import { SectorSheet } from '@/ui/Sheets';
 import { TideChart } from '@/ui/TideChart';
 import { C, F, LEVEL_TINT } from '@/ui/theme';
+import { PressableScale } from '@/ui/PressableScale';
 
 export default function TodayScreen() {
   const app = useApp();
@@ -67,9 +68,9 @@ export default function TodayScreen() {
           {bw.best ? `si tienes que salir, hazlo de ${bw.best}. ` : 'hoy no veo un buen momento para salir. '}
           {bw.worst ? `Evita salir de ${bw.worst}: ${bw.worstWord}.` : 'No se espera lluvia fuerte en las próximas horas.'}
         </Text>
-        <Pressable onPress={() => router.navigate('/nuria')} style={styles.tipBtn}>
+        <PressableScale onPress={() => router.navigate('/nuria')} style={styles.tipBtn}>
           <Text style={styles.tipBtnText}>Pregúntale a Nuria ›</Text>
-        </Pressable>
+        </PressableScale>
       </NuriaTip>
 
       <View style={{ flexDirection: 'row', gap: 10 }}>

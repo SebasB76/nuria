@@ -5,6 +5,8 @@ import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
+import { KeyboardProvider } from 'react-native-keyboard-controller';
+import { useReducedMotion } from 'react-native-reanimated';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { AppStateProvider } from '@/state/AppState';
@@ -15,6 +17,7 @@ import { ToastProvider } from '@/ui/Toast';
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
+  const reduced = useReducedMotion();
   const [loaded, error] = useFonts({ BricolageGrotesque_800ExtraBold, Onest_400Regular, Onest_500Medium, Onest_700Bold, Onest_800ExtraBold });
 
   useEffect(() => {
@@ -24,11 +27,12 @@ export default function RootLayout() {
 
   return (
     <SafeAreaProvider>
+      <KeyboardProvider>
       <ToastProvider>
         <AppStateProvider>
           <FamilyProvider>
             <StatusBar style="dark" />
-            <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: C.paper } }}>
+            <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: C.paper }, animation: reduced ? 'fade' : 'default' }}>
               <Stack.Screen name="(tabs)" />
               <Stack.Screen name="welcome" options={{ animation: 'fade' }} />
               <Stack.Screen name="report" options={{ presentation: 'modal' }} />
@@ -39,6 +43,7 @@ export default function RootLayout() {
           </FamilyProvider>
         </AppStateProvider>
       </ToastProvider>
+      </KeyboardProvider>
     </SafeAreaProvider>
   );
 }

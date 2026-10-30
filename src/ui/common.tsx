@@ -1,16 +1,17 @@
 import { router } from 'expo-router';
-import { Pressable, StyleSheet, Text } from 'react-native';
+import { StyleSheet, Text } from 'react-native';
 
 import { Prefs } from '@/state/storage';
 import { F } from './theme';
+import { PressableScale } from './PressableScale';
 
 export const placeLabel = (prefs: Prefs, id: string) => (id === prefs.homeId ? 'Casa' : id === prefs.workId ? 'Trabajo' : id === prefs.schoolId ? 'Colegio' : null);
 
 export function ScenarioBanner() {
   return (
-    <Pressable onPress={() => router.push('/settings')} style={styles.banner}>
+    <PressableScale onPress={() => router.push('/settings')} style={styles.banner}>
       <Text style={styles.text}>🎬 Escenario de demostración: aguacero simulado. Toca para cambiarlo.</Text>
-    </Pressable>
+    </PressableScale>
   );
 }
 

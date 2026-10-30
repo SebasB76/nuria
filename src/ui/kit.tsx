@@ -1,9 +1,11 @@
+import * as Haptics from 'expo-haptics';
 import { ReactNode } from 'react';
-import { Pressable, ScrollView, ScrollViewProps, StyleProp, StyleSheet, Text, TextProps, TextStyle, View, ViewStyle } from 'react-native';
+import { ScrollView, ScrollViewProps, StyleProp, StyleSheet, Text, TextProps, TextStyle, View, ViewStyle } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { Level } from '@/data/places';
 import { Drop, Icon, IconName } from './icons';
+import { PressableScale } from './PressableScale';
 import { C, F } from './theme';
 
 export function Screen({ children, scroll = true, style, ...rest }: { children: ReactNode; scroll?: boolean; style?: StyleProp<ViewStyle> } & ScrollViewProps) {
@@ -27,9 +29,9 @@ export function T({ style, kind = 'body', ...rest }: TextProps & { kind?: 'body'
 export function Card({ children, style, onPress }: { children: ReactNode; style?: StyleProp<ViewStyle>; onPress?: () => void }) {
   if (onPress)
     return (
-      <Pressable onPress={onPress} style={({ pressed }) => [styles.card, style, pressed && { opacity: 0.85 }]}>
+      <PressableScale onPress={onPress} style={[styles.card, style]}>
         {children}
-      </Pressable>
+      </PressableScale>
     );
   return <View style={[styles.card, style]}>{children}</View>;
 }
@@ -52,24 +54,21 @@ export function Button({
   const bg = { primary: C.navy, light: '#fff', danger: C.peligro, wa: C.wa }[kind];
   const fg = kind === 'light' ? C.navy : '#fff';
   return (
-    <Pressable
-      disabled={disabled}
-      onPress={onPress}
-      style={({ pressed }) => [styles.btn, { backgroundColor: bg }, kind === 'light' && styles.btnLight, style, (pressed || disabled) && { opacity: 0.7 }]}>
+    <PressableScale disabled={disabled} onPress={onPress} style={[styles.btn, { backgroundColor: bg }, kind === 'light' && styles.btnLight, style]}>
       {typeof icon === 'string' ? <Icon name={icon as IconName} size={18} color={fg} /> : icon}
       <Text style={[styles.btnText, { color: fg }]}>{label}</Text>
-    </Pressable>
+    </PressableScale>
   );
 }
 
 export function Chip({ label, onPress, on, icon, style }: { label: string; onPress?: () => void; on?: boolean; icon?: ReactNode; style?: StyleProp<ViewStyle> }) {
   return (
-    <Pressable onPress={onPress} style={({ pressed }) => [styles.chip, on && styles.chipOn, style, pressed && { opacity: 0.8 }]}>
+    <PressableScale onPress={onPress} disabled={!onPress} style={[styles.chip, on && styles.chipOn, style]}>
       {icon}
       <Text style={[styles.chipText, on && { color: '#fff' }]} numberOfLines={1}>
         {label}
       </Text>
-    </Pressable>
+    </PressableScale>
   );
 }
 
@@ -77,9 +76,16 @@ export function Segmented<V extends string | number>({ options, value, onChange 
   return (
     <View style={styles.segm}>
       {options.map((o) => (
-        <Pressable key={String(o.value)} onPress={() => onChange(o.value)} style={[styles.segmItem, o.value === value && styles.segmOn]}>
+        <PressableScale
+          key={String(o.value)}
+          onPress={() => {
+            if (o.value === value) return;
+            Haptics.selectionAsync().catch(() => {});
+            onChange(o.value);
+          }}
+          style={[styles.segmItem, o.value === value && styles.segmOn]}>
           <Text style={[styles.segmText, o.value === value && { color: '#fff' }]}>{o.label}</Text>
-        </Pressable>
+        </PressableScale>
       ))}
     </View>
   );

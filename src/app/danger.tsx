@@ -11,6 +11,7 @@ import { Drop, Icon, NuriaAvatar } from '@/ui/icons';
 import { Card, T } from '@/ui/kit';
 import { C, F } from '@/ui/theme';
 import { useToast } from '@/ui/Toast';
+import { PressableScale } from '@/ui/PressableScale';
 
 const STEPS = ['Corta la luz, si llegas sin pisar agua.', 'Sube papeles y medicinas a lo alto.', 'No cruces calles con agua que corre.'];
 
@@ -44,11 +45,11 @@ export default function DangerScreen() {
       </SafeAreaView>
 
       <ScrollView contentContainerStyle={{ padding: 16, gap: 10 }}>
-        <Pressable style={[styles.big, { backgroundColor: C.peligro }]} onPress={() => toast('En una emergencia real, este botón marca al 911.')}>
+        <PressableScale style={[styles.big, { backgroundColor: C.peligro }]} onPress={() => toast('En una emergencia real, este botón marca al 911.')}>
           <Icon name="phone" size={24} color="#fff" />
           <Text style={[styles.bigText, { color: '#fff' }]}>Llamar al 911</Text>
-        </Pressable>
-        <Pressable
+        </PressableScale>
+        <PressableScale
           style={[styles.big, { backgroundColor: '#fff', borderWidth: 2, borderColor: C.line }]}
           onPress={() => {
             fam.setStatus('me', 'ok');
@@ -57,7 +58,7 @@ export default function DangerScreen() {
           }}>
           <Icon name="check" size={24} color={C.tranquilo} strokeWidth={3} />
           <Text style={styles.bigText}>Avisar: «Estoy bien»</Text>
-        </Pressable>
+        </PressableScale>
 
         <T kind="bold" style={{ marginTop: 6 }}>
           Haz esto ahora

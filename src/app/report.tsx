@@ -12,6 +12,7 @@ import { FloodArt, Icon, Person } from '@/ui/icons';
 import { Button, Header, T } from '@/ui/kit';
 import { C, F } from '@/ui/theme';
 import { useToast } from '@/ui/Toast';
+import { PressableScale } from '@/ui/PressableScale';
 
 const DEPTHS: { d: Depth; share: number }[] = [
   { d: 'Tobillo', share: 0.12 },
@@ -39,6 +40,11 @@ export default function ReportScreen() {
     if (!perm.granted) return toast('Sin permiso para usar la cámara. Puedes reportar sin foto.');
     const r = camera ? await ImagePicker.launchCameraAsync({ quality: 0.5 }) : await ImagePicker.launchImageLibraryAsync({ quality: 0.5, mediaTypes: ['images'] });
     if (!r.canceled) setPhoto(r.assets[0].uri);
+  };
+
+  const pick = (fn: () => void) => {
+    Haptics.selectionAsync().catch(() => {});
+    fn();
   };
 
   const send = () => {
@@ -78,10 +84,10 @@ export default function ReportScreen() {
         <T kind="bold">¿Qué ves?</T>
         <View style={styles.kinds}>
           {(Object.keys(REPORT_KINDS) as ReportKind[]).map((k) => (
-            <Pressable key={k} onPress={() => setKind(k)} style={[styles.kind, kind === k && styles.on]}>
+            <PressableScale key={k} onPress={() => pick(() => setKind(k))} style={[styles.kind, kind === k && styles.on]}>
               <Text style={{ fontSize: 22 }}>{REPORT_KINDS[k].icon}</Text>
               <Text style={styles.kindText}>{REPORT_KINDS[k].label}</Text>
-            </Pressable>
+            </PressableScale>
           ))}
         </View>
 
@@ -90,10 +96,10 @@ export default function ReportScreen() {
             <T kind="bold">¿Hasta dónde llega el agua?</T>
             <View style={{ flexDirection: 'row', gap: 8 }}>
               {DEPTHS.map((x) => (
-                <Pressable key={x.d} onPress={() => setDepth(x.d)} style={[styles.depth, depth === x.d && styles.on]}>
+                <PressableScale key={x.d} onPress={() => pick(() => setDepth(x.d))} style={[styles.depth, depth === x.d && styles.on]}>
                   <Person share={x.share} size={64} />
                   <Text style={styles.kindText}>{x.d}</Text>
-                </Pressable>
+                </PressableScale>
               ))}
             </View>
           </>
