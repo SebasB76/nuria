@@ -1,4 +1,5 @@
-# Aguaje
+# Nuria
+
 
 A phone app that helps people in Guayaquil get through the El Niño rainy season. Tamy, a raindrop
 assistant ("tamya" is rain in Kichwa), tells you if your street may flood today, when to go out,
