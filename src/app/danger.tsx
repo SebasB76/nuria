@@ -7,7 +7,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { levelByKey, sectorById } from '@/data/places';
 import { useApp } from '@/state/AppState';
 import { useFamily } from '@/state/FamilyState';
-import { Drop, Icon, TamyAvatar } from '@/ui/icons';
+import { Drop, Icon, NuriaAvatar } from '@/ui/icons';
 import { Card, T } from '@/ui/kit';
 import { C, F } from '@/ui/theme';
 import { useToast } from '@/ui/Toast';
@@ -76,10 +76,10 @@ export default function DangerScreen() {
             <T kind="soft">Escuela del barrio, en lo alto · a 600 m (ejemplo)</T>
           </View>
         </Card>
-        <Card style={{ flexDirection: 'row', gap: 10, alignItems: 'center' }} onPress={() => router.navigate('/tamy')}>
-          <TamyAvatar size={34} />
+        <Card style={{ flexDirection: 'row', gap: 10, alignItems: 'center' }} onPress={() => router.navigate('/nuria')}>
+          <NuriaAvatar size={34} />
           <View style={{ flex: 1 }}>
-            <T kind="bold">Pregúntale a Tamy</T>
+            <T kind="bold">Pregúntale a Nuria</T>
             <T kind="soft">Qué hacer, por dónde salir, cómo está tu familia</T>
           </View>
           <Icon name="chevron" size={20} color={C.ink2} />

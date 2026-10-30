@@ -26,10 +26,10 @@ export function Drop({ level, size = 24, dark, fill }: { level: Level; size?: nu
   );
 }
 
-export function TamyAvatar({ size = 40 }: { size?: number }) {
+export function NuriaAvatar({ size = 40 }: { size?: number }) {
   const id = useSvgId();
   return (
-    <Svg width={size} height={size} viewBox="0 0 64 64" accessibilityLabel="Tamy">
+    <Svg width={size} height={size} viewBox="0 0 64 64" accessibilityLabel="Nuria">
       <Defs>
         <LinearGradient id={id} x1="0" y1="0" x2="1" y2="1">
           <Stop offset="0" stopColor={C.cel} />
@@ -137,7 +137,7 @@ export function Bucket({ share, size = 84 }: { share: number; size?: number }) {
   );
 }
 
-// Cerro Santa Ana, the Guayas river and Tamy waving, for the welcome screen
+// Cerro Santa Ana, the Guayas river and Nuria waving, for the welcome screen
 export function WelcomeArt({ width = 300 }: { width?: number }) {
   return (
     <Svg width={width} height={(width * 250) / 264} viewBox="0 0 264 250">

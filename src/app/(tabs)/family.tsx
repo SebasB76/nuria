@@ -127,7 +127,7 @@ export default function FamilyScreen() {
           style={{ flex: 1 }}
           onPress={() => {
             fam.askFamily();
-            toast('Tamy le preguntó a tu familia si está bien.');
+            toast('Nuria le preguntó a tu familia si está bien.');
           }}
         />
         <Button

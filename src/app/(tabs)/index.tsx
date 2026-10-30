@@ -7,9 +7,9 @@ import { bestWorstText, headline, reasons, todoFor } from '@/data/risk';
 import { SEASON } from '@/data/season';
 import { clock } from '@/data/time';
 import { useApp } from '@/state/AppState';
-import { Bucket, Drop, Icon, Logo, TamyAvatar } from '@/ui/icons';
+import { Bucket, Drop, Icon, Logo, NuriaAvatar } from '@/ui/icons';
 import { placeLabel, ScenarioBanner } from '@/ui/common';
-import { Bullets, Button, Card, Chip, Header, Screen, T, TamyTip } from '@/ui/kit';
+import { Bullets, Button, Card, Chip, Header, Screen, T, NuriaTip } from '@/ui/kit';
 import { RainStrip } from '@/ui/RainStrip';
 import { SectorSheet } from '@/ui/Sheets';
 import { TideChart } from '@/ui/TideChart';
@@ -61,16 +61,16 @@ export default function TodayScreen() {
         <RainStrip h={h} tide={tide} />
       </Card>
 
-      <TamyTip avatar={<TamyAvatar size={34} />}>
+      <NuriaTip avatar={<NuriaAvatar size={34} />}>
         <Text style={styles.tipText}>
-          <Text style={styles.tipStrong}>Tamy: </Text>
+          <Text style={styles.tipStrong}>Nuria: </Text>
           {bw.best ? `si tienes que salir, hazlo de ${bw.best}. ` : 'hoy no veo un buen momento para salir. '}
           {bw.worst ? `Evita salir de ${bw.worst}: ${bw.worstWord}.` : 'No se espera lluvia fuerte en las próximas horas.'}
         </Text>
-        <Pressable onPress={() => router.navigate('/tamy')} style={styles.tipBtn}>
-          <Text style={styles.tipBtnText}>Pregúntale a Tamy ›</Text>
+        <Pressable onPress={() => router.navigate('/nuria')} style={styles.tipBtn}>
+          <Text style={styles.tipBtnText}>Pregúntale a Nuria ›</Text>
         </Pressable>
-      </TamyTip>
+      </NuriaTip>
 
       <View style={{ flexDirection: 'row', gap: 10 }}>
         <QuickAction icon="route" title="Ruta segura" sub="El camino con menos agua" onPress={() => router.navigate('/route')} />
@@ -139,7 +139,7 @@ export default function TodayScreen() {
           : app.live.rain
             ? `Pronóstico en vivo · actualizado a las ${app.updatedAt ? clock(app.updatedAt) : ''}`
             : 'Sin conexión al pronóstico: datos de ejemplo.'}
-        {'\n'}Aguaje no es una fuente oficial. Sigue al INAMHI y a la SNGR. En una emergencia, llama al 911.
+        {'\n'}Nuria no es una fuente oficial. Sigue al INAMHI y a la SNGR. En una emergencia, llama al 911.
       </T>
 
       <SectorSheet visible={picker} onClose={() => setPicker(false)} value={s.id} onPick={app.setFocusId} title="¿Qué barrio quieres ver?" />

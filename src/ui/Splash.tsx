@@ -1,15 +1,15 @@
 import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
 
-import { TamyAvatar } from './icons';
+import { NuriaAvatar } from './icons';
 import { C } from './theme';
 
 // fonts may not be loaded yet, so this screen uses system text
 export function Splash() {
   return (
     <View style={styles.wrap}>
-      <TamyAvatar size={88} />
-      <Text style={styles.title}>Aguaje</Text>
-      <Text style={styles.sub}>Tamy está mirando el cielo…</Text>
+      <NuriaAvatar size={88} />
+      <Text style={styles.title}>Nuria</Text>
+      <Text style={styles.sub}>Mirando el cielo de Guayaquil…</Text>
       <ActivityIndicator color="#fff" style={{ marginTop: 18 }} />
     </View>
   );

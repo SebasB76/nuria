@@ -143,7 +143,7 @@ function FamilyCard() {
             label="¿Están bien?"
             onPress={() => {
               fam.askFamily();
-              toast('Tamy le preguntó a tu familia si está bien.');
+              toast('Nuria le preguntó a tu familia si está bien.');
             }}
           />
         )}
@@ -172,7 +172,7 @@ function KitCard() {
   const toggle = (i: number) => {
     const next = done.includes(i) ? done.filter((x) => x !== i) : [...done, i];
     setDone(next);
-    if (next.length === KIT_ITEMS.length) toast('¡Mochila lista! Tamy te recuerda revisarla cada mes.');
+    if (next.length === KIT_ITEMS.length) toast('¡Mochila lista! Nuria te recuerda revisarla cada mes.');
   };
   return (
     <View style={styles.box}>

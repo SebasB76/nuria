@@ -4,7 +4,7 @@
 const SCRIPT = String.raw`
 var send = function(e){
   if (window.ReactNativeWebView) window.ReactNativeWebView.postMessage(JSON.stringify(e));
-  else window.parent.postMessage({aguaje: e}, '*');
+  else window.parent.postMessage({nuria: e}, '*');
 };
 var map = L.map('map', {zoomControl:false, attributionControl:true, minZoom:5, maxZoom:17, zoomSnap:.25}).setView([-2.17,-79.9], 12);
 map.attributionControl.setPrefix('');

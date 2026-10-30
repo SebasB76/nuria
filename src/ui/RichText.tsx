@@ -2,7 +2,7 @@ import { StyleProp, Text, TextStyle, View } from 'react-native';
 
 import { C, F } from './theme';
 
-// Tamy answers in a small markdown subset: **bold**, "- " bullets and "1. " steps
+// Nuria answers in a small markdown subset: **bold**, "- " bullets and "1. " steps
 export function RichText({ text, style }: { text: string; style?: StyleProp<TextStyle> }) {
   const blocks = text.trim().split(/\n{2,}/);
   return (

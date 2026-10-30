@@ -22,7 +22,7 @@ export function LeafletMap({ scene, onEvent, style }: { scene: MapScene; onEvent
     <View style={[{ overflow: 'hidden', backgroundColor: '#1b2229' }, style]}>
       <RefWebView
         ref={ref}
-        source={{ html: MAP_HTML, baseUrl: 'https://aguaje.local/' }}
+        source={{ html: MAP_HTML, baseUrl: 'https://nuria.local/' }}
         originWhitelist={['*']}
         javaScriptEnabled
         nestedScrollEnabled

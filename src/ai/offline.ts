@@ -3,13 +3,13 @@ import { fold, sectorById } from '@/data/places';
 import { bestWorstText, headline, nextHigh } from '@/data/risk';
 import { routeReasons } from '@/data/route';
 import { atHour, hoursFromNowKey } from '@/data/time';
-import { TamyReply } from './tamy';
-import { findSector, runTool, TamyEnv } from './tools';
+import { NuriaReply } from './nuria';
+import { findSector, runTool, NuriaEnv } from './tools';
 
 const lower = (t: string) => t.charAt(0).toLowerCase() + t.slice(1);
 
 // scripted answers for when there is no DeepSeek key or no connection, so the demo never goes silent
-export async function offlineTamy(text: string, env: TamyEnv): Promise<TamyReply> {
+export async function offlineNuria(text: string, env: NuriaEnv): Promise<NuriaReply> {
   const t = fold(text), { app, family } = env;
   const s = findSector(SECTOR_HINT(t) ? text : undefined, env), h = app.hourly[s.id], l = app.risk[s.id].level;
 

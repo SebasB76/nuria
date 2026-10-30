@@ -21,7 +21,7 @@ export type Card =
   | { type: 'whatsapp'; text: string }
   | { type: 'report'; text: string; sectorName: string };
 
-export type TamyEnv = { app: ReturnType<typeof useApp>; family: ReturnType<typeof useFamily> };
+export type NuriaEnv = { app: ReturnType<typeof useApp>; family: ReturnType<typeof useFamily> };
 type ToolResult = { data: unknown; card?: Card };
 
 const fn = (name: string, description: string, properties: Record<string, unknown> = {}, required: string[] = []) => ({
@@ -52,7 +52,7 @@ export const TOOL_SPECS = [
   fn('show_home_flood_steps', 'Show the ordered steps for when water gets into the house.'),
 ];
 
-export function findSector(name: string | undefined, env: TamyEnv) {
+export function findSector(name: string | undefined, env: NuriaEnv) {
   if (!name) return sectorById(env.app.prefs.homeId);
   const t = fold(name);
   if (/casa|hogar/.test(t)) return sectorById(env.app.prefs.homeId);
@@ -61,7 +61,7 @@ export function findSector(name: string | undefined, env: TamyEnv) {
   return SECTORS.find((s) => t.includes(fold(s.short).split(' ')[0]) || fold(s.name).includes(t)) ?? sectorById(env.app.prefs.homeId);
 }
 
-function findPoint(name: string | undefined, env: TamyEnv): NamedPoint {
+function findPoint(name: string | undefined, env: NuriaEnv): NamedPoint {
   const { app, family } = env, home = PLACES.find((p) => p.id === 's:' + app.prefs.homeId)!;
   if (!name) return home;
   const t = fold(name);
@@ -79,7 +79,7 @@ const findSectorPlace = (t: string) => {
   return s ? PLACES.find((p) => p.id === 's:' + s.id) : undefined;
 };
 
-export async function runTool(name: string, args: any, env: TamyEnv): Promise<ToolResult> {
+export async function runTool(name: string, args: any, env: NuriaEnv): Promise<ToolResult> {
   const { app, family } = env;
   switch (name) {
     case 'get_neighborhood_risk': {

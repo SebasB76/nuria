@@ -100,7 +100,7 @@ export default function ReportScreen() {
         )}
 
         <Button label="Enviar reporte" onPress={send} style={{ marginTop: 6 }} />
-        <T kind="fine">Tamy revisa la foto y avisa a tus vecinos. Tu nombre no se muestra.</T>
+        <T kind="fine">Nuria revisa la foto y avisa a tus vecinos. Tu nombre no se muestra.</T>
       </ScrollView>
     </SafeAreaView>
   );

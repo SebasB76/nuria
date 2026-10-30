@@ -3,7 +3,7 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { AFTER_STEPS, SEASON, WEEKLY_TASKS } from '@/data/season';
 import { useApp } from '@/state/AppState';
-import { Bucket, Icon, TamyAvatar } from '@/ui/icons';
+import { Bucket, Icon, NuriaAvatar } from '@/ui/icons';
 import { Bullets, Card, Chip, Header, Screen, T } from '@/ui/kit';
 import { C, F } from '@/ui/theme';
 
@@ -33,7 +33,7 @@ export default function SeasonScreen() {
         </View>
       </Card>
       <View style={styles.tip}>
-        <TamyAvatar size={32} />
+        <NuriaAvatar size={32} />
         <Text style={styles.tipText}>
           Se esperan lluvias fuertes <Text style={{ fontFamily: F.black }}>hasta abril</Text>. Prepara tu casa con calma, una tarea por semana.
         </Text>
