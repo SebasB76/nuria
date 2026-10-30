@@ -8,7 +8,6 @@ import { abMarks, reportMarks, routeLines } from '@/map/scenes';
 import { MapEvent, MapScene } from '@/map/types';
 import { useApp } from '@/state/AppState';
 import { locateMe } from '@/state/location';
-import { ScenarioBanner } from '@/ui/common';
 import { Icon, NuriaAvatar } from '@/ui/icons';
 import { Card, Header, Screen, Segmented, T, NuriaTip } from '@/ui/kit';
 import { PlaceSheet } from '@/ui/Sheets';
@@ -75,7 +74,6 @@ export default function RouteScreen() {
   return (
     <Screen>
       <Header title="Ruta segura" />
-      {app.prefs.scenario === 'storm' && <ScenarioBanner />}
       <Card style={{ gap: 2, paddingVertical: 6 }}>
         <EndRow badge="A" label="Sales de" name={req.from.name} onPress={() => setSheet('from')} />
         <View style={styles.sep}>

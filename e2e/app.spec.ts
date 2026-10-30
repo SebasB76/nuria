@@ -66,7 +66,6 @@ test('family check-in: Mamá and Hija confirm, Papá does not answer', async ({ 
 
 test('storm scenario puts the low barrios in danger and opens the danger screen', async ({ page }) => {
   await open(page, '/', { scenario: 'storm' });
-  await expect(page.getByText(/^🎬 Escenario de demostración/)).toBeVisible();
   await expect(page.getByText('Peligro', { exact: true })).toBeVisible();
   await page.getByText('Qué hago ahora').click();
   await expect(page.getByText('Haz esto ahora')).toBeVisible();
