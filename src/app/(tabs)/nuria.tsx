@@ -105,7 +105,7 @@ export default function NuriaScreen() {
 
       {/* the keyboard-controller version follows the real keyboard on Android edge-to-edge too, where the core one does nothing */}
       <KeyboardAvoidingView style={{ flex: 1 }} behavior="padding">
-        <ScrollView ref={scroll} contentContainerStyle={styles.list} onContentSizeChange={() => scroll.current?.scrollToEnd({ animated: true })}>
+        <ScrollView ref={scroll} style={{ flex: 1 }} contentContainerStyle={styles.list} onContentSizeChange={() => scroll.current?.scrollToEnd({ animated: true })}>
           {msgs.map((m) =>
             m.from === 'me' ? (
               <View key={m.id} style={[styles.bub, styles.me]}>
@@ -137,7 +137,8 @@ export default function NuriaScreen() {
           )}
         </ScrollView>
 
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ flexGrow: 0 }} contentContainerStyle={styles.chips} keyboardShouldPersistTaps="handled">
+        {/* never shrinks: a long chat would squeeze this row and clip the chips */}
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ flexGrow: 0, flexShrink: 0 }} contentContainerStyle={styles.chips} keyboardShouldPersistTaps="handled">
           {CHIPS.map((c) => (
             <PressableScale key={c} onPress={() => ask(c)} style={styles.chip} disabled={busy}>
               <Text style={styles.chipText}>{c}</Text>
