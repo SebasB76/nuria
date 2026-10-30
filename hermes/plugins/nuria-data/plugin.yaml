@@ -1,0 +1,12 @@
+name: nuria-data
+version: 0.1.0
+description: "Live rain and flood risk per Guayaquil neighborhood for Nuria on WhatsApp, with the same model as the app."
+author: nuria
+kind: standalone
+provides_tools:
+  - nuria_neighborhood_risk
+  - nuria_city_overview
+  - nuria_hourly_rain
+platforms:
+  - linux
+  - macos
