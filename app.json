@@ -51,6 +51,12 @@
           "photosPermission": "Nuria usa tus fotos para que reportes una calle con agua."
         }
       ]
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "aaec76e4-a5b9-4932-a589-453edc49d262"
+      }
+    },
+    "owner": "sebasb76"
   }
 }
