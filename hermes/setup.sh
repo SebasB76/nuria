@@ -7,14 +7,17 @@ profile=nuria
 home="$HOME/.hermes/profiles/$profile"
 
 [ -d "$home" ] || hermes profile create "$profile" --no-alias --no-skills --description "Nuria: lluvias de Guayaquil por WhatsApp"
-cp "$here/SOUL.md" "$home/SOUL.md"
+skill="$here/../skills/guayaquil-flood-safety"
+# the safety rules and season facts come from the skill's guide, so the skill and the bot never drift apart
+{ cat "$here/SOUL.md"; echo; cat "$skill/references/guide.md"; } > "$home/SOUL.md"
 rm -rf "$home/plugins/nuria-data"
 mkdir -p "$home/plugins"
-cp -r "$here/plugins/nuria-data" "$home/plugins/"
+cp -rL "$here/plugins/nuria-data" "$home/plugins/"  # -L copies the skill's risk model in place of the link
 
 hp() { hermes -p "$profile" "$@" >/dev/null; }
-hp config set model.provider anthropic
-hp config set model.default claude-sonnet-5-5
+# the same open-weight model as the app (DeepSeek V4 Flash, MIT license)
+hp config set model.provider deepseek
+hp config set model.default deepseek-flash
 hp config set platform_toolsets.whatsapp '[nuria]'
 hp config set platform_toolsets.cli '[nuria]'
 hp config set plugins.enabled '[nuria-data]'
@@ -33,5 +36,11 @@ set_env WHATSAPP_ALLOW_ALL_USERS true
 set_env WHATSAPP_DM_POLICY open
 set_env WHATSAPP_GROUP_POLICY disabled
 grep -q '^NURIA_SCENARIO=' "$env_file" || set_env NURIA_SCENARIO live
+deepseek_key=$({ grep -s '^EXPO_PUBLIC_DEEPSEEK_API_KEY=' "$here/../.env" || true; } | cut -d= -f2- | tr -d ' "')
+if [ -n "$deepseek_key" ]; then
+  set_env DEEPSEEK_API_KEY "$deepseek_key"
+elif ! grep -q '^DEEPSEEK_API_KEY=.' "$env_file"; then
+  echo "Falta la key de DeepSeek: ponla en .env (EXPO_PUBLIC_DEEPSEEK_API_KEY) y corre esto otra vez." >&2
+fi
 chmod 600 "$env_file"
 echo "Perfil $profile listo en $home"
