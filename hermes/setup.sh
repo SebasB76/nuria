@@ -18,6 +18,10 @@ hp config set model.default claude-sonnet-5-5
 hp config set platform_toolsets.whatsapp '[nuria]'
 hp config set platform_toolsets.cli '[nuria]'
 hp config set plugins.enabled '[nuria-data]'
+# a friendly chat shows only the final answer: no tool breadcrumbs, reasoning or "working" notices
+for key in tool_progress show_reasoning interim_assistant_messages long_running_notifications busy_ack_detail; do
+  hp config set "display.platforms.whatsapp.$key" false
+done
 
 # direct chats only, open to anyone; WHATSAPP_ENABLED is written once the number is linked
 env_file="$home/.env"
