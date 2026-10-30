@@ -8,7 +8,7 @@ import { SEASON } from '@/data/season';
 import { clock } from '@/data/time';
 import { useApp } from '@/state/AppState';
 import { Bucket, Drop, Icon, Logo, NuriaAvatar } from '@/ui/icons';
-import { placeLabel, ScenarioBanner } from '@/ui/common';
+import { placeLabel } from '@/ui/common';
 import { Bullets, Button, Card, Chip, Header, Screen, T, NuriaTip } from '@/ui/kit';
 import { RainStrip } from '@/ui/RainStrip';
 import { SectorSheet } from '@/ui/Sheets';
@@ -39,7 +39,6 @@ export default function TodayScreen() {
           </View>
         }
       />
-      {prefs.scenario === 'storm' && <ScenarioBanner />}
 
       <View style={[styles.level, { backgroundColor: tint.bg, borderColor: tint.border }]}>
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
@@ -136,11 +135,11 @@ export default function TodayScreen() {
 
       <T kind="fine">
         {app.prefs.scenario === 'storm'
-          ? 'Escenario de demostración: la lluvia es simulada.'
+          ? ''
           : app.live.rain
-            ? `Pronóstico en vivo · actualizado a las ${app.updatedAt ? clock(app.updatedAt) : ''}`
-            : 'Sin conexión al pronóstico: datos de ejemplo.'}
-        {'\n'}Nuria no es una fuente oficial. Sigue al INAMHI y a la SNGR. En una emergencia, llama al 911.
+            ? `Pronóstico en vivo · actualizado a las ${app.updatedAt ? clock(app.updatedAt) : ''}\n`
+            : 'Sin conexión al pronóstico: datos de ejemplo.\n'}
+        Nuria no es una fuente oficial. Sigue al INAMHI y a la SNGR. En una emergencia, llama al 911.
       </T>
 
       <SectorSheet visible={picker} onClose={() => setPicker(false)} value={s.id} onPick={app.setFocusId} title="¿Qué barrio quieres ver?" />
