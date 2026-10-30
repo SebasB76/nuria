@@ -39,3 +39,11 @@ Docs: https://docs.expo.dev/eas/index.md
 - If `ios/` and `android/` directories do not exist, they are generated (Continuous Native Generation). Never create or edit them by hand — configure native behavior in `app.json` and config plugins.
 - Expo Go only includes its bundled native modules. After adding a library with native code, the app needs a development build: `npx expo run:ios|android` locally, or `eas build --profile development`.
 - Prefer recommended Expo modules over third-party libraries, and check your available skills before adding dependencies. Docs: https://docs.expo.dev/versions/latest/index.md
+
+## This project
+
+- UI copy is Spanish from Ecuador (tú); code, comments and commits are English.
+- `src/data` holds the pure logic (risk, routes, time words); screens only render it.
+- The map is Leaflet inside a WebView (`src/map`); `LeafletMap.web.tsx` is the iframe twin for the web build and the E2E suite.
+- Tamy's tools live in `src/ai/tools.ts`; every tool returns data for the model and an optional card for the chat.
+- Run `npm run typecheck`, `npx eslint src e2e` and, once before a PR, `npm run e2e`.

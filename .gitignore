@@ -41,3 +41,11 @@ example
 # generated native folders
 /ios
 /android
+
+# secrets: the DeepSeek key lives here
+.env
+
+# e2e
+dist-e2e/
+test-results/
+playwright-report/
