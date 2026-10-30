@@ -1,3 +1,4 @@
+import { Image } from 'expo-image';
 import { router } from 'expo-router';
 import { useState } from 'react';
 import { ScrollView, StyleSheet, Switch, Text, useWindowDimensions, View } from 'react-native';
@@ -7,7 +8,7 @@ import { INITIAL_FAMILY } from '@/data/family';
 import { sectorById } from '@/data/places';
 import { requestAlertPermission } from '@/state/alerts';
 import { useApp } from '@/state/AppState';
-import { Icon, IconName, WelcomeArt } from '@/ui/icons';
+import { Icon, IconName } from '@/ui/icons';
 import { Button, T } from '@/ui/kit';
 import { Row, SectorSheet } from '@/ui/Sheets';
 import { C, F } from '@/ui/theme';
@@ -21,7 +22,7 @@ const PLACE_ROWS: { key: PlaceKey; title: string; icon: IconName }[] = [
 
 export default function WelcomeScreen() {
   const { prefs, updatePrefs, setFocusId } = useApp();
-  const { width } = useWindowDimensions();
+  const { width, height } = useWindowDimensions();
   const [step, setStep] = useState(0);
   const [editing, setEditing] = useState<PlaceKey | null>(null);
   const [phone, setPhone] = useState(prefs.notifyPhone);
@@ -36,8 +37,9 @@ export default function WelcomeScreen() {
 
   if (step === 0)
     return (
-      <View style={{ flex: 1, backgroundColor: '#E6F4FB' }}>
-        <WelcomeArt width={width} />
+      <View style={{ flex: 1, backgroundColor: '#F8F0DD' }}>
+        {/* capped so the text and button still fit on a small phone */}
+        <Image source={require('@/assets/images/nuria.jpg')} style={{ width, height: Math.min(width, height * 0.55) }} contentFit="cover" contentPosition="top" accessibilityLabel="Nuria, un ave bajo la lluvia" />
         <SafeAreaView edges={['bottom']} style={styles.intro}>
           <Text style={styles.big}>Hola, soy Nuria</Text>
           <T style={{ fontSize: 17, lineHeight: 24 }}>
