@@ -151,7 +151,7 @@ export default function SettingsScreen() {
             'Subida y bajada del río: modelo de marea de Open-Meteo.',
             'Nubes: satélite GOES-19 de la NOAA, vía NASA.',
             'Calles y rutas: OpenStreetMap.',
-            'Nuria: DeepSeek, con los datos de la app.',
+            'Nuria: DeepSeek V4 Flash, un modelo abierto (licencia MIT), con los datos de la app.',
             'Terreno de cada barrio, reportes de vecinos y familia: datos de ejemplo.',
           ]}
         />
