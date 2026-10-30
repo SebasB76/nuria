@@ -1,5 +1,6 @@
 import { createContext, ReactNode, useCallback, useContext, useRef, useState } from 'react';
-import { Animated, StyleSheet, Text } from 'react-native';
+import { StyleSheet, Text } from 'react-native';
+import Animated, { Easing, FadeInUp, FadeOutUp, ReduceMotion } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { C, F } from './theme';
@@ -7,28 +8,30 @@ import { C, F } from './theme';
 const ToastContext = createContext<(text: string) => void>(() => {});
 export const useToast = () => useContext(ToastContext);
 
+// enters and leaves through the top edge; the exit is ~20% faster because the reading is done
+const EASE_OUT = Easing.bezier(0.23, 1, 0.32, 1);
+const ENTER = FadeInUp.duration(260).easing(EASE_OUT).reduceMotion(ReduceMotion.System);
+const EXIT = FadeOutUp.duration(210).easing(EASE_OUT).reduceMotion(ReduceMotion.System);
+
 export function ToastProvider({ children }: { children: ReactNode }) {
-  const [text, setText] = useState('');
-  const [opacity] = useState(() => new Animated.Value(0));
+  const [toast, setToast] = useState<{ id: number; text: string } | null>(null);
   const timer = useRef<ReturnType<typeof setTimeout>>(undefined);
   const insets = useSafeAreaInsets();
 
-  const show = useCallback(
-    (t: string) => {
-      setText(t);
-      clearTimeout(timer.current);
-      Animated.timing(opacity, { toValue: 1, duration: 160, useNativeDriver: true }).start();
-      timer.current = setTimeout(() => Animated.timing(opacity, { toValue: 0, duration: 220, useNativeDriver: true }).start(), 3200);
-    },
-    [opacity],
-  );
+  const show = useCallback((text: string) => {
+    clearTimeout(timer.current);
+    setToast({ id: Date.now(), text });
+    timer.current = setTimeout(() => setToast(null), 3200);
+  }, []);
 
   return (
     <ToastContext.Provider value={show}>
       {children}
-      <Animated.View pointerEvents="none" style={[styles.toast, { opacity, top: insets.top + 10 }]}>
-        <Text style={styles.text}>{text}</Text>
-      </Animated.View>
+      {toast && (
+        <Animated.View key={toast.id} entering={ENTER} exiting={EXIT} pointerEvents="none" style={[styles.toast, { top: insets.top + 10 }]}>
+          <Text style={styles.text}>{toast.text}</Text>
+        </Animated.View>
+      )}
     </ToastContext.Provider>
   );
 }

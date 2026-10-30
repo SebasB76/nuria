@@ -144,11 +144,15 @@ function playSat(on){
 send({type:'ready'});
 `;
 
+// user-scalable=no is on purpose: Leaflet owns pinch-zoom on this canvas, and page zoom would fight it
 export const MAP_HTML = `<!doctype html><html><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <style>
 html,body,#map{margin:0;height:100%;background:#1b2229;font-family:-apple-system,system-ui,Roboto,sans-serif}
+html{-webkit-tap-highlight-color:transparent;-webkit-text-size-adjust:100%}
+html,body{overscroll-behavior:none}
+.leaflet-marker-icon,.bm,.rep,.abm,.fm{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
 .leaflet-container{background:#1b2229}
 .leaflet-control-attribution{font-size:9px;background:rgba(11,19,26,.6)!important;color:#9aa7b1}
 .leaflet-control-attribution a{color:#9aa7b1}
@@ -163,6 +167,7 @@ html,body,#map{margin:0;height:100%;background:#1b2229;font-family:-apple-system
 .fm{position:relative;width:34px;height:34px;border-radius:50%;display:grid;place-items:center;color:#fff;font-weight:800;font-size:13px;border:3px solid var(--c);box-shadow:0 2px 8px rgba(0,0,0,.6)}
 .fm i{position:absolute;right:-10px;bottom:-6px;font-style:normal;font-size:14px}
 .fm.sos{animation:pulse 1s infinite}
+@media (prefers-reduced-motion:reduce){.fm.sos{animation:none;box-shadow:0 0 0 5px rgba(208,59,59,.55)}}
 @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(208,59,59,.8)}100%{box-shadow:0 0 0 16px rgba(208,59,59,0)}}
 .me{width:16px;height:16px;border-radius:50%;background:#3BA7DE;border:3px solid #fff;box-shadow:0 0 0 6px rgba(59,167,222,.3)}
 .mut{color:#6b7882}

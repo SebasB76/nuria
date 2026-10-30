@@ -1,6 +1,7 @@
 import * as Speech from 'expo-speech';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { ActivityIndicator, KeyboardAvoidingView, Platform, Pressable, ScrollView, ScrollViewInstance, StyleSheet, Text, TextInput, View } from 'react-native';
+import { ActivityIndicator, Pressable, ScrollView, ScrollViewInstance, StyleSheet, Text, TextInput, View } from 'react-native';
+import { KeyboardAvoidingView } from 'react-native-keyboard-controller';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router, useFocusEffect } from 'expo-router';
 
@@ -16,6 +17,7 @@ import { ChatCard } from '@/ui/ChatCards';
 import { Icon, NuriaAvatar } from '@/ui/icons';
 import { RichText } from '@/ui/RichText';
 import { C, F } from '@/ui/theme';
+import { PressableScale } from '@/ui/PressableScale';
 
 type Msg = { id: string; from: 'nuria' | 'me'; text: string; cards?: Card[]; note?: string };
 
@@ -101,7 +103,8 @@ export default function NuriaScreen() {
         </Pressable>
       </View>
 
-      <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+      {/* the keyboard-controller version follows the real keyboard on Android edge-to-edge too, where the core one does nothing */}
+      <KeyboardAvoidingView style={{ flex: 1 }} behavior="padding">
         <ScrollView ref={scroll} contentContainerStyle={styles.list} onContentSizeChange={() => scroll.current?.scrollToEnd({ animated: true })}>
           {msgs.map((m) =>
             m.from === 'me' ? (
@@ -136,9 +139,9 @@ export default function NuriaScreen() {
 
         <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ flexGrow: 0 }} contentContainerStyle={styles.chips} keyboardShouldPersistTaps="handled">
           {CHIPS.map((c) => (
-            <Pressable key={c} onPress={() => ask(c)} style={({ pressed }) => [styles.chip, pressed && { opacity: 0.75 }]} disabled={busy}>
+            <PressableScale key={c} onPress={() => ask(c)} style={styles.chip} disabled={busy}>
               <Text style={styles.chipText}>{c}</Text>
-            </Pressable>
+            </PressableScale>
           ))}
         </ScrollView>
         <View style={styles.composer}>
@@ -153,9 +156,9 @@ export default function NuriaScreen() {
             multiline
             submitBehavior="submit"
           />
-          <Pressable onPress={() => ask(text)} style={[styles.send, (!text.trim() || busy) && { opacity: 0.4 }]} disabled={!text.trim() || busy} accessibilityLabel="Enviar">
+          <PressableScale onPress={() => ask(text)} style={styles.send} disabled={!text.trim() || busy} accessibilityLabel="Enviar">
             <Icon name="send" size={20} color="#fff" />
-          </Pressable>
+          </PressableScale>
         </View>
       </KeyboardAvoidingView>
     </SafeAreaView>

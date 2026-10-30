@@ -14,6 +14,7 @@ import { Drop, Icon } from '@/ui/icons';
 import { Button, Card, Chip, Header, Screen, Segmented, T } from '@/ui/kit';
 import { C, F } from '@/ui/theme';
 import { useToast } from '@/ui/Toast';
+import { PressableScale } from '@/ui/PressableScale';
 
 const PRIVACY: { label: string; value: Privacy }[] = [
   { label: 'Siempre', value: 'always' },
@@ -106,14 +107,14 @@ export default function FamilyScreen() {
             </View>
             <View style={{ gap: 6 }}>
               {!m.me && (
-                <Pressable style={styles.act} onPress={() => call(m)} accessibilityLabel={`Llamar a ${m.rel}`}>
+                <PressableScale style={styles.act} hitSlop={6} onPress={() => call(m)} accessibilityLabel={`Llamar a ${m.rel}`}>
                   <Icon name="phone" size={16} color={C.navy} />
-                </Pressable>
+                </PressableScale>
               )}
               {!hidden && (
-                <Pressable style={styles.act} onPress={() => see(m.id)} accessibilityLabel={`Ver a ${m.rel} en el mapa`}>
+                <PressableScale style={styles.act} hitSlop={6} onPress={() => see(m.id)} accessibilityLabel={`Ver a ${m.rel} en el mapa`}>
                   <Icon name="pin" size={16} color={C.navy} />
-                </Pressable>
+                </PressableScale>
               )}
             </View>
           </Card>

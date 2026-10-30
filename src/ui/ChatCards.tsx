@@ -16,6 +16,7 @@ import { RainStrip } from './RainStrip';
 import { TideChart } from './TideChart';
 import { C, F, LEVEL_TINT } from './theme';
 import { useToast } from './Toast';
+import { PressableScale } from './PressableScale';
 
 export function ChatCard({ card }: { card: CardData }) {
   switch (card.type) {
@@ -57,9 +58,9 @@ export function ChatCard({ card }: { card: CardData }) {
 
 function Action({ label, onPress, light }: { label: string; onPress: () => void; light?: boolean }) {
   return (
-    <Pressable onPress={onPress} style={({ pressed }) => [styles.action, light && styles.actionLight, pressed && { opacity: 0.8 }]}>
+    <PressableScale onPress={onPress} style={[styles.action, light && styles.actionLight]}>
       <Text style={[styles.actionText, light && { color: C.navy }]}>{label}</Text>
-    </Pressable>
+    </PressableScale>
   );
 }
 
@@ -202,9 +203,9 @@ function WhatsAppCard({ text }: { text: string }) {
       <View style={styles.wa}>
         <Text style={styles.waText}>{text}</Text>
       </View>
-      <Pressable onPress={send} style={({ pressed }) => [styles.action, { backgroundColor: C.wa }, pressed && { opacity: 0.8 }]}>
+      <PressableScale onPress={send} style={[styles.action, { backgroundColor: C.wa }]}>
         <Text style={styles.actionText}>Enviar por WhatsApp</Text>
-      </Pressable>
+      </PressableScale>
     </View>
   );
 }
