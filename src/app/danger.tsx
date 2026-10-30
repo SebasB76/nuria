@@ -12,12 +12,14 @@ import { Card, T } from '@/ui/kit';
 import { C, F } from '@/ui/theme';
 import { useToast } from '@/ui/Toast';
 import { PressableScale } from '@/ui/PressableScale';
+import { useLightStatusBar } from '@/ui/statusBar';
 
 const STEPS = ['Corta la luz, si llegas sin pisar agua.', 'Sube papeles y medicinas a lo alto.', 'No cruces calles con agua que corre.'];
 
 // in danger, less is more: one color, big buttons, three steps
 export default function DangerScreen() {
   const { prefs } = useApp();
+  useLightStatusBar();
   const fam = useFamily();
   const toast = useToast();
   const home = sectorById(prefs.homeId);

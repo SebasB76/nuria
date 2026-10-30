@@ -26,6 +26,12 @@ export function LeafletMap({ scene, onEvent, style }: { scene: MapScene; onEvent
         originWhitelist={['*']}
         javaScriptEnabled
         nestedScrollEnabled
+        // iOS pads the page for the notch and lets it bounce; Leaflet pans the map itself
+        contentInsetAdjustmentBehavior="never"
+        automaticallyAdjustContentInsets={false}
+        scrollEnabled={false}
+        bounces={false}
+        overScrollMode="never"
         style={{ flex: 1, backgroundColor: '#1b2229' }}
         onMessage={(e: WebViewMessageEvent) => {
           const ev = JSON.parse(e.nativeEvent.data) as MapEvent;

@@ -7,6 +7,7 @@
     "icon": "./assets/images/icon.png",
     "scheme": "nuria",
     "userInterfaceStyle": "light",
+    "backgroundColor": "#F3EEE4",
     "ios": {
       "bundleIdentifier": "com.nuria.app",
       "supportsTablet": false,
