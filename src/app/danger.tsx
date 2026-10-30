@@ -2,7 +2,7 @@ import * as Haptics from 'expo-haptics';
 import { router } from 'expo-router';
 import { useEffect } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { levelByKey, sectorById } from '@/data/places';
 import { useApp } from '@/state/AppState';
@@ -23,6 +23,9 @@ export default function DangerScreen() {
   const fam = useFamily();
   const toast = useToast();
   const home = sectorById(prefs.homeId);
+  const insets = useSafeAreaInsets();
+  // opened from a notification there is no screen behind, so closing goes home
+  const close = () => (router.canGoBack() ? router.back() : router.replace('/'));
 
   useEffect(() => {
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error).catch(() => {});
@@ -30,7 +33,8 @@ export default function DangerScreen() {
 
   return (
     <View style={{ flex: 1, backgroundColor: C.paper }}>
-      <SafeAreaView edges={['top']} style={styles.top}>
+      {/* SafeAreaView reports no top inset inside a full-screen modal on iOS, so the padding is explicit */}
+      <View style={[styles.top, { paddingTop: insets.top + 10 }]}>
         <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start' }}>
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
             <Drop level={levelByKey('peligro')} size={58} dark fill="#fff" />
@@ -39,12 +43,13 @@ export default function DangerScreen() {
               <Text style={styles.word}>Peligro</Text>
             </View>
           </View>
-          <Pressable onPress={() => router.back()} hitSlop={12} accessibilityLabel="Cerrar">
-            <Icon name="close" size={26} color="#fff" />
+          <Pressable onPress={close} hitSlop={10} style={styles.closeBtn} accessibilityRole="button" accessibilityLabel="Cerrar">
+            <Icon name="close" size={18} color="#fff" strokeWidth={2.6} />
+            <Text style={styles.closeText}>Cerrar</Text>
           </Pressable>
         </View>
         <Text style={styles.msg}>El agua puede entrar a las casas de tu cuadra en la próxima hora.</Text>
-      </SafeAreaView>
+      </View>
 
       <ScrollView contentContainerStyle={{ padding: 16, gap: 10 }}>
         <PressableScale style={[styles.big, { backgroundColor: C.peligro }]} onPress={() => toast('En una emergencia real, este botón marca al 911.')}>
@@ -94,7 +99,9 @@ export default function DangerScreen() {
 }
 
 const styles = StyleSheet.create({
-  top: { backgroundColor: C.peligro, paddingHorizontal: 18, paddingBottom: 20, paddingTop: 10 },
+  top: { backgroundColor: C.peligro, paddingHorizontal: 18, paddingBottom: 20 },
+  closeBtn: { flexDirection: 'row', alignItems: 'center', gap: 5, backgroundColor: 'rgba(255,255,255,0.2)', borderRadius: 999, paddingVertical: 8, paddingHorizontal: 12 },
+  closeText: { fontFamily: F.bold, fontSize: 14, color: '#fff' },
   where: { fontFamily: F.black, fontSize: 12, letterSpacing: 1, color: '#FFE3E3' },
   word: { fontFamily: F.display, fontSize: 44, lineHeight: 46, color: '#fff', letterSpacing: -1 },
   msg: { fontFamily: F.bold, fontSize: 18, lineHeight: 24, color: '#fff', marginTop: 12 },
