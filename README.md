@@ -59,6 +59,17 @@ routing server and a commercial weather plan.
 Expo Go has no remote push notifications and no background location. Alerts here are local
 notifications, and the family is simulated. A development build (`eas build`) removes both limits.
 
+## Nuria on WhatsApp
+
+`hermes/` turns Nuria into a WhatsApp bot on [Hermes Agent](https://github.com/NousResearch/hermes-agent), with Claude Sonnet and the same rain and flood-risk model as the app.
+
+1. Run `hermes/setup.sh`. It creates or updates the Hermes profile `nuria`: personality (`SOUL.md`), data tools (`plugins/nuria-data`) and settings.
+2. Link the number: `node hermes/link-whatsapp.mjs 593…` prints an 8-character code. On the phone, open WhatsApp → Linked devices → Link with phone number, and type it.
+3. Set `WHATSAPP_ENABLED=true` in `~/.hermes/profiles/nuria/.env` and run `hermes gateway restart`.
+4. For a pitch with the app's "Aguacero simulado", set `NURIA_SCENARIO=storm` in the same `.env` and restart the gateway.
+
+Anyone can write to the number, so the WhatsApp agent only gets the `nuria` toolset: no terminal, files or browser.
+
 ## Tests
 
 `npm run e2e` exports the web build and runs the Playwright suite against it with the installed
