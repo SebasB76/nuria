@@ -1,0 +1,1437 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Aguaje · Tu copiloto ante El Niño en Guayaquil (prototipo)</title>
+<meta name="description" content="Prototipo de Aguaje: mira si va a llover fuerte en tu barrio, a qué hora y cuándo conviene salir. Con Tamy, un asistente de IA en la web y en WhatsApp.">
+<meta property="og:title" content="Aguaje · Tu copiloto ante El Niño en Guayaquil">
+<meta property="og:description" content="Nubes en vivo, riesgo por barrio en palabras simples y Tamy, un asistente de IA en la web y en WhatsApp.">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<style>
+:root{
+  color-scheme:dark;
+  --bg:#070d13; --surface:#101a23; --surface-2:#16222d; --surface-3:#1d2b38;
+  --line:rgba(255,255,255,.08); --line-2:rgba(255,255,255,.14);
+  --text:#eef3f6; --text-2:#a9b8c3; --muted:#7d8c97;
+  --brand:#2fd3c6; --brand-ink:#04211f;
+  --rain:#3987e5; --tide:#199e70;
+  --good:#0ca30c; --warning:#fab219; --serious:#ec835a; --critical:#d03b3b;
+  --wa-bg:#0b141a; --wa-in:#202c33; --wa-out:#005c4b;
+  --radius:16px;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--text);font:15px/1.55 system-ui,-apple-system,"Segoe UI",sans-serif;-webkit-font-smoothing:antialiased}
+a{color:var(--brand)}
+.wrap{max-width:1240px;margin:0 auto;padding:0 20px}
+.muted{color:var(--muted)} .t2{color:var(--text-2)}
+.tag{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;letter-spacing:.02em;padding:3px 9px;border-radius:999px;border:1px solid var(--line-2);color:var(--text-2)}
+.tag.demo{border-color:rgba(250,178,25,.45);color:#fcd27a}
+.tag.live{border-color:rgba(47,211,198,.45);color:var(--brand)}
+.tag.live::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--brand);animation:pulse 2s infinite}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(47,211,198,.55)}70%{box-shadow:0 0 0 8px rgba(47,211,198,0)}100%{box-shadow:0 0 0 0 rgba(47,211,198,0)}}
+
+.ribbon{background:linear-gradient(90deg,#3a0f12,#2a0d10);border-bottom:1px solid rgba(208,59,59,.35);font-size:13.5px}
+.ribbon .wrap{display:flex;gap:14px;align-items:center;padding-top:8px;padding-bottom:8px;flex-wrap:wrap}
+.ribbon b{color:#ffb4b4}
+.ribbon .sep{opacity:.35}
+header.top{position:sticky;top:0;z-index:1000;background:rgba(7,13,19,.82);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+header.top .wrap{display:flex;align-items:center;gap:18px;height:60px}
+.logo{display:flex;align-items:center;gap:10px;font-weight:800;font-size:19px;letter-spacing:-.01em;color:var(--text);text-decoration:none}
+nav.links{margin-left:auto;display:flex;gap:4px}
+nav.links a{color:var(--text-2);text-decoration:none;font-size:14px;padding:7px 11px;border-radius:9px}
+nav.links a:hover{background:var(--surface-2);color:var(--text)}
+nav.links a.hl{color:var(--brand)}
+@media (max-width:900px){nav.links{display:none}}
+
+.hero{padding:56px 0 34px;position:relative;overflow:hidden}
+.hero::before{content:"";position:absolute;inset:-40% -10% auto auto;width:780px;height:780px;background:radial-gradient(closest-side,rgba(47,211,198,.16),transparent 70%);pointer-events:none}
+.hero h1{font-size:clamp(34px,5vw,58px);line-height:1.03;letter-spacing:-.03em;margin:14px 0 16px;max-width:880px}
+.hero h1 em{font-style:normal;background:linear-gradient(90deg,#2fd3c6,#3987e5);-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero p.lead{font-size:18px;color:var(--text-2);max-width:760px;margin:0 0 26px}
+.cta{display:flex;gap:10px;flex-wrap:wrap}
+.btn{display:inline-flex;align-items:center;gap:8px;border-radius:12px;padding:11px 16px;font-weight:650;font-size:14.5px;text-decoration:none;border:1px solid var(--line-2);color:var(--text);background:var(--surface-2);cursor:pointer}
+.btn.primary{background:var(--brand);color:var(--brand-ink);border-color:transparent}
+.btn:hover{filter:brightness(1.08)}
+.stats{display:grid;grid-template-columns:1.5fr 1fr 1fr 1fr;gap:12px;margin-top:38px}
+@media (max-width:980px){.stats{grid-template-columns:1fr 1fr}}
+@media (max-width:560px){.stats{grid-template-columns:1fr}}
+.stat{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:16px 18px}
+.stat .v{font-size:30px;font-weight:750;letter-spacing:-.02em}
+.stat .v small{font-size:15px;font-weight:600;color:var(--text-2)}
+.stat .l{color:var(--text-2);font-size:13.5px;margin-top:2px}
+.stat .src{font-size:12px;margin-top:8px}
+.stat .src a{color:var(--muted)}
+.meter{height:10px;border-radius:6px;background:var(--surface-3);margin:12px 0 6px;overflow:hidden;display:flex}
+.meter i{display:block;height:100%;background:var(--rain);border-radius:6px}
+.meter-l{display:flex;justify-content:space-between;font-size:12px;color:var(--muted)}
+
+section.block{padding:54px 0;border-top:1px solid var(--line)}
+.kicker{font-size:12.5px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--brand)}
+h2{font-size:clamp(26px,3.2vw,38px);letter-spacing:-.02em;line-height:1.1;margin:8px 0 10px}
+.sub{color:var(--text-2);max-width:800px;margin:0 0 26px;font-size:16px}
+
+/* live map */
+.app{display:grid;grid-template-columns:minmax(0,1fr) 400px;border:1px solid var(--line-2);border-radius:20px;overflow:hidden;background:var(--surface);box-shadow:0 30px 80px -30px rgba(0,0,0,.7)}
+@media (max-width:1020px){.app{grid-template-columns:1fr}}
+.map-wrap{position:relative;min-height:720px;background:#0a1118}
+#map{position:absolute;inset:0}
+.map-bar{position:absolute;z-index:500;top:12px;left:12px;right:12px;display:flex;gap:8px;flex-wrap:wrap;pointer-events:none}
+.map-bar>*{pointer-events:auto}
+.pill{display:inline-flex;align-items:center;gap:7px;background:rgba(16,26,35,.88);backdrop-filter:blur(8px);border:1px solid var(--line-2);color:var(--text-2);border-radius:999px;padding:7px 12px;font-size:13px;font-weight:600;cursor:pointer;user-select:none}
+.pill .sw{width:10px;height:10px;border-radius:3px;background:var(--muted)}
+.pill[aria-pressed="true"]{color:var(--text);border-color:rgba(47,211,198,.6);background:rgba(17,44,48,.92)}
+.pill[aria-pressed="true"] .sw{background:var(--brand)}
+.view-btns{margin-left:auto;display:flex;gap:6px}
+.time-bar{position:absolute;z-index:500;left:12px;right:12px;bottom:12px;display:flex;align-items:center;gap:12px;background:rgba(16,26,35,.9);backdrop-filter:blur(8px);border:1px solid var(--line-2);border-radius:14px;padding:9px 12px}
+.time-bar button{width:34px;height:34px;border-radius:10px;border:1px solid var(--line-2);background:var(--surface-3);color:var(--text);cursor:pointer;font-size:14px}
+.time-bar input[type=range]{flex:1;accent-color:var(--brand)}
+.time-bar .tl{font-size:13px;color:var(--text-2);min-width:190px;text-align:right}
+.legend{position:absolute;z-index:500;left:12px;bottom:72px;background:rgba(16,26,35,.92);border:1px solid var(--line-2);border-radius:14px;padding:10px 12px;font-size:12.5px;color:var(--text-2);width:250px}
+.legend b{color:var(--text)}
+.legend .r{display:grid;grid-template-columns:22px auto 1fr;gap:6px;align-items:center;margin-top:5px}
+.legend .r strong{color:var(--text);font-weight:700}
+.legend .c{margin-top:9px;padding-top:8px;border-top:1px solid var(--line);display:flex;gap:8px;align-items:center}
+.legend .c i{width:22px;height:14px;border-radius:7px;background:linear-gradient(180deg,#fff,#c7d3db);flex:0 0 22px}
+@media (max-width:620px){.legend{display:none}}
+.callout{position:absolute;z-index:600;top:62px;left:50%;transform:translateX(-50%);width:min(520px,calc(100% - 24px));background:#24130f;border:1px solid rgba(236,131,90,.55);border-radius:14px;padding:13px 40px 13px 15px;font-size:14px;box-shadow:0 18px 50px -20px rgba(0,0,0,.8);display:none}
+.callout b{color:#ffc3a8}
+.callout .x{position:absolute;top:8px;right:8px;background:none;border:0;color:var(--text-2);font-size:18px;cursor:pointer}
+
+.panel{border-left:1px solid var(--line);padding:18px;display:flex;flex-direction:column;gap:14px;max-height:720px;overflow:auto}
+@media (max-width:1020px){.panel{border-left:0;border-top:1px solid var(--line);max-height:none}}
+.plabel{display:block;font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:700;margin-bottom:8px}
+.sel{width:100%;background:var(--surface-2);color:var(--text);border:1px solid var(--line-2);border-radius:11px;padding:10px 12px;font-size:16px;font-weight:650}
+.card{background:var(--surface-2);border:1px solid var(--line);border-radius:14px;padding:14px}
+.card h4{margin:0 0 10px;font-size:15px}
+.status{border-radius:16px;padding:16px;border:1.5px solid}
+.status.tranquilo{background:rgba(12,163,12,.10);border-color:rgba(12,163,12,.5)}
+.status.ojo{background:rgba(250,178,25,.10);border-color:rgba(250,178,25,.55)}
+.status.cuidado{background:rgba(236,131,90,.12);border-color:rgba(236,131,90,.6)}
+.status.peligro{background:rgba(208,59,59,.15);border-color:rgba(208,59,59,.65)}
+.st-top{display:flex;align-items:center;gap:12px}
+.st-lab{font-size:12px;color:var(--text-2);font-weight:600}
+.st-word{font-size:34px;font-weight:800;letter-spacing:-.02em;line-height:1}
+.st-head{font-size:17px;font-weight:700;line-height:1.3;margin:12px 0 4px}
+.st-desc{margin:0;color:var(--text-2);font-size:14px}
+.why{margin-top:12px;padding-top:10px;border-top:1px solid var(--line-2)}
+.why-t{font-size:12px;font-weight:700;color:var(--text-2);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px}
+.why ul{list-style:none;margin:0;padding:0;display:grid;gap:7px}
+.why li{display:grid;grid-template-columns:22px 1fr;gap:6px;font-size:13.5px;color:var(--text)}
+.badge-demo{font-size:10.5px;font-weight:700;color:#fcd27a;border:1px solid rgba(250,178,25,.4);border-radius:6px;padding:0 5px;margin-left:4px;white-space:nowrap}
+.wl{display:grid;grid-template-columns:34px 1fr;gap:10px;align-items:center}
+.wl+.wl{margin-top:10px}
+.wl .wi{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;font-size:16px}
+.wl.good .wi{background:rgba(12,163,12,.18)} .wl.bad .wi{background:rgba(236,131,90,.18)}
+.wl .wt{font-size:12.5px;color:var(--text-2)}
+.wl b{font-size:17px}
+.wl .wd{font-size:12.5px;color:var(--text-2)}
+.chartbox{position:relative}
+.strip{display:grid;grid-template-columns:repeat(15,1fr);gap:3px;align-items:end;height:66px}
+.strip i{display:block;border-radius:4px 4px 1px 1px;background:var(--rain)}
+.strip i.z{background:var(--surface-3)}
+.brk{display:grid;grid-template-columns:repeat(15,1fr);gap:3px;margin-top:5px;font-size:11px;font-weight:700;min-height:19px;color:var(--text-2)}
+.brk span{border-top:3px solid;padding-top:2px;text-align:center;white-space:nowrap}
+.brk .g{border-color:var(--good)} .brk .o{border-color:var(--serious)}
+.hrs{display:grid;grid-template-columns:repeat(15,1fr);font-size:11px;color:var(--muted);margin-top:2px}
+.hrs span{grid-column:span 3}
+.key{font-size:12px;color:var(--muted);margin-top:8px}
+.tip{position:absolute;pointer-events:none;background:#0b131a;border:1px solid var(--line-2);border-radius:9px;padding:6px 9px;font-size:12.5px;white-space:nowrap;transform:translate(-50%,-110%);opacity:0;transition:opacity .08s;z-index:5}
+.tide-now{font-size:15px;margin:0 0 4px}
+.tide-txt{margin:0;font-size:13.5px;color:var(--text-2)}
+.tide-svg{display:block;width:100%;margin-top:10px;overflow:visible}
+.tide-svg text{font-size:11px;font-weight:700;fill:var(--text)}
+.todo{margin:0;padding:0;list-style:none;display:grid;gap:8px}
+.todo li{display:grid;grid-template-columns:22px 1fr;gap:8px;font-size:14px;color:var(--text-2)}
+.todo li span:first-child{width:22px;height:22px;border-radius:7px;background:var(--surface-3);display:grid;place-items:center;font-size:12px;color:var(--text);font-weight:700}
+details.srcs{font-size:12.5px;color:var(--muted)}
+details.srcs summary{cursor:pointer}
+details.srcs p{margin:6px 0 0}
+
+.leaflet-container{background:#0a1118;font:inherit}
+.leaflet-control-attribution{background:rgba(7,13,19,.75)!important;color:var(--muted)!important;font-size:10.5px!important}
+.leaflet-control-attribution a{color:var(--text-2)!important}
+.leaflet-bar a{background:var(--surface-2)!important;color:var(--text)!important;border-color:var(--line-2)!important}
+.leaflet-top.leaflet-left{top:54px}
+.bm{position:absolute;transform:translate(-11px,-50%);display:flex;align-items:center;gap:4px;white-space:nowrap;cursor:pointer}
+.bm svg{flex:0 0 auto;filter:drop-shadow(0 1px 2px rgba(0,0,0,.8))}
+.bm .bn{font-weight:750;font-size:12.5px;color:#fff;text-shadow:0 0 3px #000,0 1px 2px #000,0 0 8px rgba(0,0,0,.8)}
+.bm.on .bn{background:var(--brand);color:var(--brand-ink);text-shadow:none;border-radius:999px;padding:2px 9px}
+.rep{width:30px;height:30px;border-radius:50%;background:#0b131a;border:2px solid var(--serious);display:grid;place-items:center;font-size:15px;box-shadow:0 4px 14px rgba(0,0,0,.5)}
+.rep.mine{border-color:var(--brand);animation:pop .5s ease-out}
+@keyframes pop{0%{transform:scale(.3)}70%{transform:scale(1.15)}100%{transform:scale(1)}}
+.leaflet-popup-content-wrapper,.leaflet-popup-tip{background:#0e1820;color:var(--text);border:1px solid var(--line-2)}
+.leaflet-popup-content{margin:10px 12px;font-size:13px}
+
+/* safe route */
+#rmap{position:absolute;inset:0}
+.rfield{display:flex;align-items:center;gap:8px}
+.rfield .sel{flex:1;min-width:0}
+.ab{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;font-weight:800;font-size:13px;flex:0 0 28px}
+.ab.a{background:#fff;color:#0b131a} .ab.b{background:var(--brand);color:var(--brand-ink)}
+.geo{width:44px;height:44px;border-radius:11px;border:1px solid var(--line-2);background:var(--surface-2);color:var(--text);cursor:pointer;font-size:18px;flex:0 0 44px}
+.rpick{font-size:12.5px;color:var(--muted);margin-top:6px}
+.rpick button{background:none;border:0;color:var(--brand);cursor:pointer;padding:0;font:inherit;text-decoration:underline}
+.seg{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;background:var(--surface-2);border:1px solid var(--line-2);border-radius:12px;padding:4px}
+.seg button{background:none;border:0;color:var(--text-2);border-radius:9px;padding:8px 2px;font-weight:650;font-size:12.5px;cursor:pointer}
+.seg button.on{background:var(--surface-3);color:var(--text);box-shadow:inset 0 0 0 1px var(--line-2)}
+#rOut{display:flex;flex-direction:column;gap:10px}
+.rtip{display:flex;gap:10px;align-items:flex-start;background:rgba(47,211,198,.08);border:1px solid rgba(47,211,198,.35);border-radius:14px;padding:11px 12px;font-size:14px}
+.rcard{border:1.5px solid var(--line-2);border-radius:14px;padding:12px 13px;background:var(--surface-2);cursor:pointer;text-align:left;color:var(--text);font:inherit;width:100%}
+.rcard.best{border-color:rgba(47,211,198,.7);background:rgba(47,211,198,.06)}
+.rcard.on{box-shadow:0 0 0 2px var(--brand)}
+.rcard .rh{display:flex;align-items:center;gap:8px;font-weight:750;font-size:15px}
+.rcard .ln{width:24px;height:5px;border-radius:3px;flex:0 0 24px}
+.rcard .badge{margin-left:auto;font-size:11px;font-weight:800;padding:2px 8px;border-radius:999px;background:var(--surface-3);color:var(--text-2);white-space:nowrap}
+.rcard.best .badge{background:var(--brand);color:var(--brand-ink)}
+.rcard .via{font-size:13px;color:var(--text-2);margin:3px 0 7px}
+.rcard ul{list-style:none;margin:0;padding:0;display:grid;gap:4px;font-size:13.5px}
+.rcard li{display:grid;grid-template-columns:20px 1fr;gap:4px}
+.rhint{position:absolute;z-index:600;top:12px;left:50%;transform:translateX(-50%);background:var(--brand);color:var(--brand-ink);font-weight:700;border-radius:999px;padding:8px 14px;font-size:13.5px;display:none;box-shadow:0 8px 24px rgba(0,0,0,.5)}
+.abm{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font-weight:800;border:3px solid #0b131a;box-shadow:0 3px 10px rgba(0,0,0,.6)}
+.rep.hit{border-color:var(--critical);box-shadow:0 0 0 4px rgba(208,59,59,.35)}
+
+/* family */
+#fmap{position:absolute;inset:0}
+.fm{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;color:#fff;font-weight:800;font-size:13px;border:3px solid var(--c);box-shadow:0 0 0 3px #0b131a,0 6px 16px rgba(0,0,0,.6);position:relative}
+.fm i{position:absolute;right:-12px;bottom:-6px;font-style:normal;font-size:15px}
+.fm.sos{animation:sos 1.2s infinite}
+@keyframes sos{0%{box-shadow:0 0 0 3px #0b131a,0 0 0 4px rgba(208,59,59,.9)}70%{box-shadow:0 0 0 3px #0b131a,0 0 0 24px rgba(208,59,59,0)}100%{box-shadow:0 0 0 3px #0b131a,0 0 0 4px rgba(208,59,59,0)}}
+.fsum{border-radius:14px;padding:12px 14px;font-size:15px;border:1.5px solid}
+.fsum.good{background:rgba(12,163,12,.1);border-color:rgba(12,163,12,.5)}
+.fsum.warn{background:rgba(250,178,25,.1);border-color:rgba(250,178,25,.55)}
+.fsum.bad{background:rgba(208,59,59,.15);border-color:rgba(208,59,59,.7)}
+#fList{display:flex;flex-direction:column;gap:8px}
+.fr{display:grid;grid-template-columns:40px 1fr auto;gap:10px;align-items:start;background:var(--surface-2);border:1px solid var(--line);border-radius:14px;padding:10px}
+.fr.help{border-color:rgba(208,59,59,.7);background:rgba(208,59,59,.08)}
+.fav{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;font-weight:800;color:#fff;border:3px solid var(--c);font-size:13px}
+.fn{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.fst{font-size:12.5px;font-weight:700;display:inline-flex;align-items:center;gap:5px}
+.fst i{width:9px;height:9px;border-radius:50%;display:inline-block}
+.fl{font-size:13px;color:var(--text-2);margin-top:3px;display:flex;align-items:center;gap:4px;flex-wrap:wrap}
+.fw{font-size:12.5px;color:#ffc3a8;margin-top:3px}
+.fmeta{font-size:12px;color:var(--muted);margin-top:2px}
+.fa{display:flex;flex-direction:column;gap:5px}
+.fa button{background:var(--surface-3);border:1px solid var(--line-2);color:var(--text);border-radius:9px;padding:5px 10px;font-size:12px;font-weight:650;cursor:pointer}
+.fbtns{display:grid;gap:8px}
+.fbtns .btn{justify-content:center}
+.fbanner{position:absolute;z-index:600;top:12px;left:12px;right:12px;background:#2a0f12;border:1px solid rgba(208,59,59,.75);border-radius:14px;padding:12px 40px 12px 14px;display:none;box-shadow:0 18px 50px -20px rgba(0,0,0,.8)}
+.fbanner b{display:block;color:#ffb4b4;font-size:15px}
+.fbanner span{font-size:13px;color:var(--text-2)}
+.fbb{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.fbb button{background:var(--surface-3);border:1px solid var(--line-2);color:var(--text);border-radius:999px;padding:6px 11px;font-size:12.5px;font-weight:650;cursor:pointer}
+.fbanner .x{position:absolute;top:8px;right:8px;background:none;border:0;color:var(--text-2);font-size:18px;cursor:pointer}
+
+/* Tamy */
+.agent-grid{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,.9fr);gap:26px;align-items:start}
+@media (max-width:1020px){.agent-grid{grid-template-columns:1fr}}
+.persona{display:flex;gap:16px;align-items:center;margin-bottom:18px}
+.persona .traits{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+.chat{background:var(--surface);border:1px solid var(--line-2);border-radius:20px;overflow:hidden;display:flex;flex-direction:column;height:660px;box-shadow:0 30px 80px -30px rgba(0,0,0,.7)}
+.chat-h{display:flex;align-items:center;gap:12px;padding:13px 16px;border-bottom:1px solid var(--line);background:linear-gradient(180deg,#132330,#101a23)}
+.chat-h .nm{font-weight:750}
+.chat-h .st{font-size:12.5px;color:var(--brand)}
+.chat-h .ctx{margin-left:auto;font-size:12px;color:var(--text-2);text-align:right}
+.msgs{flex:1;overflow:auto;padding:18px 16px;display:flex;flex-direction:column;gap:12px;scroll-behavior:smooth}
+.m{max-width:86%;padding:10px 13px;border-radius:16px;font-size:14.5px;line-height:1.5;animation:rise .25s ease-out}
+@keyframes rise{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.m.g{background:var(--surface-2);border:1px solid var(--line);border-top-left-radius:6px;align-self:flex-start}
+.m.u{background:#14423f;border:1px solid rgba(47,211,198,.35);border-top-right-radius:6px;align-self:flex-end}
+.m.g .who{display:flex;align-items:center;gap:7px;font-size:12px;color:var(--muted);margin-bottom:4px;font-weight:650}
+.m p{margin:0 0 6px}.m p:last-child{margin:0}
+.m ol,.m ul{margin:4px 0 6px;padding-left:20px}
+.m li{margin:2px 0}
+.m .mini{margin:8px 0 4px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:8px 10px}
+.m .mini .cap{font-size:11.5px;color:var(--muted);margin-top:2px}
+.m .opts{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.m .opts button,.chips button{background:var(--surface-3);border:1px solid var(--line-2);color:var(--text);border-radius:999px;padding:6px 11px;font-size:13px;cursor:pointer;font-weight:600}
+.m .opts button:hover,.chips button:hover{border-color:var(--brand)}
+.m .opts button:disabled{opacity:.45;cursor:default}
+.lvl{display:inline-flex;align-items:center;gap:6px;padding:3px 10px 3px 6px;border-radius:999px;font-weight:700;font-size:13.5px;background:var(--surface-3);border:1px solid var(--line-2);color:var(--text);vertical-align:middle}
+.check{display:grid;gap:5px;margin:6px 0}
+.check label{display:flex;gap:8px;align-items:flex-start;font-size:14px;cursor:pointer}
+.check input{accent-color:var(--brand);margin-top:4px}
+.prog{height:6px;border-radius:3px;background:var(--surface-3);overflow:hidden;margin-top:6px}
+.prog i{display:block;height:100%;width:0;background:var(--brand);transition:width .2s}
+.typing{display:inline-flex;gap:4px;padding:4px 2px}
+.typing i{width:7px;height:7px;border-radius:50%;background:var(--muted);animation:blink 1.2s infinite}
+.typing i:nth-child(2){animation-delay:.15s}.typing i:nth-child(3){animation-delay:.3s}
+@keyframes blink{0%,80%,100%{opacity:.25}40%{opacity:1}}
+.chips{display:flex;gap:6px;overflow-x:auto;padding:10px 14px 4px;border-top:1px solid var(--line)}
+.chips button{white-space:nowrap}
+.composer{display:flex;gap:8px;padding:10px 14px 14px}
+.composer input{flex:1;background:var(--surface-2);border:1px solid var(--line-2);border-radius:12px;padding:11px 13px;color:var(--text);font-size:14.5px}
+.composer input:focus{outline:2px solid rgba(47,211,198,.5);outline-offset:0}
+.composer button{width:46px;border-radius:12px;border:0;background:var(--brand);color:var(--brand-ink);font-size:18px;cursor:pointer}
+.msgs a{color:var(--brand)}
+.phone{width:min(360px,100%);margin:0 auto;border-radius:42px;background:#05080b;padding:12px;border:1px solid #26323c;box-shadow:0 40px 90px -30px rgba(0,0,0,.85)}
+.screen{border-radius:32px;overflow:hidden;background:var(--wa-bg);height:700px;display:flex;flex-direction:column}
+.wa-h{background:#1f2c33;padding:12px 14px 10px;display:flex;align-items:center;gap:10px}
+.wa-h .nm{font-weight:650;font-size:15px;display:flex;align-items:center;gap:5px}
+.wa-h .nm .ver{width:14px;height:14px;border-radius:50%;background:#25d366;display:inline-grid;place-items:center;font-size:9px;color:#05080b;font-weight:900}
+.wa-h .st{font-size:12px;color:#8696a0}
+.wa-body{flex:1;overflow:auto;padding:12px 10px;display:flex;flex-direction:column;gap:7px;background:radial-gradient(circle at 20% 10%,rgba(255,255,255,.025),transparent 40%),var(--wa-bg)}
+.wa-day{align-self:center;background:#182229;color:#8696a0;font-size:11.5px;padding:4px 10px;border-radius:8px;margin:2px 0 6px}
+.wa{max-width:88%;padding:7px 9px 5px;border-radius:10px;font-size:13.6px;line-height:1.42;position:relative;opacity:0;transform:translateY(8px);transition:all .35s ease}
+.wa.show{opacity:1;transform:none}
+.wa.in{background:var(--wa-in);align-self:flex-start;border-top-left-radius:3px}
+.wa.out{background:var(--wa-out);align-self:flex-end;border-top-right-radius:3px}
+.wa .tm{font-size:10.5px;color:#8696a0;text-align:right;margin-top:2px}
+.wa.out .tm{color:#9fd8cc}
+.wa-btns{display:grid;gap:4px;margin-top:4px}
+.wa-btns span{background:var(--wa-in);color:#53bdeb;text-align:center;border-radius:8px;padding:7px;font-size:13px;font-weight:600}
+.voice{display:flex;align-items:center;gap:8px;min-width:210px}
+.voice .play{width:28px;height:28px;border-radius:50%;background:#9fd8cc;color:#005c4b;display:grid;place-items:center;font-size:11px}
+.voice .wave{flex:1;height:22px;background:repeating-linear-gradient(90deg,#9fd8cc 0 2px,transparent 2px 5px);opacity:.8;clip-path:polygon(0 40%,5% 20%,10% 60%,15% 10%,20% 50%,25% 30%,30% 70%,35% 15%,40% 55%,45% 35%,50% 65%,55% 20%,60% 50%,65% 30%,70% 60%,75% 25%,80% 55%,85% 40%,90% 60%,95% 35%,100% 50%,100% 100%,0 100%)}
+.wa .tr{font-size:11.5px;color:#cfe9e3;font-style:italic;margin-top:4px}
+.wa-input{display:flex;gap:6px;padding:8px;background:#0b141a}
+.wa-input div{flex:1;background:#1f2c33;border-radius:20px;padding:9px 14px;color:#8696a0;font-size:13.5px}
+.wa-input span{width:38px;height:38px;border-radius:50%;background:#00a884;display:grid;place-items:center}
+.caption{font-size:13px;color:var(--text-2);text-align:center;margin:14px auto 0;max-width:380px}
+.src-line{font-size:11.5px;color:var(--muted)}
+
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+@media (max-width:980px){.cards{grid-template-columns:1fr 1fr}}
+@media (max-width:620px){.cards{grid-template-columns:1fr}}
+.feat{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:18px}
+.feat .ic{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;background:rgba(47,211,198,.12);font-size:20px;margin-bottom:10px}
+.feat h4{margin:0 0 6px;font-size:16.5px}
+.feat p{margin:0;color:var(--text-2);font-size:14px}
+.tbl-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:var(--radius);margin-top:26px}
+table.cmp{width:100%;border-collapse:collapse;min-width:760px;font-size:14px}
+table.cmp th,table.cmp td{padding:11px 14px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+table.cmp thead th{background:var(--surface-2);font-size:13px;color:var(--text-2)}
+table.cmp thead th.us{color:var(--brand)}
+table.cmp td:first-child{color:var(--text);font-weight:600;width:24%}
+table.cmp td{color:var(--text-2)}
+table.cmp td.us{background:rgba(47,211,198,.05);color:var(--text)}
+table.cmp .y,table.cmp .n,table.cmp .p{display:inline-grid;place-items:center;width:18px;height:18px;border-radius:50%;font-size:11px;font-weight:900;margin-right:6px;vertical-align:-3px}
+.cmp .y{background:var(--good);color:#fff}.cmp .n{background:var(--surface-3);color:var(--muted)}.cmp .p{background:var(--warning);color:#0b0b0b}
+.arch{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;position:relative}
+@media (max-width:980px){.arch{grid-template-columns:1fr 1fr}}
+@media (max-width:560px){.arch{grid-template-columns:1fr}}
+.col{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:16px;position:relative}
+.col h4{margin:0 0 10px;font-size:15px;display:flex;align-items:center;gap:8px}
+.col h4 .num{width:24px;height:24px;border-radius:8px;background:var(--brand);color:var(--brand-ink);display:grid;place-items:center;font-size:13px}
+.col ul{margin:0;padding-left:18px;color:var(--text-2);font-size:13.5px}
+.col li{margin:5px 0}
+.col:not(:last-child)::after{content:"→";position:absolute;right:-13px;top:50%;transform:translateY(-50%);color:var(--brand);font-weight:900;font-size:18px;z-index:2}
+@media (max-width:980px){.col::after{display:none}}
+.phases{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:26px}
+@media (max-width:860px){.phases{grid-template-columns:1fr}}
+.phase{border:1px solid var(--line);border-radius:var(--radius);padding:16px;background:linear-gradient(180deg,var(--surface),transparent)}
+.phase .k{font-size:12px;font-weight:800;color:var(--brand);letter-spacing:.08em;text-transform:uppercase}
+.phase h4{margin:4px 0 8px;font-size:16.5px}
+.phase ul{margin:0;padding-left:18px;color:var(--text-2);font-size:14px}
+.sources{columns:2;column-gap:28px;font-size:13.5px;color:var(--text-2);padding-left:18px}
+@media (max-width:760px){.sources{columns:1}}
+.sources li{margin:4px 0;break-inside:avoid}
+footer{border-top:1px solid var(--line);padding:30px 0 50px;color:var(--muted);font-size:13px}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(30px);background:#0e2a2a;border:1px solid rgba(47,211,198,.5);color:var(--text);padding:11px 16px;border-radius:12px;font-size:14px;opacity:0;transition:all .25s;z-index:2000}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+</style>
+</head>
+<body>
+
+<div class="ribbon"><div class="wrap">
+  <span><b>● Alerta roja por El Niño</b></span><span class="sep">|</span>
+  <span>El INAMHI anunció el 23 de octubre que El Niño entra en su fase de mayor intensidad.</span><span class="sep">|</span>
+  <span>Fuentes oficiales: INAMHI y SNGR · Emergencias: <b>911</b></span>
+</div></div>
+
+<header class="top"><div class="wrap">
+  <a class="logo" href="#">
+    <svg width="30" height="30" viewBox="0 0 32 32" aria-hidden="true"><defs><linearGradient id="lg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2fd3c6"/><stop offset="1" stop-color="#3987e5"/></linearGradient></defs><rect width="32" height="32" rx="9" fill="url(#lg)"/><path d="M16 5c3.6 4.4 6 7.7 6 10.6a6 6 0 0 1-12 0C10 12.7 12.4 9.4 16 5z" fill="#04211f" opacity=".85"/><path d="M5 23c2.2-1.6 4.4-1.6 6.6 0s4.4 1.6 6.6 0 4.4-1.6 6.6 0 2.2 1.6 2.2 1.6" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round"/></svg>
+    Aguaje <span class="tag demo" style="margin-left:4px">Prototipo</span>
+  </a>
+  <nav class="links">
+    <a href="#app">Mapa en vivo</a><a href="#ruta">Ruta segura</a><a href="#familia">Mi familia</a><a class="hl" href="flujo.html">Pantallas de la app</a><a href="#tamy">Tamy</a><a href="#compara">Comparativa</a><a href="#como">Cómo lo construimos</a>
+  </nav>
+</div></header>
+
+<section class="hero"><div class="wrap">
+  <span class="tag live">Nubes y pronóstico en vivo</span>
+  <h1>Tu copiloto ante El Niño, <em>calle por calle</em> en Guayaquil.</h1>
+  <p class="lead">Aguaje junta el satélite, el pronóstico, la marea del Guayas y lo que reportan tus vecinos. Tamy, su asistente de IA, te dice qué hacer y cuándo: en la web y en WhatsApp.</p>
+  <div class="cta">
+    <a class="btn primary" href="#app">Ver mi barrio ahora</a>
+    <a class="btn" href="#ruta">Buscar una ruta segura</a>
+    <a class="btn" href="flujo.html">Ver las pantallas de la app</a>
+    <a class="btn" href="#tamy">Hablar con Tamy</a>
+  </div>
+
+  <div class="stats">
+    <div class="stat">
+      <div class="v">683,9 mm <small>en sep. y oct.</small></div>
+      <div class="l">Guayaquil ya recibió el 65 % de la lluvia de un invierno normal completo (enero a abril). Y el invierno todavía no empieza.</div>
+      <div class="meter" role="img" aria-label="683,9 de 1055,6 milímetros, 65 por ciento"><i style="width:64.8%"></i></div>
+      <div class="meter-l"><span>683,9 mm</span><span>Normal ene–abr: 1.055,6 mm</span></div>
+      <div class="src"><a href="https://www.primicias.ec/sociedad/lluvias-apogeo-fenomeno-elnino-ecuador-alerta-inamhi-guayaquil-quito-135787/" target="_blank" rel="noopener">Fuente: INAMHI vía Primicias</a></div>
+    </div>
+    <div class="stat">
+      <div class="v">63 mm <small>en 1 hora</small></div>
+      <div class="l">Lluvia del 26 de octubre en la estación de la ESPOL. La normal de todo octubre es 5 mm.</div>
+      <div class="src"><a href="https://www.primicias.ec/guayaquil/lecciones-tormenta-guayaquil-drenajes-obsoletos-radares-meteorologicos-fenomeno-elnino-lluvias-inundaciones-135816/" target="_blank" rel="noopener">Fuente: Primicias</a></div>
+    </div>
+    <div class="stat">
+      <div class="v">≈90 <small>sectores</small></div>
+      <div class="l">Con agua acumulada ese día. La marea alta del Guayas llegó a 4,50 m a las 19:31 y frenó los desagües.</div>
+      <div class="src"><a href="https://www.primicias.ec/guayaquil/lecciones-tormenta-guayaquil-drenajes-obsoletos-radares-meteorologicos-fenomeno-elnino-lluvias-inundaciones-135816/" target="_blank" rel="noopener">Fuente: Segura EP vía Primicias</a></div>
+    </div>
+    <div class="stat">
+      <div class="v">0 <small>radares</small></div>
+      <div class="l">La Costa de Ecuador no tiene radar de lluvia. Las apps de radar no ven la lluvia de Guayaquil.</div>
+      <div class="src"><a href="https://www.primicias.ec/guayaquil/lecciones-tormenta-guayaquil-drenajes-obsoletos-radares-meteorologicos-fenomeno-elnino-lluvias-inundaciones-135816/" target="_blank" rel="noopener">Fuente: Primicias</a></div>
+    </div>
+  </div>
+</div></section>
+
+<section class="block" id="app"><div class="wrap">
+  <div class="kicker">Mapa en vivo</div>
+  <h2>¿Va a llover fuerte en tu barrio?</h2>
+  <p class="sub">Elige tu barrio y mira, en palabras simples, si va a llover fuerte, a qué hora y cuándo conviene salir. Las nubes del mapa son una foto real del satélite. <span class="tag demo">Terreno y reportes de vecinos: de ejemplo</span></p>
+
+  <div class="app">
+    <div class="map-wrap">
+      <div id="map" aria-label="Mapa de Guayaquil con las nubes y el riesgo de cada barrio"></div>
+      <div class="map-bar">
+        <span class="pill" role="button" tabindex="0" data-layer="sat" aria-pressed="true"><span class="sw"></span>Nubes ahora</span>
+        <span class="pill" role="button" tabindex="0" data-layer="risk" aria-pressed="true"><span class="sw"></span>Barrios</span>
+        <span class="pill" role="button" tabindex="0" data-layer="reports" aria-pressed="true"><span class="sw"></span>Reportes de vecinos</span>
+        <span class="pill" role="button" tabindex="0" data-layer="radar" aria-pressed="false"><span class="sw"></span>¿Y el radar?</span>
+        <span class="view-btns">
+          <span class="pill" role="button" tabindex="0" data-view="gye">Guayaquil</span>
+          <span class="pill" role="button" tabindex="0" data-view="ec">Ecuador</span>
+        </span>
+      </div>
+      <div class="callout" id="radarCallout">
+        <button class="x" aria-label="Cerrar">×</button>
+        <b>Guayaquil no tiene radar de lluvia.</b> En toda la Costa de Ecuador no hay un radar meteorológico. Por eso las apps de radar, como RainViewer, no ven la lluvia aquí: la zona oscura es lo que ningún radar cubre. Aguaje usa el satélite, que toma una foto de las nubes cada 10 minutos.
+      </div>
+      <div class="legend" id="legend"></div>
+      <div class="time-bar">
+        <button id="play" aria-label="Pausar animación">❚❚</button>
+        <input type="range" id="frame" min="0" max="11" value="11" aria-label="Momento de la foto del satélite">
+        <div class="tl" id="frameLabel">Cargando nubes…</div>
+      </div>
+    </div>
+
+    <aside class="panel">
+      <div>
+        <label class="plabel" for="sectorSel">Tu barrio</label>
+        <select class="sel" id="sectorSel"></select>
+      </div>
+      <div class="status" id="status"></div>
+      <div class="card"><h4>¿Cuándo salir?</h4><div id="when"></div></div>
+      <div class="card"><h4>Tu día, hora por hora</h4><div class="chartbox" id="day"></div></div>
+      <div class="card"><h4>El río y la marea</h4><div class="chartbox" id="tide"></div></div>
+      <div class="card"><h4>Qué hacer ahora</h4><ul class="todo" id="todo"></ul></div>
+      <details class="srcs"><summary>¿De dónde salen estos datos?</summary>
+        <p>Nubes: satélite GOES-19 de la NOAA, vía NASA. Lluvia: pronóstico de Open-Meteo. Marea: modelo de Open-Meteo frente a Guayaquil. Terreno y reportes de vecinos: datos de ejemplo.</p>
+        <p id="liveNote"></p>
+      </details>
+    </aside>
+  </div>
+</div></section>
+
+<section class="block" id="ruta"><div class="wrap">
+  <div class="kicker">Ruta segura</div>
+  <h2>¿Por dónde me voy para no quedarme atrapado?</h2>
+  <p class="sub">Elige de dónde sales y a dónde vas. Te damos el mejor camino y otras opciones, según la lluvia que viene, el río y lo que reportan tus vecinos. Si un camino pasa por agua, buscamos uno que la rodee. <span class="tag demo">Reportes de vecinos: de ejemplo</span></p>
+  <div class="app">
+    <div class="map-wrap" style="min-height:640px">
+      <div id="rmap" aria-label="Mapa con la ruta más segura y las alternativas"></div>
+      <div class="rhint" id="rhint"></div>
+    </div>
+    <aside class="panel" style="max-height:640px">
+      <div>
+        <label class="plabel" for="rFrom">¿De dónde sales?</label>
+        <div class="rfield"><span class="ab a">A</span><select class="sel" id="rFrom"></select><button class="geo" id="rGeo" title="Usar mi ubicación" aria-label="Usar mi ubicación">◎</button></div>
+      </div>
+      <div>
+        <label class="plabel" for="rTo">¿A dónde vas?</label>
+        <div class="rfield"><span class="ab b">B</span><select class="sel" id="rTo"></select></div>
+        <div class="rpick">O toca el mapa: <button data-pick="from">elegir la salida</button> · <button data-pick="to">elegir el destino</button></div>
+      </div>
+      <div>
+        <div class="plabel">¿Cuándo sales?</div>
+        <div class="seg" id="rWhen"><button data-off="0" class="on">Ahora</button><button data-off="1">En 1 hora</button><button data-off="2">En 2 horas</button><button data-off="best">Mejor hora</button></div>
+      </div>
+      <div id="rOut"><p class="muted" style="margin:0">Calculando la ruta…</p></div>
+      <p class="src-line" style="margin:0">Caminos: OSRM con mapas de OpenStreetMap. Los tiempos no cuentan el tráfico.</p>
+    </aside>
+  </div>
+</div></section>
+
+<section class="block" id="familia"><div class="wrap">
+  <div class="kicker">Mi familia</div>
+  <h2>¿Dónde está mi familia y está bien?</h2>
+  <p class="sub">Mira en el mapa dónde está cada persona, cómo está su zona y si confirmó que está bien. Cada quien decide si comparte su ubicación, y puede pausarla cuando quiera. <span class="tag demo">Familia de ejemplo; la zona de cada uno usa el pronóstico en vivo</span></p>
+  <div class="app">
+    <div class="map-wrap" style="min-height:640px">
+      <div id="fmap" aria-label="Mapa con la ubicación de tu familia"></div>
+      <div class="fbanner" id="fBanner" role="alert"></div>
+    </div>
+    <aside class="panel" style="max-height:640px">
+      <div class="fsum" id="fSum"></div>
+      <div id="fList"></div>
+      <div class="fbtns">
+        <button class="btn primary" id="fAsk">Preguntar a todos: «¿Estás bien?»</button>
+        <button class="btn" id="fSos">Simular que alguien pide ayuda</button>
+      </div>
+      <div class="card">
+        <h4>Tu ubicación</h4>
+        <div class="seg" id="fPriv" style="grid-template-columns:repeat(3,1fr)"><button data-p="always" class="on">Compartir</button><button data-p="emergency">Solo emergencias</button><button data-p="paused">Pausar</button></div>
+        <p class="tide-txt" id="fPrivTxt" style="margin-top:8px">Tu familia ve dónde estás mientras compartes. Puedes pausarlo cuando quieras.</p>
+      </div>
+    </aside>
+  </div>
+</div></section>
+
+<section class="block" id="tamy"><div class="wrap">
+  <div class="kicker">Asistente de IA</div>
+  <h2>Conoce a Tamy</h2>
+  <div class="persona">
+    <div id="avatarBig"></div>
+    <div>
+      <div class="t2" style="max-width:780px;font-size:16px">Tamy viene de <i>tamya</i>, que significa <b>lluvia</b> en kichwa. Vigila el cielo, la marea y tu calle. Habla simple, nunca exagera y siempre te da una acción concreta. Si algo es oficial, te manda al INAMHI o a la SNGR.</div>
+      <div class="traits"><span class="tag">Habla con calma</span><span class="tag">Va al grano</span><span class="tag">Conoce tu barrio</span><span class="tag">Entiende audios y fotos</span><span class="tag">Te avisa antes</span></div>
+    </div>
+  </div>
+
+  <div class="agent-grid">
+    <div>
+      <div class="chat" id="chat">
+        <div class="chat-h">
+          <div id="avatarSm"></div>
+          <div><div class="nm">Tamy</div><div class="st">● en línea</div></div>
+          <div class="ctx">Tu barrio: <b id="chatSector">–</b><br><span class="muted">usa el pronóstico en vivo</span></div>
+        </div>
+        <div class="msgs" id="msgs" aria-live="polite"></div>
+        <div class="chips" id="chips"></div>
+        <form class="composer" id="composer">
+          <input id="q" autocomplete="off" placeholder="Pregúntale a Tamy… ej. ¿llueve hoy en el Guasmo?">
+          <button aria-label="Enviar">➤</button>
+        </form>
+      </div>
+      <p class="src-line" style="margin-top:10px">En este prototipo Tamy responde un set de preguntas con datos en vivo. En la versión real es un modelo de lenguaje con herramientas: pronóstico, marea, riesgo, avisos oficiales y reportes.</p>
+    </div>
+
+    <div>
+      <div class="phone"><div class="screen">
+        <div class="wa-h">
+          <span style="color:#aebac1">‹</span>
+          <div id="avatarWa"></div>
+          <div><div class="nm">Tamy · Aguaje <span class="ver">✓</span></div><div class="st">cuenta de empresa</div></div>
+        </div>
+        <div class="wa-body" id="waBody">
+          <div class="wa-day">LUNES 26 DE OCTUBRE</div>
+          <div class="wa in"><b>⚠️ Cuidado en Alborada</b><br>El INAMHI acaba de emitir una alerta para Guayas. El satélite ve nubes de tormenta que crecen rápido al norte de la ciudad.<br><br>🕒 Lluvia muy fuerte probable <b>de 2:30 a 4:30 pm</b>.<br>🌊 El río estará alto a las <b>7:30 pm</b>: el agua de la calle se irá lento hasta la noche.<br><br>👉 Si vas a salir del trabajo, sal <b>antes de las 2 pm</b> o espera hasta después de las 9 pm.<div class="tm">1:05 pm</div>
+            <div class="wa-btns"><span>🗺️ Ver mapa</span><span>💬 Avisar a mi familia</span></div></div>
+          <div class="wa out"><div class="voice"><span class="play">▶</span><span class="wave"></span><span style="font-size:11px;color:#9fd8cc">0:06</span></div><div class="tr">“¿Y si salgo a las 3 a Durán por el puente?”</div><div class="tm">1:07 pm ✓✓</div></div>
+          <div class="wa in">Escuché tu audio 🎧. A las 3 es lo peor de la tormenta en el norte y sobre el puente. Te recomiendo salir <b>ahora, antes de las 2 pm</b>, o esperar.<br><br>¿Te aviso cuando pase lo peor?<div class="tm">1:07 pm</div>
+            <div class="wa-btns"><span>Sí, avísame</span></div></div>
+          <div class="wa out">Sí porfa<div class="tm">1:08 pm ✓✓</div></div>
+          <div class="wa in">✅ <b>Lo peor ya pasó</b> en tu camino. Tus vecinos todavía reportan agua en 4 calles de la Alborada. Te marqué un camino que las evita.<div class="tm">4:52 pm</div>
+            <div class="wa-btns"><span>🗺️ Ver camino</span><span>📸 Reportar mi calle</span></div></div>
+        </div>
+        <div class="wa-input"><div>Mensaje</div><span>🎤</span></div>
+      </div></div>
+      <p class="caption"><b>Simulación:</b> así te habría avisado Tamy el lunes 26 de octubre. Ese día cayeron 63 mm en una hora y la marea alta frenó los desagües. El INAMHI emitió su alerta unas dos horas antes.</p>
+    </div>
+  </div>
+</div></section>
+
+<section class="block" id="compara"><div class="wrap">
+  <div class="kicker">Qué hacemos mejor</div>
+  <h2>RainViewer y Amaru, y lo que agregamos</h2>
+  <p class="sub">RainViewer es un mapa de radar global. Amaru es una app gratuita de riesgo de inundación para 13 países, que se volvió viral en Ecuador tras la lluvia del 26 de octubre. Aguaje se enfoca en Guayaquil y en una pregunta: <b>¿qué hago y a qué hora?</b></p>
+
+  <div class="cards">
+    <div class="feat"><div class="ic">🛰️</div><h4>Satélite donde no hay radar</h4><p>Una foto de las nubes cada 10 minutos. Vemos las nubes de tormenta que crecen antes de que llueva. RainViewer depende de radares, y la Costa no tiene.</p></div>
+    <div class="feat"><div class="ic">🌊</div><h4>La marea dentro del consejo</h4><p>En Guayaquil, cuando el río está alto, se tapan las salidas de los desagües. Tamy cruza lluvia y marea y te dice la mejor hora para moverte.</p></div>
+    <div class="feat"><div class="ic">💬</div><h4>Tamy en WhatsApp</h4><p>Sin descargar otra app. Entiende audios y fotos, avisa antes de la lluvia y te dice qué hacer, no solo qué color tiene el mapa.</p></div>
+    <div class="feat"><div class="ic">🧠</div><h4>Memoria de cada calle</h4><p>Cruzamos cada tormenta con los reportes de vecinos y de Segura EP. Así Tamy puede decir: «con una lluvia así y el río alto, tu calle se llenó hasta la rodilla».</p></div>
+    <div class="feat"><div class="ic">🧭</div><h4>Ruta segura</h4><p>El mejor camino y otras opciones hasta donde vas, con la hora en que menos llueve. Si un camino pasa por agua reportada, buscamos uno que la rodee.</p></div>
+    <div class="feat"><div class="ic">🤝</div><h4>Antes, durante y después</h4><p>Tu familia en el mapa, en tiempo real, y el aviso de «estoy bien». Una tarea por semana para la temporada de El Niño y, después de la lluvia, guía para documentar daños y pedir ayudas.</p></div>
+  </div>
+
+  <div class="tbl-wrap">
+    <table class="cmp">
+      <thead><tr><th>Capacidad</th><th>RainViewer</th><th>Amaru</th><th class="us">Aguaje (propuesta)</th></tr></thead>
+      <tbody>
+        <tr><td>Lluvia en vivo en Guayaquil</td><td><span class="n">✕</span>Sin cobertura de radar en la Costa</td><td><span class="p">~</span>Usa RainViewer y pronósticos</td><td class="us"><span class="y">✓</span>Satélite GOES-19 cada 10 min y lluvia estimada por satélite</td></tr>
+        <tr><td>Pronóstico por hora</td><td><span class="y">✓</span>24 h gratis, 72 h de pago</td><td><span class="y">✓</span>Open-Meteo y MET Norway</td><td class="us"><span class="y">✓</span>Varios modelos, por barrio</td></tr>
+        <tr><td>Marea del Guayas</td><td><span class="n">✕</span></td><td><span class="y">✓</span>Dentro del índice de riesgo</td><td class="us"><span class="y">✓</span>Dentro del riesgo y de la «mejor hora para salir»</td></tr>
+        <tr><td>Ríos y crecidas</td><td><span class="n">✕</span></td><td><span class="y">✓</span>850 estaciones (Google Flood Forecasting)</td><td class="us"><span class="y">✓</span>Google Flood Forecasting y estaciones del INAMHI</td></tr>
+        <tr><td>Riesgo por zona</td><td><span class="n">✕</span></td><td><span class="y">✓</span>Índice 0–100 con 4 niveles</td><td class="us"><span class="y">✓</span>4 niveles en palabras (Tranquilo, Ojo, Cuidado, Peligro) y memoria por calle</td></tr>
+        <tr><td>Reportes de vecinos</td><td><span class="n">✕</span></td><td><span class="y">✓</span>Revisados con IA</td><td class="us"><span class="y">✓</span>Revisados con IA, enviados por WhatsApp con foto o audio</td></tr>
+        <tr><td>Asistente de IA que conversa</td><td><span class="p">~</span>«AI insights» en el plan de pago</td><td><span class="n">–</span>No aparece en la prensa</td><td class="us"><span class="y">✓</span>Tamy, en la web y en WhatsApp</td></tr>
+        <tr><td>Ruta segura</td><td><span class="n">✕</span></td><td><span class="y">✓</span>Revisa cómo está una ruta antes de viajar</td><td class="us"><span class="y">✓</span>Mejor camino y alternativas, mejor hora para salir y desvíos por agua reportada</td></tr>
+        <tr><td>Familia en tiempo real</td><td><span class="n">✕</span></td><td><span class="n">–</span>No aparece en la prensa</td><td class="us"><span class="y">✓</span>Dónde está cada uno, si está bien y si su zona tiene riesgo, con pedido de ayuda</td></tr>
+        <tr><td>Alertas</td><td><span class="y">✓</span>Por intensidad de lluvia</td><td><span class="y">✓</span>Por lugar y por ruta</td><td class="us"><span class="y">✓</span>Por lugar, ruta y horario, con la acción a tomar</td></tr>
+        <tr><td>Contexto de El Niño</td><td><span class="n">✕</span></td><td><span class="n">–</span>No aparece en la prensa</td><td class="us"><span class="y">✓</span>Cuánto ha llovido frente a lo normal y qué viene</td></tr>
+        <tr><td>Después de la emergencia</td><td><span class="n">✕</span></td><td><span class="n">–</span>No aparece en la prensa</td><td class="us"><span class="y">✓</span>Daños, seguros, ayudas y aviso a la familia</td></tr>
+        <tr><td>Precio</td><td>Gratis, más planes Essential y Pro</td><td>Gratis</td><td class="us">Gratis para personas; panel de pago para empresas</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="src-line" style="margin-top:10px">Datos de Amaru según Primicias y Teleamazonas (27 y 28 de octubre de 2026). No pudimos abrir la app directamente.</p>
+</div></section>
+
+<section class="block" id="como"><div class="wrap">
+  <div class="kicker">Cómo lo construimos</div>
+  <h2>De los datos a una acción, en cuatro pasos</h2>
+  <p class="sub">El prototipo usa fuentes abiertas que ya funcionan desde el navegador. La versión real suma las fuentes oficiales de Ecuador y un motor que recalcula el riesgo cada 10 minutos.</p>
+  <div class="arch">
+    <div class="col"><h4><span class="num">1</span>Fuentes</h4><ul>
+      <li>Satélite GOES-19 cada 10 min (NOAA, vía NASA GIBS)</li>
+      <li>Lluvia estimada por satélite (NOAA y NASA)</li>
+      <li>Pronóstico Open-Meteo: ECMWF, GFS, ICON</li>
+      <li>Mareógrafo del Río Guayas (red IOC) y tablas del INOCAR</li>
+      <li>Google Flood Forecasting (ríos)</li>
+      <li>Avisos del INAMHI y la SNGR</li>
+      <li>Reportes de vecinos y de Segura EP</li>
+      <li>Calles y caminos: OpenStreetMap (OSRM)</li>
+      <li>Terreno (Copernicus DEM) y red de drenaje</li>
+    </ul></div>
+    <div class="col"><h4><span class="num">2</span>Motor Aguaje</h4><ul>
+      <li>Detecta nubes de tormenta que crecen y estima cuándo llegan</li>
+      <li>Riesgo por barrio, cada 10 min</li>
+      <li>Mejor hora para salir: cruza lluvia y marea</li>
+      <li>Ruta segura: compara caminos según la lluvia, el río y el agua reportada</li>
+      <li>Memoria de inundaciones por calle</li>
+      <li>Revisión de reportes con IA: foto, ubicación y otros reportes cerca</li>
+    </ul></div>
+    <div class="col"><h4><span class="num">3</span>Tamy</h4><ul>
+      <li>Modelo de lenguaje con herramientas: pronóstico, marea, riesgo, avisos oficiales, reportes y aviso a la familia</li>
+      <li>Reglas fijas: nunca contradice al INAMHI ni a la SNGR, siempre da una acción, habla simple</li>
+      <li>Entiende audios y fotos</li>
+      <li>Recuerda tus lugares: casa, trabajo, colegio</li>
+    </ul></div>
+    <div class="col"><h4><span class="num">4</span>Canales</h4><ul>
+      <li>WhatsApp: Tamy como agente en WhatsApp Business, con alertas, audios y fotos</li>
+      <li>Web y app instalable con el mapa</li>
+      <li>Panel para el municipio y las empresas: mapa de reportes y avisos a empleados y clientes</li>
+    </ul></div>
+  </div>
+
+  <div class="phases">
+    <div class="phase"><div class="k">Fase 1</div><h4>MVP para Guayaquil</h4><ul>
+      <li>Mapa con nubes, pronóstico y marea</li><li>Riesgo por barrio en palabras simples</li><li>Tamy en WhatsApp con alertas por barrio</li><li>Guayaquil, Samborondón, Durán y Daule</li></ul></div>
+    <div class="phase"><div class="k">Fase 2</div><h4>Ver lo que el radar no ve</h4><ul>
+      <li>Aviso de tormenta con el satélite</li><li>Memoria de inundaciones por calle</li><li>Caminos seguros y reportes con foto</li></ul></div>
+    <div class="phase"><div class="k">Fase 3</div><h4>Red propia y toda la Costa</h4><ul>
+      <li>Pluviómetros y sensores de nivel en puntos críticos, con la ESPOL</li><li>Panel para municipios y empresas</li><li>Manabí, Los Ríos, El Oro y Esmeraldas</li></ul></div>
+  </div>
+
+  <h3 style="margin:36px 0 10px;font-size:17px">Fuentes de este prototipo</h3>
+  <ul class="sources">
+    <li><a href="https://www.rainviewer.com/" target="_blank" rel="noopener">RainViewer</a> y su <a href="https://www.rainviewer.com/api/transition-faq.html" target="_blank" rel="noopener">aviso sobre el API</a></li>
+    <li><a href="https://www.primicias.ec/ciencia-tecnologia/lluvias-inundaciones-ecuador-guayaquil-amaru-aplicacion-alertas-135827/" target="_blank" rel="noopener">Primicias: así funciona Amaru</a></li>
+    <li><a href="https://www.teleamazonas.com/tendencias/entretenimiento/tecnologia/amaru-plataforma-web-app-consultar-clima-131542/" target="_blank" rel="noopener">Teleamazonas: Amaru, plataforma web y app</a></li>
+    <li><a href="https://www.primicias.ec/guayaquil/lecciones-tormenta-guayaquil-drenajes-obsoletos-radares-meteorologicos-fenomeno-elnino-lluvias-inundaciones-135816/" target="_blank" rel="noopener">Primicias: lecciones de la tormenta del 26 de octubre</a></li>
+    <li><a href="https://www.primicias.ec/sociedad/lluvias-apogeo-fenomeno-elnino-ecuador-alerta-inamhi-guayaquil-quito-135787/" target="_blank" rel="noopener">Primicias: El Niño en su fase de mayor intensidad</a></li>
+    <li><a href="https://www.eluniverso.com/comunidad/guayaquil/el-fenomeno-de-el-nino-inicia-su-fase-de-mayor-intensidad-y-se-aproximan-lluvias-mas-fuertes-alerta-el-inahmi-nota/" target="_blank" rel="noopener">El Universo: aviso del INAMHI</a></li>
+    <li><a href="https://www.primicias.ec/guayaquil/rio-guayas-marea-alta-lluvias-guayaquil-inocar-inundaciones-ecuador-135786/" target="_blank" rel="noopener">Primicias: el INOCAR alerta por marea alta</a></li>
+    <li><a href="https://www.primicias.ec/sociedad/fenomeno-nino-lluvias-record-septiembre-octubre-precipitaciones-historicas-135334/" target="_blank" rel="noopener">Primicias: lluvias récord de septiembre y octubre</a></li>
+    <li><a href="https://nasa-gibs.github.io/gibs-api-docs/" target="_blank" rel="noopener">NASA GIBS</a> (fotos del satélite GOES-19)</li>
+    <li><a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo</a> (pronóstico y marea)</li>
+  </ul>
+</div></section>
+
+<footer><div class="wrap">
+  <b style="color:var(--text-2)">Aguaje es un prototipo y no es una fuente oficial.</b> Sigue los avisos del INAMHI y de la SNGR. En una emergencia, llama al 911. Los datos de terreno, los reportes de vecinos y la conversación de WhatsApp son de ejemplo.
+  <br>Mapa base © Esri y OpenStreetMap · Nubes NOAA GOES-19 vía NASA GIBS · Radar RainViewer · Pronóstico y marea Open-Meteo · Caminos OSRM y OpenStreetMap.
+</div></footer>
+
+<div class="toast" id="toast"></div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+const TZ_OFFSET_H = -5; // Ecuador has no daylight saving time
+const LEVELS = [
+  {max:25, key:'tranquilo', name:'Tranquilo', hex:'#0ca30c', fill:.24, short:'sin agua en la calle', desc:'No se espera agua en la calle.'},
+  {max:50, key:'ojo', name:'Ojo', hex:'#fab219', fill:.46, short:'mantente atento', desc:'Mantente atento. Ten un plan si vas a salir.'},
+  {max:75, key:'cuidado', name:'Cuidado', hex:'#ec835a', fill:.7, short:'agua en calles bajas', desc:'Es probable que se junte agua en las calles bajas.'},
+  {max:101, key:'peligro', name:'Peligro', hex:'#d03b3b', fill:.92, short:'riesgo de inundación', desc:'Riesgo alto de inundación. Evita las zonas bajas y sigue al INAMHI y a la SNGR.'}
+];
+const RAIN = [
+  {max:.5, n:0, word:'sin lluvia'}, {max:2.5, n:1, word:'llovizna'}, {max:7.6, n:2, word:'lluvia moderada'},
+  {max:30, n:3, word:'lluvia fuerte'}, {max:1e9, n:4, word:'lluvia muy fuerte'}
+];
+// terrain and reports are illustrative values for the prototype
+const SECTORS = [
+  {id:'alborada', name:'Alborada', short:'Alborada', lat:-2.140, lon:-79.902, terrain:.75, reports:.6},
+  {id:'sauces', name:'Sauces y Samanes', short:'Sauces', lat:-2.121, lon:-79.904, terrain:.8, reports:.7},
+  {id:'urdesa', name:'Urdesa', short:'Urdesa', lat:-2.164, lon:-79.910, terrain:.6, reports:.3},
+  {id:'centro', name:'Centro', short:'Centro', lat:-2.194, lon:-79.884, terrain:.5, reports:.4},
+  {id:'trinitaria', name:'Isla Trinitaria', short:'Trinitaria', lat:-2.236, lon:-79.922, terrain:.85, reports:.5},
+  {id:'guasmo', name:'Guasmo', short:'Guasmo', lat:-2.268, lon:-79.888, terrain:.8, reports:.6},
+  {id:'bastion', name:'Bastión Popular', short:'Bastión', lat:-2.083, lon:-79.957, terrain:.7, reports:.5},
+  {id:'mapasingue', name:'Mapasingue', short:'Mapasingue', lat:-2.152, lon:-79.935, terrain:.6, reports:.3},
+  {id:'costa', name:'Vía a la Costa', short:'Vía a la Costa', lat:-2.183, lon:-79.995, terrain:.35, reports:.1},
+  {id:'samborondon', name:'Samborondón', short:'Samborondón', lat:-2.142, lon:-79.866, terrain:.55, reports:.3},
+  {id:'duran', name:'Durán', short:'Durán', lat:-2.172, lon:-79.833, terrain:.7, reports:.4}
+];
+const DEMO_REPORTS = [
+  {lat:-2.1553, lon:-79.8950, icon:'🌊', text:'Agua hasta la rodilla en la avenida', ago:'hace 15 min', n:6},
+  {lat:-2.137, lon:-79.897, icon:'🌊', text:'Agua hasta la rodilla', ago:'hace 25 min', n:3},
+  {lat:-2.118, lon:-79.909, icon:'🚧', text:'Paso a desnivel cerrado', ago:'hace 40 min', n:5},
+  {lat:-2.262, lon:-79.884, icon:'🕳️', text:'Alcantarilla tapada', ago:'hace 1 hora', n:2},
+  {lat:-2.233, lon:-79.917, icon:'🌊', text:'Agua en la calle', ago:'hace 1 hora', n:4},
+  {lat:-2.150, lon:-79.940, icon:'⛰️', text:'Tierra suelta en el cerro', ago:'hace 2 horas', n:2},
+  {lat:-2.170, lon:-79.838, icon:'🌊', text:'Agua hasta el tobillo', ago:'hace 2 horas', n:3}
+];
+
+const state = {sector: SECTORS[0], tide: null, live: {rain:false, tide:false}, risk: {}};
+const $ = s => document.querySelector(s);
+const nf1 = new Intl.NumberFormat('es-EC', {maximumFractionDigits:1});
+const clamp = (v,a=0,b=1) => Math.max(a, Math.min(b, v));
+const sum = a => a.reduce((x,y)=>x+(y||0), 0);
+const localNow = () => new Date(Date.now() + TZ_OFFSET_H*3600e3);
+const hourKey = d => d.toISOString().slice(0,13)+':00';
+const hourOf = t => +t.slice(11,13);
+const levelOf = s => LEVELS.find(l => s < l.max);
+const rainCat = mm => RAIN.find(r => mm < r.max);
+
+/* ---------- plain-language time ---------- */
+function hShort(h){ h = ((h%24)+24)%24; return h===0 ? '12 am' : h===12 ? '12 pm' : (h%12)+(h<12?' am':' pm'); }
+function range(a,b){
+  const A = hShort(a), B = hShort(b), sa = A.split(' '), sb = B.split(' ');
+  return sa[1]===sb[1] ? `${sa[0]} a ${B}` : `${A} a ${B}`;
+}
+function atHour(t){
+  const h = hourOf(t), today = hourKey(localNow()).slice(0,10), pre = t.slice(0,10)===today ? '' : 'mañana ';
+  if(h===0) return pre+'a la medianoche';
+  if(h===12) return pre+'al mediodía';
+  return pre + ((h%12)===1 ? 'a la ' : 'a las ') + hShort(h);
+}
+function partOfDay(t){
+  const h = hourOf(t), today = hourKey(localNow()).slice(0,10);
+  const p = h<5 ? 'madrugada' : h<12 ? 'mañana' : h<19 ? 'tarde' : 'noche';
+  if(t.slice(0,10)===today) return 'esta '+p;
+  return p==='mañana' ? 'mañana temprano' : 'mañana en la '+p;
+}
+function clock(d){ const l = new Date(d.getTime()+TZ_OFFSET_H*3600e3), h = l.getUTCHours(), m = String(l.getUTCMinutes()).padStart(2,'0'); return `${h%12||12}:${m} ${h<12?'am':'pm'}`; }
+
+/* ---------- icons ---------- */
+let uid = 0;
+const DROP = 'M20 2C20 2 4 19 4 30a16 16 0 0 0 32 0C36 19 20 2 20 2Z';
+function drop(l, size=24){
+  const id = 'dc'+(++uid), y = 46 - 44*l.fill;
+  return `<svg width="${Math.round(size*40/48)}" height="${size}" viewBox="0 0 40 48" role="img" aria-label="${l.name}"><defs><clipPath id="${id}"><path d="${DROP}"/></clipPath></defs><path d="${DROP}" fill="#0b131a"/><g clip-path="url(#${id})"><path d="M-2 ${y} q5.5 -3.5 11 0 t11 0 t11 0 t11 0 V50 H-2Z" fill="${l.hex}"/></g><path d="${DROP}" fill="none" stroke="${l.hex}" stroke-width="2.8"/></svg>`;
+}
+function avatar(size){
+  const g = 'tg'+(++uid);
+  return `<svg width="${size}" height="${size}" viewBox="0 0 64 64" role="img" aria-label="Tamy"><defs><linearGradient id="${g}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2fd3c6"/><stop offset="1" stop-color="#2a5fd6"/></linearGradient></defs>
+  <circle cx="32" cy="32" r="32" fill="url(#${g})"/>
+  <path d="M13 17l-2 5M53 15l-2 5M50 47l-2 5M12 46l-2 5" stroke="#fff" stroke-opacity=".45" stroke-width="2" stroke-linecap="round"/>
+  <path d="M32 11C32 11 17 28 17 38.5a15 15 0 0 0 30 0C47 28 32 11 32 11z" fill="#fff"/>
+  <path d="M23.5 29c1.5-3.5 3.5-6 5.5-8" stroke="#CFEAF8" stroke-width="2.6" fill="none" stroke-linecap="round"/>
+  <circle cx="27" cy="38" r="2.3" fill="#0d2233"/><circle cx="37" cy="38" r="2.3" fill="#0d2233"/>
+  <circle cx="23.5" cy="43" r="2.3" fill="#F6A6A0" opacity=".75"/><circle cx="40.5" cy="43" r="2.3" fill="#F6A6A0" opacity=".75"/>
+  <path d="M28 44q4 3.4 8 0" stroke="#0d2233" stroke-width="2" fill="none" stroke-linecap="round"/></svg>`;
+}
+$('#avatarBig').innerHTML = avatar(76);
+$('#avatarSm').innerHTML = avatar(40);
+$('#avatarWa').innerHTML = avatar(36);
+const lvlPill = l => `<span class="lvl">${drop(l,18)}${l.name}</span>`;
+
+/* ---------- data ---------- */
+async function getJSON(url){ const r = await fetch(url); if(!r.ok) throw new Error(r.status); return r.json(); }
+function synthSeries(fn){
+  const start = localNow(); start.setUTCMinutes(0,0,0); start.setUTCHours(start.getUTCHours()-1);
+  const time=[], v=[];
+  for(let i=0;i<50;i++){ const d = new Date(start.getTime()+i*3600e3); time.push(hourKey(d)); v.push(fn(d.getUTCHours(), i)); }
+  return {time, v};
+}
+function synthRain(s){
+  // fallback when the forecast API is unreachable: afternoon storm, typical for Guayaquil
+  const r = synthSeries(h => +(Math.exp(-Math.pow((h-16)/2.2,2))*(12+8*s.terrain) + (h>20||h<4?.6:.1)).toFixed(1));
+  return {time:r.time, precipitation:r.v, precipitation_probability:r.time.map(t=>Math.round(40+55*Math.exp(-Math.pow((hourOf(t)-16)/4,2))))};
+}
+function synthTide(){ const r = synthSeries((h,i)=> +(.6+1.2*Math.cos(2*Math.PI*(i-10)/12.42)).toFixed(2)); return {time:r.time, sea_level_height_msl:r.v}; }
+async function loadForecast(){
+  const lat = SECTORS.map(s=>s.lat).join(','), lon = SECTORS.map(s=>s.lon).join(',');
+  try{
+    const j = await getJSON(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&hourly=precipitation,precipitation_probability&past_hours=1&forecast_hours=49&timezone=America%2FGuayaquil`);
+    const arr = Array.isArray(j) ? j : [j];
+    SECTORS.forEach((s,i)=> s.hourly = arr[i].hourly);
+    state.live.rain = true;
+  }catch(e){ SECTORS.forEach(s=> s.hourly = synthRain(s)); }
+}
+async function loadTide(){
+  try{
+    const j = await getJSON('https://marine-api.open-meteo.com/v1/marine?latitude=-2.45&longitude=-79.95&hourly=sea_level_height_msl&past_hours=1&forecast_hours=49&timezone=America%2FGuayaquil');
+    state.tide = j.hourly; state.live.tide = true;
+  }catch(e){ state.tide = synthTide(); }
+}
+function nowIndex(times){ const i = times.indexOf(hourKey(localNow())); return i<0 ? 0 : i; }
+
+/* ---------- risk ---------- */
+function computeRisk(s){
+  const h = s.hourly, i = nowIndex(h.time);
+  const r3 = sum(h.precipitation.slice(i,i+3)), r24 = sum(h.precipitation.slice(i,i+24));
+  const tv = state.tide.sea_level_height_msl, ti = nowIndex(state.tide.time);
+  const tmin = Math.min(...tv), tmax = Math.max(...tv);
+  const tideN = clamp((Math.max(...tv.slice(ti, ti+6)) - tmin)/((tmax - tmin)||1));
+  const score = Math.round(30*clamp(r3/25) + 25*clamp(r24/70) + 15*tideN + 20*s.terrain + 10*s.reports);
+  return {score, level: levelOf(score), r3, r24, i};
+}
+function windows(s){
+  const h = s.hourly, i = nowIndex(h.time), tv = state.tide.sea_level_height_msl, ti = nowIndex(state.tide.time);
+  const tmin = Math.min(...tv), tmax = Math.max(...tv);
+  let best = null, worst = null;
+  for(let k=i; k<i+14 && k+2<h.time.length; k++){
+    const hour = hourOf(h.time[k]), rain = h.precipitation[k] + h.precipitation[k+1];
+    const cost = rain + 3*clamp(((tv[ti+(k-i)] ?? tmin) - tmin)/((tmax-tmin)||1));
+    if(hour>=6 && hour<=21 && (!best || cost<best.cost)) best = {k, cost, rain, peak:Math.max(h.precipitation[k],h.precipitation[k+1])};
+    if(!worst || rain>worst.rain) worst = {k, rain, peak:Math.max(h.precipitation[k],h.precipitation[k+1])};
+  }
+  return {best, worst, h, i};
+}
+function tideTurns(){
+  const t = state.tide, v = t.sea_level_height_msl, i = nowIndex(t.time), out = [];
+  for(let k=Math.max(1,i); k<v.length-1; k++){
+    if(v[k]>=v[k-1] && v[k]>v[k+1]) out.push({k, t:t.time[k], high:true});
+    if(v[k]<=v[k-1] && v[k]<v[k+1]) out.push({k, t:t.time[k], high:false});
+  }
+  return out;
+}
+const nextHigh = () => tideTurns().find(x=>x.high);
+function headline(s){
+  const {worst, h} = windows(s), c = worst ? rainCat(worst.peak) : RAIN[0];
+  if(c.n===0) return 'No se espera lluvia en las próximas horas.';
+  const verb = ['', 'Puede caer una llovizna', 'Puede llover moderado', 'Puede llover fuerte', 'Puede llover muy fuerte'][c.n];
+  const a = hourOf(h.time[worst.k]);
+  return `${verb} ${partOfDay(h.time[worst.k])}, de ${range(a, a+2)}.`;
+}
+function reasons(s){
+  const r = state.risk[s.id], ht = nextHigh();
+  const amount = r.r24<2 ? 'Casi no se espera lluvia' : r.r24<10 ? 'Se espera poca lluvia' : r.r24<30 ? 'Se espera bastante lluvia' : 'Se espera mucha lluvia';
+  return [
+    {i:'☔', t:`${amount} en las próximas 24 horas.`},
+    {i:'🌊', t: ht ? `El río estará alto ${atHour(ht.t)}. Con el río alto, el agua de la calle se va más lento.` : 'El río está bajo por ahora.'},
+    {i:'🏘️', t: s.terrain>.7 ? 'Es una zona baja: el agua se junta rápido.' : s.terrain>.5 ? 'A veces se junta agua en esta zona.' : 'Es una zona alta: el agua se va rápido.', demo:true},
+    {i:'📣', t: s.reports>.5 ? 'Varios vecinos reportaron agua hoy.' : s.reports>.2 ? 'Un par de vecinos reportaron agua hoy.' : 'Nadie ha reportado agua hoy.', demo:true}
+  ];
+}
+
+/* ---------- panel ---------- */
+function tipFor(el){ let t = el.querySelector('.tip'); if(!t){ t = document.createElement('div'); t.className = 'tip'; el.appendChild(t); } return t; }
+function renderPanel(){
+  const s = state.sector, r = state.risk[s.id], l = r.level;
+  const st = $('#status'); st.className = 'status '+l.key;
+  st.innerHTML = `<div class="st-top">${drop(l,54)}<div><div class="st-lab">Riesgo de que se inunde tu calle</div><div class="st-word">${l.name}</div></div></div>
+    <p class="st-head">${headline(s)}</p><p class="st-desc">${l.desc}</p>
+    <div class="why"><div class="why-t">¿Por qué?</div><ul>${reasons(s).map(x=>`<li><span>${x.i}</span><span>${x.t}${x.demo?'<span class="badge-demo">ejemplo</span>':''}</span></li>`).join('')}</ul></div>`;
+
+  const {best, worst, h, i} = windows(s);
+  const goodTxt = best ? (rainCat(best.peak).n===0 ? 'Casi sin lluvia y con el río más bajo.' : `Lo más suave del día: ${rainCat(best.peak).word}.`) : '';
+  $('#when').innerHTML = (best ? `<div class="wl good"><span class="wi">🟢</span><div><div class="wt">Mejor hora para salir</div><b>${range(hourOf(h.time[best.k]), hourOf(h.time[best.k])+2)}</b><div class="wd">${goodTxt}</div></div></div>` : '')
+    + (worst && rainCat(worst.peak).n>=2
+      ? `<div class="wl bad"><span class="wi">🟠</span><div><div class="wt">Evita salir</div><b>${range(hourOf(h.time[worst.k]), hourOf(h.time[worst.k])+2)}</b><div class="wd">Lo más fuerte: ${rainCat(worst.peak).word}.</div></div></div>`
+      : `<div class="wl good"><span class="wi">🟢</span><div><div class="wt">Próximas 14 horas</div><b>Sin lluvia fuerte</b></div></div>`);
+
+  dayStrip($('#day'), h, i, best, worst);
+  tideCard($('#tide'));
+
+  const ht = nextHigh();
+  const todo = {
+    tranquilo: ['Revisa que la alcantarilla de tu cuadra no tenga basura.', 'Guarda tus papeles importantes en una funda plástica.', 'Activa los avisos de Tamy para tu barrio.'],
+    ojo: ['Carga el celular y la batería externa.', best ? `Si tienes que salir, hazlo de ${range(hourOf(h.time[best.k]), hourOf(h.time[best.k])+2)}.` : 'Planifica tus salidas con Tamy.', ht ? `El río estará alto ${atHour(ht.t)}: si llueve a esa hora, el agua tarda en irse.` : 'Ten lista la mochila de emergencia.'],
+    cuidado: ['Sube papeles, medicinas y aparatos a un lugar alto.', 'Mueve el carro a una zona alta antes de la lluvia.', worst ? `No salgas de ${range(hourOf(h.time[worst.k]), hourOf(h.time[worst.k])+2)}.` : 'Evita los pasos a desnivel.'],
+    peligro: ['Quédate en un lugar alto y seguro.', 'No camines ni manejes por calles con agua que corre.', 'Si el agua entra a tu casa, corta la luz y llama al 911.']
+  }[l.key];
+  $('#todo').innerHTML = todo.map((t,k)=>`<li><span>${k+1}</span><span>${t}</span></li>`).join('');
+  $('#chatSector').textContent = s.name;
+  $('#liveNote').textContent = state.live.rain ? 'El pronóstico de esta página está en vivo.' : 'Sin conexión al pronóstico: esta página muestra datos de ejemplo.';
+}
+
+function dayStrip(el, h, i, best, worst){
+  const n = Math.min(15, h.time.length-i), H = [8,28,52,76,100];
+  const cols = Array.from({length:n}, (_,k)=>{ const mm = h.precipitation[i+k], c = rainCat(mm); return {t:h.time[i+k], mm, c, p:h.precipitation_probability[i+k]}; });
+  const brk = [];
+  if(best && best.k-i < n) brk.push(`<span class="g" style="grid-column:${best.k-i+1}/span 2">sal</span>`);
+  if(worst && rainCat(worst.peak).n>=2 && worst.k-i < n) brk.push(`<span class="o" style="grid-column:${worst.k-i+1}/span 2">evita</span>`);
+  el.innerHTML = `<div class="strip" role="img" aria-label="Lluvia esperada en las próximas ${n} horas">${cols.map((c,k)=>`<i class="${c.c.n?'':'z'}" style="height:${H[c.c.n]}%" data-k="${k}"></i>`).join('')}</div>
+    <div class="brk">${brk.join('')}</div>
+    <div class="hrs">${cols.filter((_,k)=>k%3===0).map((c,k)=>`<span>${k===0?'ahora':hShort(hourOf(c.t))}</span>`).join('')}</div>
+    <div class="key">Barra más alta = lluvia más fuerte. Toca una barra para ver la hora.</div>`;
+  const tip = tipFor(el);
+  el.querySelectorAll('.strip i').forEach(b=>{
+    const show = ()=>{ const c = cols[+b.dataset.k]; tip.innerHTML = `${hShort(hourOf(c.t))} · <b>${c.c.word}</b>${c.p!=null?` · ${c.p} % de probabilidad`:''}`; tip.style.left = (b.offsetLeft+b.offsetWidth/2)+'px'; tip.style.top = b.offsetTop+'px'; tip.style.opacity = 1; };
+    b.addEventListener('mouseenter', show); b.addEventListener('click', show);
+    b.addEventListener('mouseleave', ()=> tip.style.opacity = 0);
+  });
+}
+
+function tideCard(el){
+  const t = state.tide, v = t.sea_level_height_msl, i = nowIndex(t.time), n = Math.min(25, v.length-i);
+  const rising = v[i+1] > v[i], turns = tideTurns().filter(x=>x.k-i < n);
+  const hi = turns.find(x=>x.high), lo = turns.find(x=>!x.high);
+  const W = 340, H = 76, vals = v.slice(i, i+n), mn = Math.min(...vals), mx = Math.max(...vals);
+  const x = k => 8 + k*(W-16)/(n-1), y = val => 22 + (1-(val-mn)/((mx-mn)||1))*(H-38);
+  const path = vals.map((val,k)=>(k?'L':'M')+x(k).toFixed(1)+','+y(val).toFixed(1)).join('');
+  const marks = turns.map(tt=>{ const k = tt.k-i; return `<circle cx="${x(k)}" cy="${y(v[tt.k])}" r="4" fill="var(--tide)" stroke="var(--surface-2)" stroke-width="2"/><text x="${clamp(x(k),30,W-30)}" y="${tt.high ? y(v[tt.k])-9 : y(v[tt.k])+18}" text-anchor="middle">${tt.high?'alta':'baja'} ${hShort(hourOf(tt.t))}</text>`; }).join('');
+  el.innerHTML = `<p class="tide-now">Ahora el río está <b>${rising?'subiendo ↑':'bajando ↓'}</b>.</p>
+    <p class="tide-txt">${[hi,lo].filter(Boolean).sort((a,b)=>a.k-b.k).map((x,j)=>(j?'y ':'Estará ')+(x.high?'alto ':'bajo ')+atHour(x.t)).join(' ')}. Cuando el río está alto, se tapan las salidas de los desagües y el agua de la calle tarda más en irse.</p>
+    <svg class="tide-svg" viewBox="0 0 ${W} ${H}" role="img" aria-label="Subida y bajada del río en las próximas 24 horas">
+      <path d="${path}" fill="none" stroke="var(--tide)" stroke-width="2.5" stroke-linejoin="round"/>
+      <circle cx="${x(0)}" cy="${y(vals[0])}" r="5" fill="#fff"/><text x="${x(0)+4}" y="${y(vals[0])+(rising?18:-9)}" text-anchor="start">ahora</text>${marks}
+    </svg>`;
+}
+
+/* ---------- map ---------- */
+const map = L.map('map', {zoomControl:true, minZoom:5, maxZoom:15}).setView([-2.17,-79.91], 12);
+map.createPane('sat').style.zIndex = 350;
+map.createPane('radar').style.zIndex = 370;
+map.createPane('labels').style.zIndex = 380; map.getPane('labels').style.pointerEvents = 'none';
+const ESRI = 'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas';
+L.tileLayer(`${ESRI}/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}`, {maxNativeZoom:16, attribution:'Mapa base © Esri, © OpenStreetMap'}).addTo(map);
+L.tileLayer(`${ESRI}/World_Dark_Gray_Reference/MapServer/tile/{z}/{y}/{x}`, {maxNativeZoom:16, pane:'labels'}).addTo(map);
+const sectorBounds = L.latLngBounds(SECTORS.map(s=>[s.lat,s.lon]));
+const fitCity = (anim) => map.fitBounds(sectorBounds, {paddingTopLeft:[30,70], paddingBottomRight:[30,80], animate:!!anim});
+fitCity(false);
+
+const GIBS = 'https://gibs.earthdata.nasa.gov/wmts/epsg3857/best';
+const iso = d => d.toISOString().slice(0,19)+'Z';
+async function gibsTimes(layer, tms, hoursBack){
+  // GeoColor has gaps, so expand the published time ranges instead of assuming every 10 minutes exists
+  const end = new Date(), start = new Date(end - hoursBack*3600e3);
+  const txt = await (await fetch(`${GIBS}/1.0.0/${layer}/default/${tms}/all/${iso(start)}--${iso(end)}.xml`)).text();
+  const dom = (txt.match(/<Domain>([^<]+)<\/Domain>/)||[])[1];
+  if(!dom) throw new Error('no domain');
+  const out = [];
+  dom.split(',').forEach(r=>{ const [a,b] = r.split('/'); for(let t = new Date(a); t <= new Date(b||a); t = new Date(t.getTime()+600e3)) out.push(t); });
+  return out;
+}
+const sat = {layers:[], times:[], i:0, timer:null, playing:true, on:true};
+async function initSat(){
+  const hour = localNow().getUTCHours(), day = hour>=6 && hour<18;
+  let layer = day ? 'GOES-East_ABI_Band2_Red_Visible_1km' : 'GOES-East_ABI_GeoColor', tms = 'GoogleMapsCompatible_Level7';
+  try{
+    const times = await gibsTimes(layer, tms, 3);
+    // the newest visible-band times are listed before all of their tiles exist
+    sat.times = (day ? times.slice(0,-2) : times).slice(-12);
+    if(!sat.times.length) throw new Error('no times');
+  }catch(e){
+    layer = 'GOES-East_ABI_Band13_Clean_Infrared'; tms = 'GoogleMapsCompatible_Level6';
+    const last = Math.floor((Date.now()-50*60e3)/600e3)*600e3; sat.times = Array.from({length:12},(_,k)=> new Date(last-(11-k)*600e3));
+  }
+  // "screen" drops the dark ground of the satellite image so only the white clouds show over the map
+  map.getPane('sat').style.mixBlendMode = 'screen';
+  sat.layers = sat.times.map(t=> L.tileLayer(`${GIBS}/${layer}/default/${iso(t)}/${tms}/{z}/{y}/{x}.png`, {pane:'sat', opacity:0, maxNativeZoom:tms.endsWith('6')?6:7, maxZoom:15, attribution:'Nubes: NOAA GOES-19 · NASA GIBS'}).addTo(map));
+  $('#frame').max = sat.times.length-1;
+  showFrame(sat.times.length-1); playSat(true);
+}
+function showFrame(i){
+  sat.i = i; $('#frame').value = i;
+  sat.layers.forEach((l,k)=> l.setOpacity(sat.on && k===i ? .9 : 0));
+  const t = sat.times[i], mins = Math.round((Date.now()-t)/60e3);
+  $('#frameLabel').textContent = `Nubes de las ${clock(t)} · hace ${mins<60 ? mins+' min' : nf1.format(mins/60)+' h'}`;
+}
+function playSat(on){
+  sat.playing = on; $('#play').textContent = on ? '❚❚' : '▶'; $('#play').setAttribute('aria-label', on?'Pausar animación':'Ver cómo se movieron las nubes');
+  clearInterval(sat.timer);
+  if(on) sat.timer = setInterval(()=> showFrame(sat.i>=sat.layers.length-1 ? 0 : sat.i+1), 700);
+}
+$('#play').onclick = ()=> playSat(!sat.playing);
+$('#frame').oninput = e=>{ playSat(false); showFrame(+e.target.value); };
+
+let radar = null, coverage = null;
+async function initRadar(){
+  try{
+    const j = await getJSON('https://api.rainviewer.com/public/weather-maps.json');
+    radar = L.tileLayer(`${j.host}${j.radar.past[j.radar.past.length-1].path}/256/{z}/{x}/{y}/2/1_1.png`, {pane:'radar', opacity:.85, maxNativeZoom:7, maxZoom:15, attribution:'RainViewer'});
+  }catch(e){}
+  coverage = L.tileLayer('https://tilecache.rainviewer.com/v2/coverage/0/256/{z}/{x}/{y}/0/0_0.png', {pane:'radar', opacity:.45, maxNativeZoom:7, maxZoom:15});
+}
+
+const labelLayer = L.layerGroup().addTo(map), reportLayer = L.layerGroup().addTo(map);
+function drawSectors(){
+  labelLayer.clearLayers();
+  SECTORS.forEach(s=>{
+    const l = state.risk[s.id].level, on = s===state.sector;
+    const html = `<span class="bm${on?' on':''}">${drop(l, on?30:24)}<span class="bn">${s.short}${on?' · '+l.name:''}</span></span>`;
+    L.marker([s.lat,s.lon], {icon:L.divIcon({className:'', html, iconSize:[0,0]}), zIndexOffset: on?1000:0, riseOnHover:true, title:`${s.name}: ${l.name}`})
+      .on('click', ()=>selectSector(s)).addTo(labelLayer);
+  });
+}
+function drawReports(){
+  DEMO_REPORTS.forEach(r=>{
+    L.marker([r.lat,r.lon], {icon:L.divIcon({className:'', html:`<div class="rep">${r.icon}</div>`, iconSize:[30,30], iconAnchor:[15,15]})})
+      .bindPopup(`<b>${r.text}</b><br><span style="color:var(--muted)">${r.ago} · ${r.n} vecinos lo confirmaron</span><br><span class="badge-demo" style="margin:4px 0 0">ejemplo</span>`).addTo(reportLayer);
+  });
+}
+const MY_REPORTS = [];
+function addMyReport(kind, depth, icon){
+  const s = state.sector, ll = [s.lat + (Math.random()-.5)*.006, s.lon + (Math.random()-.5)*.006];
+  L.marker(ll, {icon:L.divIcon({className:'', html:'<div class="rep mine">📍</div>', iconSize:[30,30], iconAnchor:[15,15]})})
+    .bindPopup(`<b>Tu reporte: ${kind}</b><br>${depth?('Hasta: '+depth.toLowerCase()+'<br>'):''}<span style="color:var(--muted)">ahora · Tamy lo está revisando</span>`).addTo(reportLayer);
+  MY_REPORTS.push({lat:ll[0], lon:ll[1], icon, text:kind+(depth?' ('+depth.toLowerCase()+')':''), mine:true});
+  if(rt.res) runRoute(false);
+}
+function renderLegend(){
+  $('#legend').innerHTML = `<b>Riesgo en cada barrio</b>${LEVELS.map(l=>`<div class="r">${drop(l,20)}<strong>${l.name}</strong><span>${l.short}</span></div>`).join('')}
+    <div class="c"><i></i><span>Lo blanco son nubes: una foto real del satélite.</span></div>`;
+}
+const layersOn = {sat:true, radar:false, risk:true, reports:true};
+function toggleLayer(name){
+  const on = layersOn[name] = !layersOn[name];
+  document.querySelector(`[data-layer="${name}"]`).setAttribute('aria-pressed', on);
+  if(name==='sat'){ sat.on = on; showFrame(sat.i); }
+  if(name==='radar'){
+    if(on){ radar && radar.addTo(map); coverage && coverage.addTo(map); $('#radarCallout').style.display='block'; map.flyTo([-1.6,-78.6], 6, {duration:1.2}); }
+    else { radar && radar.remove(); coverage && coverage.remove(); $('#radarCallout').style.display='none'; fitCity(true); }
+  }
+  if(name==='risk') on ? labelLayer.addTo(map) : labelLayer.remove();
+  if(name==='reports') on ? reportLayer.addTo(map) : reportLayer.remove();
+}
+document.querySelectorAll('[data-layer]').forEach(p=>{
+  p.addEventListener('click', ()=>toggleLayer(p.dataset.layer));
+  p.addEventListener('keydown', e=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); toggleLayer(p.dataset.layer); } });
+});
+document.querySelectorAll('[data-view]').forEach(p=> p.addEventListener('click', ()=>{
+  p.dataset.view==='ec' ? map.flyTo([-1.6,-78.6], 6, {duration:1.2}) : fitCity(true);
+}));
+$('#radarCallout .x').onclick = ()=> $('#radarCallout').style.display='none';
+
+function selectSector(s, from){
+  state.sector = s; $('#sectorSel').value = s.id;
+  renderPanel(); drawSectors();
+  if(from !== 'chat') map.panTo([s.lat, s.lon]);
+}
+$('#sectorSel').innerHTML = SECTORS.map(s=>`<option value="${s.id}">${s.name}</option>`).join('');
+$('#sectorSel').onchange = e => selectSector(SECTORS.find(s=>s.id===e.target.value));
+
+/* ---------- safe route ---------- */
+const PLACES = [
+  ...SECTORS.map(s=>({id:'s:'+s.id, name:s.name, lat:s.lat, lon:s.lon, group:'Barrios'})),
+  {id:'p:malecon', name:'Malecón 2000', lat:-2.1935, lon:-79.8798, group:'Lugares'},
+  {id:'p:terminal', name:'Terminal Terrestre', lat:-2.1409, lon:-79.8889, group:'Lugares'},
+  {id:'p:aeropuerto', name:'Aeropuerto', lat:-2.1574, lon:-79.8836, group:'Lugares'},
+  {id:'p:malldelsol', name:'Mall del Sol', lat:-2.1543, lon:-79.8928, group:'Lugares'},
+  {id:'p:espol', name:'ESPOL (Prosperina)', lat:-2.1470, lon:-79.9655, group:'Lugares'}
+];
+const place = id => [...rt.custom, ...PLACES].find(p=>p.id===id);
+const rt = {custom:[], from:null, to:null, offSel:0, res:null, sel:0, pick:null, seq:0};
+rt.from = PLACES[0]; rt.to = PLACES.find(p=>p.id==='p:malecon');
+function dist(a,b){ const x = (b.lon-a.lon)*Math.PI/180*Math.cos((a.lat+b.lat)*Math.PI/360), y = (b.lat-a.lat)*Math.PI/180; return Math.hypot(x,y)*6371000; }
+const nearestSector = p => SECTORS.reduce((m,s)=> dist(p,s) < dist(p,m) ? s : m);
+// only standing water and closed streets block a route; a clogged drain or a loose hillside does not
+const blockingReports = () => [...DEMO_REPORTS, ...MY_REPORTS].filter(r=> r.icon==='🌊' || r.icon==='🚧');
+
+const rmap = L.map('rmap', {zoomControl:true, minZoom:9, maxZoom:17}).setView([-2.17,-79.9], 12);
+rmap.createPane('labels').style.zIndex = 380; rmap.getPane('labels').style.pointerEvents = 'none';
+L.tileLayer(`${ESRI}/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}`, {maxNativeZoom:16, attribution:'Mapa base © Esri, © OpenStreetMap · Caminos: OSRM'}).addTo(rmap);
+L.tileLayer(`${ESRI}/World_Dark_Gray_Reference/MapServer/tile/{z}/{y}/{x}`, {maxNativeZoom:16, pane:'labels'}).addTo(rmap);
+const rRoutes = L.layerGroup().addTo(rmap), rMarks = L.layerGroup().addTo(rmap), rReps = L.layerGroup().addTo(rmap);
+
+function drawRouteReports(hits=[]){
+  rReps.clearLayers();
+  [...DEMO_REPORTS, ...MY_REPORTS].forEach(r=>{
+    L.marker([r.lat,r.lon], {icon:L.divIcon({className:'', html:`<div class="rep${hits.includes(r)?' hit':''}${r.mine?' mine':''}">${r.icon}</div>`, iconSize:[30,30], iconAnchor:[15,15]})})
+      .bindPopup(`<b>${r.text}</b><br><span style="color:var(--muted)">${r.mine?'tu reporte':r.ago+' · ejemplo'}</span>`).addTo(rReps);
+  });
+}
+async function osrm(points, alternatives){
+  const coords = points.map(p=>`${p.lon.toFixed(5)},${p.lat.toFixed(5)}`).join(';');
+  const j = await getJSON(`https://router.project-osrm.org/route/v1/driving/${coords}?alternatives=${alternatives?3:'false'}&overview=full&geometries=geojson&steps=true`);
+  if(j.code!=='Ok') throw new Error(j.code);
+  return j.routes.map(r=>({
+    coords: r.geometry.coordinates.map(([x,y])=>({lat:y, lon:x})), dist:r.distance, dur:r.duration,
+    name: [...new Set(r.legs.flatMap(l=>l.summary.split(', ')).filter(Boolean))].slice(0,2).join(' y ').replace(/Avenida/g,'Av.')
+  }));
+}
+function samples(coords, step=250){
+  const seg = coords.slice(1).map((c,i)=>dist(coords[i],c)), total = sum(seg) || 1, out = [{...coords[0], frac:0}];
+  let acc = 0, next = step;
+  seg.forEach((d,i)=>{
+    while(d && acc+d >= next){ const f = (next-acc)/d, a = coords[i], b = coords[i+1]; out.push({lat:a.lat+(b.lat-a.lat)*f, lon:a.lon+(b.lon-a.lon)*f, frac:next/total}); next += step; }
+    acc += d;
+  });
+  out.push({...coords[coords.length-1], frac:1});
+  return out;
+}
+// cost of driving a route if you leave `off` hours from now: rain on the way, reported water, low ground, then time
+function assess(r, off){
+  const pts = r.pts || (r.pts = samples(r.coords)), reps = blockingReports(), hits = new Set();
+  let rain = 0, peak = 0, low = 0;
+  for(const p of pts){
+    const s = nearestSector(p), h = s.hourly, k = Math.min(nowIndex(h.time) + off + Math.floor(p.frac*r.dur/3600), h.precipitation.length-1);
+    const mm = h.precipitation[k] || 0;
+    rain += mm; peak = Math.max(peak, mm); low += s.terrain;
+    reps.forEach(rep=>{ if(dist(p,rep) < 220) hits.add(rep); });
+  }
+  const n = pts.length;
+  return {cost:(rain/n)*8 + hits.size*30 + (low/n)*6 + r.dur/60*.5, peak, hits:[...hits], low:low/n};
+}
+async function planRoute(from, to, offSel){
+  const seq = ++rt.seq;
+  const cands = await osrm([from,to], true);
+  const first = cands.map(r=>assess(r,0));
+  if(first.every(a=>a.hits.length)){
+    // every option crosses reported water: ask for a way around the first flooded point, on both sides
+    const rep = first[0].hits[0], dx = to.lon-from.lon, dy = to.lat-from.lat, len = Math.hypot(dx,dy) || 1;
+    for(const sg of [1,-1]){
+      try{ const [d] = await osrm([from, {lat:rep.lat + dx/len*.008*sg, lon:rep.lon - dy/len*.008*sg}, to], false); if(d){ d.detour = true; cands.push(d); } }catch(e){}
+    }
+  }
+  const uniq = cands.filter((r,i)=> !cands.slice(0,i).some(q=> Math.abs(q.dist-r.dist) < r.dist*.01));
+  let off = offSel;
+  if(offSel==='best'){
+    let best = null;
+    for(let o=0; o<=6; o++) for(const r of uniq){ const c = assess(r,o).cost; if(!best || c < best.c) best = {c, o}; }
+    off = best.o;
+  }
+  const list = uniq.map(r=>({r, a:assess(r,off)})).sort((x,y)=>x.a.cost-y.a.cost).slice(0,3);
+  const later = [0,1,2,3,4,5,6].map(o=>({o, c:assess(list[0].r,o).cost})).reduce((m,x)=> x.c < m.c ? x : m);
+  return seq===rt.seq ? {from, to, off, list, later} : null;
+}
+const departWords = off => off===0 ? 'ahora' : atHour(hourKey(new Date(localNow().getTime()+off*3600e3)));
+function routeReasons(x){
+  const a = x.a, c = rainCat(a.peak), out = [];
+  out.push(['☔', c.n===0 ? 'Sin lluvia en el camino.' : `En el camino: ${c.word}.`]);
+  out.push(a.hits.length ? ['⚠️', `Pasa por ${a.hits.length===1 ? 'un punto' : a.hits.length+' puntos'} con agua reportada: ${a.hits[0].text.toLowerCase()}.`] : ['✅', 'Sin agua reportada en el camino.']);
+  if(a.low > .72) out.push(['🏘️', 'Cruza zonas bajas, donde el agua se junta rápido.']);
+  if(x.r.detour) out.push(['↪️', 'Rodea el punto con agua.']);
+  return out;
+}
+function compareTag(x, b){
+  const dm = Math.round((b.r.dur - x.r.dur)/60);
+  return dm >= 1 ? `${dm} min más corta` : dm <= -1 ? `${-dm} min más larga` : 'Tiempo parecido';
+}
+function renderRoute(res){
+  const {list, off, later} = res, b = list[0];
+  let tip;
+  if(rt.offSel==='best') tip = `Sal ${departWords(off)}: es cuando menos llueve en tu camino.`;
+  else if(later.o!==off && later.c < b.a.cost - 2) tip = `Si puedes, sal ${departWords(later.o)}: habrá menos lluvia en el camino.`;
+  else tip = off===0 ? 'Es un buen momento para salir.' : `Saliendo ${departWords(off)} vas bien.`;
+  $('#rOut').innerHTML = `<div class="rtip">${avatar(26)}<div><b>Tamy:</b> ${tip}</div></div>` + list.map((x,i)=>`
+    <button class="rcard${i===0?' best':''}${i===rt.sel?' on':''}" data-i="${i}">
+      <div class="rh"><span class="ln" style="background:${i===0?'var(--brand)':'#8a96a0'}"></span>${i===0?'Ruta recomendada':'Alternativa '+i}<span class="badge">${i===0?'Más segura':compareTag(x,b)}</span></div>
+      <div class="via">${x.r.name ? 'Por '+x.r.name : 'Por la ruta marcada'} · ~${Math.round(x.r.dur/60)} min · ${nf1.format(x.r.dist/1000)} km</div>
+      <ul>${routeReasons(x).map(([ic,t])=>`<li><span>${ic}</span><span>${t}</span></li>`).join('')}</ul>
+    </button>`).join('');
+}
+function drawRoutes(res, fit){
+  rRoutes.clearLayers(); rMarks.clearLayers();
+  const ll = r => r.coords.map(p=>[p.lat,p.lon]);
+  res.list.forEach((x,i)=>{ if(i) L.polyline(ll(x.r), {color:i===rt.sel?'#c7d3db':'#8a96a0', weight:i===rt.sel?6:4, opacity:.95, dashArray:i===rt.sel?null:'8 8'}).on('click',()=>selectRoute(i)).addTo(rRoutes); });
+  L.polyline(ll(res.list[0].r), {color:'#04211f', weight:11, opacity:.7}).addTo(rRoutes);
+  L.polyline(ll(res.list[0].r), {color:'#2fd3c6', weight:rt.sel===0?7:5}).on('click',()=>selectRoute(0)).addTo(rRoutes);
+  [[res.from,'A','#fff','#0b131a'],[res.to,'B','#2fd3c6','#04211f']].forEach(([p,t,bg,fg])=>
+    L.marker([p.lat,p.lon], {icon:L.divIcon({className:'', html:`<div class="abm" style="background:${bg};color:${fg}">${t}</div>`, iconSize:[30,30], iconAnchor:[15,15]}), zIndexOffset:2000}).bindTooltip(p.name).addTo(rMarks));
+  drawRouteReports(res.list.flatMap(x=>x.a.hits));
+  if(fit) rmap.fitBounds(L.latLngBounds(res.list.flatMap(x=>ll(x.r))), {padding:[50,50]});
+}
+function selectRoute(i){ rt.sel = i; drawRoutes(rt.res, false); renderRoute(rt.res); }
+$('#rOut').addEventListener('click', e=>{ const c = e.target.closest('.rcard'); if(c) selectRoute(+c.dataset.i); });
+async function runRoute(fit=true){
+  if(!SECTORS[0].hourly) return;
+  if(rt.from.id===rt.to.id){ $('#rOut').innerHTML = '<p class="muted" style="margin:0">Elige un destino distinto de la salida.</p>'; return; }
+  $('#rOut').innerHTML = '<p class="muted" style="margin:0">Buscando el camino con menos agua…</p>';
+  try{
+    const res = await planRoute(rt.from, rt.to, rt.offSel);
+    if(!res) return;
+    rt.res = res; rt.sel = 0; drawRoutes(res, fit); renderRoute(res);
+  }catch(e){ $('#rOut').innerHTML = '<p class="muted" style="margin:0">No pudimos calcular la ruta ahora. Intenta de nuevo en un momento.</p>'; }
+}
+function fillPlaces(){
+  const opt = p => `<option value="${p.id}">${p.name}</option>`;
+  const html = (rt.custom.length ? `<optgroup label="Tus puntos">${rt.custom.map(opt).join('')}</optgroup>` : '')
+    + ['Barrios','Lugares'].map(g=>`<optgroup label="${g}">${PLACES.filter(p=>p.group===g).map(opt).join('')}</optgroup>`).join('');
+  $('#rFrom').innerHTML = html; $('#rTo').innerHTML = html;
+  $('#rFrom').value = rt.from.id; $('#rTo').value = rt.to.id;
+}
+function setCustom(p){ rt.custom = [p, ...rt.custom.filter(x=>x.id!==p.id)]; }
+$('#rFrom').onchange = e=>{ rt.from = place(e.target.value); runRoute(); };
+$('#rTo').onchange = e=>{ rt.to = place(e.target.value); runRoute(); };
+document.querySelectorAll('#rWhen button').forEach(b=> b.onclick = ()=>{
+  document.querySelectorAll('#rWhen button').forEach(x=>x.classList.toggle('on', x===b));
+  rt.offSel = b.dataset.off==='best' ? 'best' : +b.dataset.off; runRoute(false);
+});
+document.querySelectorAll('[data-pick]').forEach(b=> b.onclick = ()=>{
+  rt.pick = b.dataset.pick;
+  $('#rhint').textContent = rt.pick==='from' ? 'Toca el mapa donde sales' : 'Toca el mapa a donde vas';
+  $('#rhint').style.display = 'block'; rmap.getContainer().style.cursor = 'crosshair';
+});
+rmap.on('click', e=>{
+  if(!rt.pick) return;
+  const p = {id:'pick:'+rt.pick, name: rt.pick==='from' ? '📍 Salida en el mapa' : '📍 Destino en el mapa', lat:e.latlng.lat, lon:e.latlng.lng};
+  setCustom(p); rt[rt.pick] = p; rt.pick = null;
+  $('#rhint').style.display = 'none'; rmap.getContainer().style.cursor = '';
+  fillPlaces(); runRoute();
+});
+$('#rGeo').onclick = ()=>{
+  if(!navigator.geolocation) return toast('Tu navegador no comparte la ubicación. Elige un punto en el mapa.');
+  navigator.geolocation.getCurrentPosition(pos=>{
+    const p = {id:'me', name:'◎ Mi ubicación', lat:pos.coords.latitude, lon:pos.coords.longitude};
+    if(dist(p, {lat:-2.17, lon:-79.9}) > 40000) return toast('Estás lejos de Guayaquil. Por ahora el prototipo solo cubre la ciudad.');
+    setCustom(p); rt.from = p; fillPlaces(); runRoute();
+  }, ()=> toast('No pudimos ver tu ubicación. Elige un punto en el mapa.'), {timeout:8000});
+};
+
+/* ---------- family ---------- */
+// sample family; positions move on real streets, and each zone uses the live risk of the nearest barrio
+const FAMILY = [
+  {id:'yo', rel:'Tú', ini:'Tú', color:'#1f6f6a', lat:-2.1405, lon:-79.9008, status:'ok', okAgo:0, battery:78, me:true},
+  {id:'mama', rel:'Mamá', ini:'M', color:'#E8746A', lat:-2.1652, lon:-79.9125, status:'ok', okAgo:5, battery:64},
+  {id:'hija', rel:'Hija', ini:'H', color:'#9A7BD6', lat:-2.1612, lon:-79.9068, status:'ok', okAgo:12, battery:41, note:'En el colegio'},
+  {id:'papa', rel:'Papá', ini:'P', color:'#3E8FC9', lat:-2.1940, lon:-79.8840, status:'unknown', okAgo:null, battery:18, moving:true}
+];
+const STATUS = {ok:{t:'Está bien', c:'#0ca30c'}, wait:{t:'Esperando respuesta…', c:'#7d8c97'}, unknown:{t:'Sin confirmar', c:'#fab219'}, help:{t:'Necesita ayuda', c:'#d03b3b'}};
+const fam = {path:[], step:0, timer:null, privacy:'always', warned:false};
+const member = id => FAMILY.find(m=>m.id===id);
+const fmap = L.map('fmap', {zoomControl:true, minZoom:9, maxZoom:17}).setView([-2.17,-79.885], 13);
+fmap.createPane('labels').style.zIndex = 380; fmap.getPane('labels').style.pointerEvents = 'none';
+L.tileLayer(`${ESRI}/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}`, {maxNativeZoom:16, attribution:'Mapa base © Esri, © OpenStreetMap'}).addTo(fmap);
+L.tileLayer(`${ESRI}/World_Dark_Gray_Reference/MapServer/tile/{z}/{y}/{x}`, {maxNativeZoom:16, pane:'labels'}).addTo(fmap);
+const fReps = L.layerGroup().addTo(fmap);
+
+function zoneOf(m){ const s = nearestSector(m); return {s, l:state.risk[s.id].level, wet:blockingReports().find(r=>dist(m,r) < 300)}; }
+const hidden = m => m.me && fam.privacy!=='always';
+function famIcon(m){
+  return L.divIcon({className:'', html:`<div class="fm${m.status==='help'?' sos':''}" style="--c:${STATUS[m.status].c};background:${m.color}">${m.ini}${m.moving?'<i>🚗</i>':''}</div>`, iconSize:[38,38], iconAnchor:[19,19]});
+}
+function drawFamily(){
+  FAMILY.forEach(m=>{
+    if(hidden(m)){ if(m.marker){ m.marker.remove(); m.marker = null; } return; }
+    if(!m.marker) m.marker = L.marker([m.lat,m.lon], {icon:famIcon(m), zIndexOffset:1000}).addTo(fmap);
+    m.marker.setLatLng([m.lat,m.lon]).setIcon(famIcon(m)).setZIndexOffset(m.status==='help'?3000:1000);
+    m.marker.unbindTooltip().bindTooltip(`${m.rel}: ${STATUS[m.status].t}`);
+  });
+}
+function renderFamily(){
+  const ok = FAMILY.filter(m=>m.status==='ok').length, help = FAMILY.find(m=>m.status==='help');
+  const sum = $('#fSum');
+  sum.className = 'fsum ' + (help ? 'bad' : ok===FAMILY.length ? 'good' : 'warn');
+  sum.innerHTML = help ? `🚨 <b>${help.rel} pidió ayuda.</b> Mira dónde está en el mapa.` : `<b>${ok} de ${FAMILY.length}</b> confirmaron que están bien.`;
+  $('#fList').innerHTML = FAMILY.map(m=>{
+    const z = zoneOf(m), st = STATUS[m.status];
+    const where = hidden(m) ? (fam.privacy==='paused' ? 'Ubicación pausada' : 'Solo se comparte en una emergencia') : `${m.moving ? '🚗 En camino · ' : m.note ? m.note+' · ' : ''}${z.s.name} ${drop(z.l,14)} ${z.l.name}`;
+    const seen = m.me ? 'Tú' : m.status==='ok' ? `Confirmó ${m.okAgo ? 'hace '+m.okAgo+' min' : 'ahora'}` : m.status==='help' ? 'Pidió ayuda hace un momento' : 'No ha confirmado';
+    return `<div class="fr ${m.status}">
+      <div class="fav" style="background:${m.color};--c:${st.c}">${m.ini}</div>
+      <div><div class="fn"><b>${m.rel}</b><span class="fst"><i style="background:${st.c}"></i>${st.t}</span></div>
+        <div class="fl">📍 ${where}</div>
+        ${z.wet && !hidden(m) ? `<div class="fw">⚠️ Cerca de agua reportada: ${z.wet.text.toLowerCase()}</div>` : ''}
+        <div class="fmeta">${seen} · 🔋 ${m.battery} %</div></div>
+      <div class="fa">${m.me ? '' : `<button data-call="${m.id}">Llamar</button>`}${hidden(m) ? '' : `<button data-see="${m.id}">Ver</button>`}</div>
+    </div>`;
+  }).join('');
+}
+function updateFamily(){ drawFamily(); renderFamily(); }
+function showSos(m){
+  const z = zoneOf(m), b = $('#fBanner');
+  b.innerHTML = `<b>🚨 ${m.rel} pidió ayuda</b><span>${z.s.name}${z.wet ? ' · cerca de agua reportada' : ''} · hace un momento</span>
+    <div class="fbb"><button data-call="${m.id}">📞 Llamar a ${m.rel}</button><button data-911>🚑 Llamar al 911</button><button data-route="${m.id}">🧭 Ruta segura hasta ${m.rel}</button></div><button class="x" aria-label="Cerrar">×</button>`;
+  b.style.display = 'block';
+}
+$('#familia').addEventListener('click', e=>{
+  const t = e.target.closest('button'); if(!t) return;
+  if(t.dataset.call) toast(`En el prototipo no hacemos llamadas reales.`);
+  if('911' in t.dataset) toast('En una emergencia real, este botón marca al 911.');
+  if(t.dataset.see){ const m = member(t.dataset.see); fmap.flyTo([m.lat,m.lon], 15, {duration:1}); }
+  if(t.dataset.route){
+    const m = member(t.dataset.route), dest = {id:'fam:'+m.id, name:'📍 Donde está '+m.rel, lat:m.lat, lon:m.lon};
+    setCustom(dest); rt.to = dest; rt.from = place('s:'+state.sector.id); fillPlaces(); runRoute();
+    document.getElementById('ruta').scrollIntoView({behavior:'smooth'});
+  }
+  if(t.classList.contains('x')) $('#fBanner').style.display = 'none';
+});
+function askFamily(){
+  FAMILY.filter(m=>!m.me && m.status!=='help').forEach(m=> m.status = 'wait');
+  updateFamily();
+  [['mama',1500],['hija',3000]].forEach(([id,ms])=> setTimeout(()=>{ const m = member(id); if(m.status==='wait'){ m.status = 'ok'; m.okAgo = 0; updateFamily(); } }, ms));
+  setTimeout(()=>{ const p = member('papa'); if(p.status==='wait'){ p.status = 'unknown'; updateFamily(); toast('Papá no responde. Tamy le escribió por WhatsApp y te avisa apenas conteste.'); } }, 6000);
+}
+$('#fAsk').onclick = askFamily;
+$('#fSos').onclick = ()=>{ const p = member('papa'); p.status = 'help'; updateFamily(); showSos(p); fmap.flyTo([p.lat,p.lon], 15, {duration:1}); };
+document.querySelectorAll('#fPriv button').forEach(b=> b.onclick = ()=>{
+  document.querySelectorAll('#fPriv button').forEach(x=>x.classList.toggle('on', x===b));
+  fam.privacy = b.dataset.p;
+  $('#fPrivTxt').textContent = {
+    always:'Tu familia ve dónde estás mientras compartes. Puedes pausarlo cuando quieras.',
+    emergency:'Tu familia solo ve dónde estás si tú pides ayuda o Tamy detecta peligro en tu zona.',
+    paused:'Nadie ve dónde estás. Tu familia solo ve si confirmaste que estás bien.'
+  }[fam.privacy];
+  updateFamily();
+});
+async function initFamily(){
+  const p = member('papa'), to = {lat:-2.1705, lon:-79.8365};
+  try{ fam.path = samples((await osrm([p, to], false))[0].coords, 90); }
+  catch(e){ fam.path = Array.from({length:40}, (_,k)=>({lat:p.lat+(to.lat-p.lat)*k/39, lon:p.lon+(to.lon-p.lon)*k/39})); }
+  [...DEMO_REPORTS].forEach(r=> L.marker([r.lat,r.lon], {icon:L.divIcon({className:'', html:`<div class="rep">${r.icon}</div>`, iconSize:[30,30], iconAnchor:[15,15]})}).bindPopup(`<b>${r.text}</b><br><span style="color:var(--muted)">${r.ago} · ejemplo</span>`).addTo(fReps));
+  updateFamily();
+  fmap.fitBounds(L.latLngBounds([...FAMILY.map(m=>[m.lat,m.lon]), [to.lat,to.lon]]), {padding:[60,60]});
+  fam.timer = setInterval(()=>{
+    if(fam.step >= fam.path.length-1){ clearInterval(fam.timer); p.moving = false; updateFamily(); return; }
+    const q = fam.path[++fam.step]; p.lat = q.lat; p.lon = q.lon;
+    drawFamily();
+    if(fam.step % 4===0) renderFamily();
+    if(!fam.warned && zoneOf(p).wet && p.status!=='ok'){ fam.warned = true; renderFamily(); toast('Tamy: Papá está cerca de una calle con agua y no ha confirmado que está bien.'); }
+  }, 1200);
+}
+
+/* ---------- Tamy chat ---------- */
+const msgs = $('#msgs');
+function toast(t){ const el = $('#toast'); el.textContent = t; el.classList.add('show'); clearTimeout(el._t); el._t = setTimeout(()=>el.classList.remove('show'), 2600); }
+function addMsg(html, who='g'){
+  const d = document.createElement('div'); d.className = 'm '+who;
+  d.innerHTML = who==='g' ? `<div class="who">${avatar(18)} Tamy</div>${html}` : html;
+  msgs.appendChild(d); msgs.scrollTop = msgs.scrollHeight; return d;
+}
+function tamySay(html, delay=650){
+  const t = addMsg('<span class="typing"><i></i><i></i><i></i></span>');
+  return new Promise(res=> setTimeout(()=>{ t.innerHTML = `<div class="who">${avatar(18)} Tamy</div>${html}`; msgs.scrollTop = msgs.scrollHeight; res(t); }, delay));
+}
+function miniDay(s){
+  const h = s.hourly, i = nowIndex(h.time), n = Math.min(15, h.time.length-i), H = [8,28,52,76,100];
+  return `<div class="mini"><div class="strip" style="height:44px">${h.precipitation.slice(i,i+n).map(mm=>{ const c = rainCat(mm); return `<i class="${c.n?'':'z'}" style="height:${H[c.n]}%"></i>`; }).join('')}</div>
+    <div class="hrs">${h.time.slice(i,i+n).filter((_,k)=>k%3===0).map((t,k)=>`<span>${k===0?'ahora':hShort(hourOf(t))}</span>`).join('')}</div>
+    <div class="cap">Lluvia en ${s.name}, próximas ${n} horas. Barra más alta = lluvia más fuerte.</div></div>`;
+}
+const intents = {
+  async lluvia(){
+    const s = state.sector, l = state.risk[s.id].level;
+    await tamySay(`<p>En <b>${s.name}</b>: ${headline(s).replace(/^./, c=>c.toLowerCase())}</p>${miniDay(s)}<p>Tu barrio está en ${lvlPill(l)}: ${l.desc.replace(/^./, c=>c.toLowerCase())}</p>`);
+    offer(['¿A qué hora salgo?','¿Qué hago si entra agua a mi casa?']);
+  },
+  async salir(){
+    const s = state.sector, {best, worst, h} = windows(s), ht = nextHigh();
+    const b = best && hourOf(h.time[best.k]), w = worst && hourOf(h.time[worst.k]);
+    await tamySay(`<p>${best ? `Sal de <b>${range(b, b+2)}</b>. Es el momento más tranquilo en ${s.name}.` : 'Hoy no veo un buen momento. Si puedes, quédate donde estás.'}</p>
+      ${worst && rainCat(worst.peak).n>=2 ? `<p>Evita salir de <b>${range(w, w+2)}</b>: es lo más fuerte de la lluvia.</p>` : ''}
+      ${ht ? `<p>🌊 El río estará alto ${atHour(ht.t)}. Si llueve cerca de esa hora, el agua se queda más tiempo en la calle.</p>` : ''}`);
+    offer(['¿Por dónde me voy más seguro?','Avísale a mi familia que estoy bien']);
+  },
+  async ruta(){
+    const from = PLACES.find(p=>p.id==='s:'+state.sector.id), to = PLACES.find(p=>p.id===(state.sector.id==='centro' ? 'p:malldelsol' : 'p:malecon'));
+    rt.from = from; rt.to = to; rt.offSel = 0; fillPlaces();
+    document.querySelectorAll('#rWhen button').forEach(x=>x.classList.toggle('on', x.dataset.off==='0'));
+    let res = null;
+    try{ res = await planRoute(from, to, 0); }catch(e){}
+    if(!res){ await tamySay('<p>No pude calcular la ruta ahora. Prueba en un momento en la sección «Ruta segura».</p>'); offer(); return; }
+    rt.res = res; rt.sel = 0; drawRoutes(res, true); renderRoute(res);
+    const b = res.list[0], alt = res.list[1];
+    const why = !alt ? '' : alt.a.hits.length ? 'pasa por agua reportada' : alt.r.dur > b.r.dur ? 'es más larga' : 'tiene más lluvia en el camino';
+    const m = await tamySay(`<p>De <b>${from.name}</b> al <b>${to.name}</b>, te recomiendo ir ${b.r.name ? 'por <b>'+b.r.name+'</b>' : 'por la ruta marcada'}: unos ${Math.round(b.r.dur/60)} minutos sin contar el tráfico.</p><ul>${routeReasons(b).map(([ic,t])=>`<li>${ic} ${t}</li>`).join('')}</ul>${alt ? `<p>La otra opción ${why}.</p>` : ''}<div class="opts"><button>Ver la ruta en el mapa</button></div>`);
+    m.querySelector('.opts button').onclick = ()=> document.getElementById('ruta').scrollIntoView({behavior:'smooth'});
+    offer(['¿A qué hora salgo?','Reportar una calle inundada']);
+  },
+  async donde(){
+    const lines = FAMILY.filter(m=>!m.me).map(m=>{ const z = zoneOf(m); return `<li><b>${m.rel}</b>: ${STATUS[m.status].t.toLowerCase()}. ${m.moving ? 'Va en camino; ahora está en' : m.note ? m.note+', en' : 'Está en'} ${z.s.name} (${z.l.name.toLowerCase()})${z.wet ? '. ⚠️ Está cerca de agua reportada' : ''}.</li>`; }).join('');
+    const pending = FAMILY.filter(m=>!m.me && m.status!=='ok');
+    const m = await tamySay(`<p>Así está tu familia ahora:</p><ul>${lines}</ul>${pending.length ? `<p>${pending.map(x=>x.rel).join(' y ')} no ha${pending.length>1?'n':''} confirmado. ¿Le pregunto si está bien?</p>` : ''}<div class="opts">${pending.length ? '<button data-a="ask">Sí, pregúntale</button>' : ''}<button data-a="map">Ver en el mapa</button></div>`);
+    m.querySelectorAll('.opts button').forEach(b=> b.onclick = ()=>{
+      if(b.dataset.a==='ask'){ b.disabled = true; askFamily(); toast('Tamy le preguntó a tu familia si está bien.'); }
+      else document.getElementById('familia').scrollIntoView({behavior:'smooth'});
+    });
+    offer(['Avísale a mi familia que estoy bien','¿Por dónde me voy más seguro?']);
+  },
+  async casa(){
+    await tamySay(`<p>Si entra agua a tu casa, haz esto en orden:</p><ol>
+      <li><b>Corta la luz</b> desde el breaker, solo si llegas sin pisar agua.</li>
+      <li>Sube papeles, medicinas y aparatos a un lugar alto.</li>
+      <li>No camines por agua que corre: con 15 cm te puede tumbar y con 30 cm puede arrastrar un carro.</li>
+      <li>Aléjate de cables caídos y postes.</li>
+      <li>Si el agua sigue subiendo, ve al piso más alto y llama al <b>911</b>.</li></ol>
+      <p>Después, toma fotos de los daños antes de limpiar. Te sirven para el seguro y para pedir ayuda.</p>`);
+    offer(['Reportar una calle inundada','Arma mi mochila de emergencia']);
+  },
+  async mochila(){
+    const items = ['Agua: 4 litros por persona por día, para 3 días','Comida que no se dañe y un abrelatas','Linterna y pilas','Cargador y batería externa','Botiquín y tus medicinas','Copias de cédula y papeles en funda plástica','Dinero en efectivo','Silbato','Una muda de ropa seca','Comida y agua para tu mascota'];
+    const m = await tamySay(`<p>Tu mochila de emergencia. Marca lo que ya tienes:</p><div class="check">${items.map(t=>`<label><input type="checkbox"> ${t}</label>`).join('')}</div><div class="prog"><i></i></div><div class="muted prog-txt" style="font-size:12.5px;margin-top:4px">0 de ${items.length} listos</div>`);
+    const boxes = m.querySelectorAll('input'), bar = m.querySelector('.prog i'), txt = m.querySelector('.prog-txt');
+    boxes.forEach(b=> b.onchange = ()=>{ const n = [...boxes].filter(x=>x.checked).length; bar.style.width = (n/items.length*100)+'%'; txt.textContent = `${n} de ${items.length} listos`; if(n===items.length) toast('¡Mochila lista! Tamy te recuerda revisarla cada mes.'); });
+    offer(['¿Cómo va El Niño esta temporada?']);
+  },
+  async reportar(){
+    const m = await tamySay(`<p>Gracias por ayudar a tus vecinos. ¿Qué ves en <b>${state.sector.name}</b>?</p><div class="opts">${['🌊 Agua en la calle','🚧 Calle cerrada','🕳️ Alcantarilla tapada','⛰️ Deslave'].map(o=>`<button>${o}</button>`).join('')}</div>`);
+    m.querySelectorAll('button').forEach(b=> b.onclick = async ()=>{
+      m.querySelectorAll('button').forEach(x=>x.disabled=true);
+      const kind = b.textContent; addMsg(kind, 'u');
+      if(kind.includes('Agua')){
+        const m2 = await tamySay(`<p>¿Hasta dónde llega el agua?</p><div class="opts">${['Tobillo','Rodilla','Cintura'].map(o=>`<button>${o}</button>`).join('')}</div>`);
+        m2.querySelectorAll('button').forEach(c=> c.onclick = ()=>{ m2.querySelectorAll('button').forEach(x=>x.disabled=true); addMsg(c.textContent,'u'); finish(kind, c.textContent); });
+      } else finish(kind);
+    });
+    async function finish(kind, depth){
+      addMyReport(kind.replace(/^\S+\s/,''), depth, kind.split(' ')[0]);
+      await tamySay(`<p>Listo ✅. Tu reporte ya está en el mapa. Lo reviso y lo comparo con otros reportes cerca antes de avisar al barrio.</p><p class="muted" style="font-size:12.5px">Por WhatsApp puedes mandarme una foto o un audio y yo hago el resto.</p>`);
+      toast('Tu reporte aparece en el mapa, arriba.');
+      offer(['¿Qué hago si entra agua a mi casa?']);
+    }
+  },
+  async nino(){
+    await tamySay(`<p>Así va El Niño en Guayaquil:</p><ul>
+      <li>El INAMHI anunció el <b>23 de octubre</b> que El Niño entra en su fase más fuerte.</li>
+      <li>En septiembre y octubre ya llovió <b>2 de cada 3 partes</b> de lo que llueve en un invierno normal completo.</li>
+      <li>Los expertos esperan lluvias muy fuertes <b>por lo menos hasta abril</b>.</li></ul>
+      <div class="mini"><div style="display:flex;justify-content:space-between;font-size:12px;color:var(--muted)"><span>Lo que ya llovió</span><span>Un invierno normal</span></div><div class="meter" style="margin:6px 0"><i style="width:64.8%"></i></div><div class="cap">65 %, y el invierno recién empieza</div></div>
+      <p>Te propongo preparar tu casa esta semana: limpiar el canal del techo y armar la mochila.</p>
+      <p class="muted" style="font-size:12.5px">Fuentes: INAMHI, Primicias y El Universo.</p>`);
+    offer(['Arma mi mochila de emergencia']);
+  },
+  async familia(){
+    const s = state.sector, l = state.risk[s.id].level, later = hourKey(new Date(localNow().getTime()+2*3600e3));
+    const m = await tamySay(`<p>Te preparé este mensaje para tu grupo «Familia»:</p><div class="mini" style="background:#005c4b;border-color:transparent">Estoy bien 🙏. Estoy en ${s.name}. Aquí estamos en «${l.name}». Les escribo de nuevo ${atHour(later)}.</div><div class="opts"><button>Enviar por WhatsApp</button><button>Cambiar el mensaje</button></div>`);
+    m.querySelectorAll('button').forEach(b=> b.onclick = ()=>{ m.querySelectorAll('button').forEach(x=>x.disabled=true); toast('En el prototipo no enviamos mensajes reales.'); });
+    offer(['¿A qué hora salgo?']);
+  },
+  async fallback(){
+    await tamySay(`<p>En este prototipo respondo sobre la lluvia, a qué hora salir, qué hacer si entra agua, la mochila, reportes, El Niño y avisos a tu familia.</p><p>En la versión real entiendo cualquier pregunta, porque uso un modelo de lenguaje con el pronóstico, la marea y los avisos oficiales.</p>`);
+    offer();
+  }
+};
+const CHIPS = [['¿Va a llover fuerte hoy?','lluvia'],['¿Por dónde me voy más seguro?','ruta'],['¿A qué hora salgo?','salir'],['¿Qué hago si entra agua a mi casa?','casa'],['Arma mi mochila de emergencia','mochila'],['Reportar una calle inundada','reportar'],['¿Cómo va El Niño esta temporada?','nino'],['¿Dónde está mi familia?','donde'],['Avísale a mi familia que estoy bien','familia']];
+function offer(list){
+  const items = list ? CHIPS.filter(c=>list.includes(c[0])) : CHIPS;
+  $('#chips').innerHTML = items.map(c=>`<button data-i="${c[1]}">${c[0]}</button>`).join('') + (list ? '<button data-i="__all">Ver más</button>' : '');
+  $('#chips').querySelectorAll('button').forEach(b=> b.onclick = ()=>{ if(b.dataset.i==='__all') return offer(); ask(b.textContent, b.dataset.i); });
+}
+const fold = t => t.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'');
+function route(text){
+  const t = fold(text);
+  const hit = SECTORS.find(s => t.includes(fold(s.short).split(' ')[0]));
+  if(hit && hit !== state.sector) selectSector(hit, 'chat');
+  if(/ruta|camino|por donde|llegar|irme/.test(t)) return 'ruta';
+  if(/salg|salir|hora|moverme|regres/.test(t)) return 'salir';
+  if(/casa|entra|entro|adentro|hogar/.test(t)) return 'casa';
+  if(/mochila|kit|preparar|emergencia/.test(t)) return 'mochila';
+  if(/report|inundad|calle|alcantarill|deslave/.test(t)) return 'reportar';
+  if(/nino|temporada|fenomeno|invierno/.test(t)) return 'nino';
+  if(/donde esta|donde estan|ubicacion|como esta mi|como estan/.test(t)) return 'donde';
+  if(/familia|mama|papa|avis|estoy bien/.test(t)) return 'familia';
+  if(/llov|lluv|aguacero|tormenta|clima|tiempo/.test(t)) return 'lluvia';
+  return 'fallback';
+}
+function ask(text, intent){ addMsg(text.replace(/[<>&]/g, c=>({'<':'&lt;','>':'&gt;','&':'&amp;'}[c])), 'u'); $('#chips').innerHTML = ''; intents[intent||route(text)](); }
+$('#composer').onsubmit = e=>{ e.preventDefault(); const v = $('#q').value.trim(); if(!v) return; $('#q').value = ''; ask(v); };
+
+function playWhatsApp(){
+  document.querySelectorAll('#waBody .wa').forEach((x,k)=> setTimeout(()=> x.classList.add('show'), 500 + k*1300));
+}
+new IntersectionObserver((es,ob)=>{ if(es[0].isIntersecting){ playWhatsApp(); ob.disconnect(); } }, {threshold:.35}).observe($('#waBody'));
+
+/* ---------- boot ---------- */
+(async function boot(){
+  renderLegend(); initSat(); initRadar(); drawReports();
+  await Promise.all([loadForecast(), loadTide()]);
+  SECTORS.forEach(s=> state.risk[s.id] = computeRisk(s));
+  drawSectors(); renderPanel();
+  fillPlaces(); drawRouteReports(); initFamily();
+  new IntersectionObserver((es,ob)=>{ if(es[0].isIntersecting){ ob.disconnect(); if(!rt.res) runRoute(); } }, {threshold:.25}).observe($('#ruta'));
+  const l = state.risk[state.sector.id].level;
+  await tamySay(`<p>¡Hola! Soy <b>Tamy</b> 💧. Mi nombre viene de <i>tamya</i>, lluvia en kichwa. Vigilo el cielo, la marea del Guayas y lo que reportan tus vecinos.</p><p>Ahora mismo, ${state.sector.name} está en ${lvlPill(l)}. ¿En qué te ayudo?</p>`, 300);
+  offer();
+  new IntersectionObserver((es,ob)=>{ if(es[0].isIntersecting){ ob.disconnect(); setTimeout(()=>{ if(msgs.children.length===1) ask('¿Va a llover fuerte hoy?','lluvia'); }, 700); } }, {threshold:.5}).observe($('#chat'));
+  let rt; addEventListener('resize', ()=>{ clearTimeout(rt); rt = setTimeout(renderPanel, 150); });
+})();
+</script>
+</body>
+</html>

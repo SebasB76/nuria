@@ -1,0 +1,743 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Aguaje · Un día de lluvia con la app (pantallas)</title>
+<meta name="description" content="Las pantallas de Aguaje, contadas como un día de lluvia en Guayaquil. Sin términos técnicos.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Onest:wght@400;500;600;700&family=Caveat:wght@600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#F3EEE4; --paper-2:#E9E1D2; --card:#FFFFFF;
+  --ink:#10283A; --ink-2:#4B5D69; --muted:#8B9297;
+  --cel:#3BA7DE; --cel-deep:#1F86C0; --cel-soft:#DCEFF9;
+  --navy:#0E3550; --mangle:#2F7D5B; --sun:#F08A45;
+  --tranquilo:#2E9E5B; --ojo:#F2B01E; --cuidado:#EE7A3A; --peligro:#D43C3C;
+  --wa:#25D366;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.55 Onest,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+.display{font-family:"Bricolage Grotesque",Onest,sans-serif;letter-spacing:-.02em}
+.hand{font-family:Caveat,cursive}
+a{color:var(--cel-deep)}
+.wrap{max-width:1240px;margin:0 auto;padding:0 24px}
+
+/* Guayaquil flag: five stripes, celeste and white */
+.flag{height:10px;background:linear-gradient(180deg,var(--cel) 0 20%,#fff 20% 40%,var(--cel) 40% 60%,#fff 60% 80%,var(--cel) 80%)}
+header.top .wrap{display:flex;align-items:center;gap:14px;height:66px}
+.logo{display:flex;align-items:center;gap:9px;font-weight:800;font-size:20px;text-decoration:none;color:var(--ink)}
+header.top nav{margin-left:auto;display:flex;gap:6px}
+header.top nav a{font-size:14px;font-weight:600;text-decoration:none;color:var(--ink-2);padding:8px 12px;border-radius:10px}
+header.top nav a:hover{background:var(--paper-2)}
+header.top nav a.cur{background:var(--ink);color:#fff}
+
+.hero{padding:40px 0 24px;position:relative}
+.hero h1{font-size:clamp(40px,6vw,76px);line-height:.98;margin:0 0 18px;max-width:900px}
+.hero h1 .u{background:linear-gradient(transparent 62%,#BFE3F5 62%);padding:0 4px}
+.hero p{font-size:19px;color:var(--ink-2);max-width:700px;margin:0}
+.journey{display:flex;flex-wrap:wrap;gap:8px;margin-top:28px}
+.journey a{display:flex;align-items:center;gap:8px;text-decoration:none;color:var(--ink);background:var(--card);border:1.5px solid var(--paper-2);border-radius:999px;padding:7px 14px 7px 7px;font-weight:600;font-size:14.5px}
+.journey a b{width:26px;height:26px;border-radius:50%;background:var(--navy);color:#fff;display:grid;place-items:center;font-size:13px}
+.journey a:hover{border-color:var(--cel)}
+
+.lang{margin:34px 0 10px;background:var(--navy);color:#fff;border-radius:28px;padding:30px;display:grid;grid-template-columns:1.1fr 2fr;gap:30px;align-items:center;position:relative;overflow:hidden}
+.lang::after{content:"";position:absolute;right:-60px;bottom:-60px;width:260px;height:260px;border-radius:50%;background:radial-gradient(closest-side,rgba(59,167,222,.35),transparent)}
+@media (max-width:900px){.lang{grid-template-columns:1fr}}
+.lang h2{font-size:34px;line-height:1.05;margin:0 0 10px}
+.lang p{color:#C9DCE8;margin:0}
+.levels{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;position:relative;z-index:1}
+@media (max-width:640px){.levels{grid-template-columns:1fr 1fr}}
+.lv{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:18px;padding:14px;text-align:center}
+.lv .w{font-family:"Bricolage Grotesque";font-weight:800;font-size:22px;margin-top:6px}
+.lv .d{font-size:13px;color:#C9DCE8}
+.rules{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:14px}
+@media (max-width:900px){.rules{grid-template-columns:1fr}}
+.rule{background:var(--card);border-radius:18px;padding:16px 18px;border:1.5px solid var(--paper-2)}
+.rule b{display:block;font-size:16px;margin-bottom:2px}
+.rule span{color:var(--ink-2);font-size:14.5px}
+.rule .ex{display:inline-block;margin-top:6px;font-size:13px;background:var(--paper);border-radius:8px;padding:2px 8px;color:var(--ink)}
+.rule .ex s{color:var(--muted)}
+
+/* chapters */
+.chap{padding:56px 0 30px;border-top:2px dashed var(--paper-2);margin-top:40px}
+.chap-h{display:grid;grid-template-columns:120px 1fr;gap:10px 24px;align-items:start;margin-bottom:26px}
+@media (max-width:700px){.chap-h{grid-template-columns:1fr}}
+.chap-n{font-family:"Bricolage Grotesque";font-weight:800;font-size:96px;line-height:.8;color:var(--cel);-webkit-text-stroke:0}
+.chap-h h2{font-size:clamp(28px,3.4vw,42px);line-height:1.05;margin:4px 0 8px}
+.chap-h p{margin:0;color:var(--ink-2);font-size:17px;max-width:720px}
+.note{display:inline-flex;align-items:center;gap:8px;margin-top:10px;background:#E4F7EA;color:#1D6B3B;border-radius:10px;padding:6px 10px;font-size:14px;font-weight:600}
+.phones{display:flex;align-items:flex-start;justify-content:center;gap:0;overflow-x:auto;padding:10px 4px 20px;scroll-snap-type:x mandatory}
+figure.ph{margin:0;display:flex;flex-direction:column;align-items:center;scroll-snap-align:center}
+figcaption{width:270px;margin-top:16px;font-size:15px;color:var(--ink-2);text-align:center}
+figcaption b{color:var(--ink)}
+.arrow{flex:0 0 96px;align-self:center;margin-top:-60px;display:flex;flex-direction:column;align-items:center;color:var(--cel-deep)}
+.arrow .hand{font-size:21px;line-height:1;margin-top:2px;text-align:center}
+@media (max-width:900px){.phones{justify-content:flex-start}.arrow{flex-basis:60px}.arrow .hand{font-size:17px}}
+
+/* phone frame */
+.phone{width:280px;border-radius:46px;background:#0d1418;padding:8px;box-shadow:0 34px 60px -28px rgba(16,40,58,.55),0 2px 0 rgba(255,255,255,.08) inset}
+.scr{position:relative;width:264px;height:568px;border-radius:38px;overflow:hidden;background:#F8F5EF;display:flex;flex-direction:column;font-size:13px;line-height:1.4;color:var(--ink)}
+.sb{height:36px;flex:0 0 36px;display:flex;align-items:center;justify-content:space-between;padding:0 22px 0 26px;font-size:12px;font-weight:700;position:relative;z-index:3}
+.sb .isl{width:78px;height:22px;border-radius:12px;background:#0d1418}
+.sb.light{color:#fff}
+.body{flex:1;padding:2px 14px 72px;display:flex;flex-direction:column;gap:10px;overflow:hidden}
+.tabbar{position:absolute;left:0;right:0;bottom:0;height:64px;background:#fff;border-top:1px solid #ECE5D8;display:flex;justify-content:space-around;align-items:flex-start;padding:9px 6px 0;z-index:4}
+.tab{display:flex;flex-direction:column;align-items:center;gap:2px;font-size:9.5px;color:#9AA19D;font-weight:700;width:44px}
+.tab.on{color:var(--navy)}
+.tab.g{margin-top:-24px}
+.tab.g .av{border-radius:50%;box-shadow:0 8px 16px -4px rgba(14,53,80,.45);border:3px solid #fff;display:flex}
+.app-top{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.app-top .brand{display:flex;align-items:center;gap:6px;font-family:"Bricolage Grotesque";font-weight:800;font-size:17px}
+.chip{display:inline-flex;align-items:center;gap:5px;background:#fff;border:1px solid #E6DED0;border-radius:999px;padding:4px 9px;font-size:11.5px;font-weight:700}
+h3.t{font-family:"Bricolage Grotesque";font-weight:800;font-size:23px;line-height:1.05;margin:2px 0 0;letter-spacing:-.02em}
+.soft{color:var(--ink-2);font-size:12.5px;margin:0}
+.step{font-size:11px;font-weight:700;color:var(--cel-deep);letter-spacing:.06em;text-transform:uppercase}
+.btn-a,.btn-b,.btn-wa{display:flex;align-items:center;justify-content:center;gap:7px;width:100%;border-radius:14px;padding:12px;font-weight:700;font-size:14px;border:0;font-family:inherit}
+.btn-a{background:var(--navy);color:#fff}
+.btn-b{background:#fff;color:var(--navy);border:1.5px solid #D9D1C2}
+.btn-wa{background:#fff;color:#128C4A;border:1.5px solid #BFE8CF}
+.fine{font-size:10.5px;color:var(--muted);text-align:center;margin:0}
+.card-a{background:#fff;border:1px solid #ECE5D8;border-radius:16px;padding:11px}
+
+.place{display:flex;align-items:center;gap:10px;background:#fff;border:1.5px solid #ECE5D8;border-radius:14px;padding:9px 10px}
+.place .pi{width:32px;height:32px;border-radius:10px;background:var(--cel-soft);color:var(--cel-deep);display:grid;place-items:center;flex:0 0 32px}
+.place b{display:block;font-size:13px}.place small{color:var(--ink-2);font-size:11px}
+.place .ok{margin-left:auto;width:22px;height:22px;border-radius:50%;background:var(--tranquilo);color:#fff;display:grid;place-items:center}
+.place.add{border-style:dashed;color:var(--cel-deep);font-weight:700;justify-content:center}
+.tg{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid #EDE6DA}
+.tg div{flex:1}.tg b{display:block;font-size:13px}.tg small{font-size:11px;color:var(--ink-2)}
+.sw{width:40px;height:24px;border-radius:12px;background:#D7D0C3;position:relative;flex:0 0 40px}
+.sw::after{content:"";position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.2)}
+.sw.on{background:var(--tranquilo)}.sw.on::after{left:19px}
+.avs{display:flex;gap:6px;align-items:center}
+.avs span{width:32px;height:32px;border-radius:50%;display:grid;place-items:center;font-weight:800;font-size:12px;color:#fff}
+
+/* level card */
+.lvl{border-radius:20px;padding:13px;border:1.5px solid}
+.lvl.tranquilo{background:#E3F3E8;border-color:#A9D9B7}
+.lvl.ojo{background:#FFF3D3;border-color:#F1CF74}
+.lvl.cuidado{background:#FDE6D7;border-color:#F3B48E}
+.lvl.peligro{background:#FBDADA;border-color:#EFA2A2}
+.lvl .row{display:flex;align-items:center;gap:10px}
+.lvl .word{font-family:"Bricolage Grotesque";font-weight:800;font-size:30px;line-height:.9}
+.lvl .lab{font-size:10.5px;font-weight:700;color:var(--ink-2);text-transform:uppercase;letter-spacing:.06em}
+.lvl .head{font-weight:700;font-size:15.5px;line-height:1.25;margin:9px 0 2px}
+.lvl .sub{font-size:12.5px;color:var(--ink-2)}
+
+/* day strip */
+.day{background:#fff;border:1px solid #ECE5D8;border-radius:16px;padding:10px 10px 8px}
+.day .ttl{display:flex;justify-content:space-between;font-weight:700;font-size:12.5px;margin-bottom:6px}
+.day .ttl span{font-weight:600;color:var(--muted);font-size:11px}
+.bars{display:grid;grid-template-columns:repeat(15,1fr);gap:2px;align-items:end;height:46px}
+.bars i{display:block;border-radius:3px 3px 1px 1px;background:var(--cel)}
+.bars i.z{background:#E7E1D6}
+.brk{display:grid;grid-template-columns:repeat(15,1fr);gap:2px;margin-top:4px;font-size:9.5px;font-weight:800}
+.brk span{border-top:3px solid;padding-top:2px;text-align:center;white-space:nowrap}
+.brk .g{border-color:var(--tranquilo);color:#1D6B3B}
+.brk .o{border-color:var(--cuidado);color:#A64A14}
+.hrs{display:grid;grid-template-columns:repeat(15,1fr);font-size:9.5px;color:var(--muted);margin-top:2px}
+.hrs span{grid-column:span 3}
+
+.tip{display:flex;gap:9px;align-items:flex-start;background:var(--navy);color:#fff;border-radius:16px;padding:10px 11px;font-size:12.5px}
+.tip b{color:#BFE3F5}
+.tip .mini{margin-top:7px;display:inline-block;background:rgba(255,255,255,.14);border-radius:9px;padding:4px 9px;font-weight:700;font-size:11.5px}
+.mplaces{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.mp{background:#fff;border:1px solid #ECE5D8;border-radius:14px;padding:8px 9px;display:flex;align-items:center;gap:7px}
+.mp b{display:block;font-size:12px}.mp small{font-size:10.5px;color:var(--ink-2)}
+
+/* safe route */
+.rab{width:20px;height:20px;border-radius:50%;display:grid;place-items:center;font-size:10.5px;font-weight:800;flex:0 0 20px}
+.segm{display:grid;grid-template-columns:repeat(3,1fr);gap:3px;background:#fff;border:1px solid #E6DED0;border-radius:11px;padding:3px}
+.segm span{text-align:center;font-size:11.5px;font-weight:700;color:var(--ink-2);padding:5px 0;border-radius:8px}
+.segm span.on{background:var(--navy);color:#fff}
+.rc{background:#fff;border:1.5px solid #ECE5D8;border-radius:13px;padding:7px 10px}
+.rc.best{border-color:#A9D9B7;background:#F1FAF3}
+.rc .rt{display:flex;align-items:center;gap:7px;font-weight:800;font-size:12.5px}
+.rc .rl{width:18px;height:5px;border-radius:3px}
+.rc .rm{margin-left:auto;font-weight:700;color:var(--ink-2);font-size:11.5px}
+.rc small{display:block;font-size:11px;color:var(--ink-2);margin-top:1px}
+
+/* map */
+.mapart{position:absolute;inset:0;z-index:1}
+.float{position:absolute;z-index:2;background:#fff;border-radius:12px;padding:6px 9px;font-size:11.5px;font-weight:700;box-shadow:0 6px 18px -6px rgba(16,40,58,.35);display:flex;align-items:center;gap:6px}
+.sheet{position:absolute;left:8px;right:8px;bottom:72px;z-index:3;background:#fff;border-radius:18px;padding:11px 12px;box-shadow:0 -6px 24px -10px rgba(16,40,58,.35)}
+.sheet .grab{width:36px;height:4px;border-radius:2px;background:#DDD5C7;margin:-4px auto 8px}
+.legend4{display:flex;justify-content:space-between;margin-top:8px;padding-top:8px;border-top:1px solid #EFE8DC}
+.legend4 span{display:flex;flex-direction:column;align-items:center;font-size:9.5px;font-weight:700;color:var(--ink-2);gap:1px}
+
+/* lock screen */
+.lock{background:linear-gradient(180deg,#1B3A52 0%,#2B2F55 60%,#3A2E50 100%)}
+.lock::before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(105deg,transparent 0 14px,rgba(255,255,255,.07) 14px 15px);opacity:.9}
+.clock{position:relative;z-index:2;text-align:center;color:#fff;margin-top:16px}
+.clock .d{font-size:13px;font-weight:600;opacity:.85}
+.clock .h{font-family:"Bricolage Grotesque";font-weight:800;font-size:72px;line-height:1;letter-spacing:-.03em}
+.notif{position:relative;z-index:2;margin:10px 10px 0;background:rgba(255,255,255,.88);backdrop-filter:blur(10px);border-radius:20px;padding:10px 11px;color:var(--ink)}
+.notif .hd{display:flex;align-items:center;gap:6px;font-size:11px;font-weight:700;color:var(--ink-2)}
+.notif .hd .ago{margin-left:auto;font-weight:600}
+.notif .tt{font-weight:800;font-size:14px;margin:5px 0 2px;display:flex;align-items:center;gap:6px}
+.notif p{margin:0;font-size:12.5px}
+.notif .acts{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:9px}
+.notif .acts span{background:#fff;border-radius:11px;padding:7px;text-align:center;font-weight:700;font-size:12px;color:var(--navy)}
+.lockbtns{position:absolute;z-index:2;bottom:22px;left:30px;right:30px;display:flex;justify-content:space-between}
+.lockbtns span{width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,.18);display:grid;place-items:center;color:#fff}
+
+/* chat */
+.chat-h{display:flex;align-items:center;gap:9px;padding:4px 12px 10px;border-bottom:1px solid #ECE5D8;background:#fff}
+.chat-h b{display:block;font-size:14px}.chat-h small{color:var(--tranquilo);font-size:11px;font-weight:700}
+.chat-b{flex:1;padding:10px 10px 70px;display:flex;flex-direction:column;gap:7px;background:#F1ECE2;overflow:hidden}
+.bub{max-width:88%;border-radius:15px;padding:8px 10px;font-size:12.5px;line-height:1.38}
+.bub.me{align-self:flex-end;background:#D6F0FF;border-top-right-radius:4px}
+.bub.g{align-self:flex-start;background:#fff;border-top-left-radius:4px}
+.voice{display:flex;align-items:center;gap:7px;min-width:170px}
+.voice .pl{width:26px;height:26px;border-radius:50%;background:var(--navy);color:#fff;display:grid;place-items:center;font-size:10px}
+.voice .wv{flex:1;height:20px;background:repeating-linear-gradient(90deg,var(--cel-deep) 0 2px,transparent 2px 5px);clip-path:polygon(0 45%,6% 20%,12% 60%,18% 10%,24% 55%,30% 25%,36% 70%,42% 15%,48% 50%,54% 30%,60% 65%,66% 20%,72% 55%,78% 35%,84% 60%,90% 30%,100% 50%,100% 100%,0 100%)}
+.bub .tr{font-size:11px;color:var(--ink-2);font-style:italic;margin-top:4px}
+.route{margin-top:6px;border:1px solid #ECE5D8;border-radius:12px;overflow:hidden}
+.route div{display:flex;gap:7px;align-items:flex-start;padding:7px 8px;font-size:11.5px}
+.route div+div{border-top:1px solid #ECE5D8}
+.route .dot{width:10px;height:10px;border-radius:50%;margin-top:3px;flex:0 0 10px}
+.qr{display:flex;gap:6px;flex-wrap:wrap}
+.qr span{background:#fff;border:1.5px solid var(--cel);color:var(--cel-deep);border-radius:999px;padding:5px 10px;font-weight:700;font-size:11.5px}
+.inbar{position:absolute;left:0;right:0;bottom:0;height:64px;background:#fff;border-top:1px solid #ECE5D8;display:flex;align-items:flex-start;gap:8px;padding:10px 12px 0;z-index:4}
+.inbar div{flex:1;background:#F3EEE4;border-radius:18px;padding:8px 12px;color:var(--muted);font-size:12px}
+.inbar span{width:36px;height:36px;border-radius:50%;background:var(--navy);color:#fff;display:grid;place-items:center}
+
+/* report */
+.photo{position:relative;border-radius:18px;overflow:hidden;height:170px}
+.photo .tag{position:absolute;left:8px;bottom:8px;background:rgba(16,40,58,.75);color:#fff;font-size:10.5px;font-weight:700;border-radius:8px;padding:3px 7px;display:flex;gap:4px;align-items:center}
+.depths{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}
+.depth{background:#fff;border:2px solid #ECE5D8;border-radius:14px;padding:6px 4px 7px;text-align:center;font-weight:700;font-size:12px}
+.depth.on{border-color:var(--cel);background:#EEF8FD}
+
+/* danger */
+.danger-top{background:var(--peligro);color:#fff;margin:-36px 0 0;padding:46px 16px 16px;position:relative}
+.danger-top .word{font-family:"Bricolage Grotesque";font-weight:800;font-size:34px;line-height:.95}
+.danger-top p{margin:6px 0 0;font-size:13px;opacity:.95}
+.bigbtn{display:flex;align-items:center;gap:10px;border-radius:16px;padding:13px;font-weight:800;font-size:15px}
+.bigbtn.call{background:#7E1B1B;color:#fff}
+.bigbtn.ok{background:#fff;color:var(--ink);border:2px solid #E7DECF}
+.steps{margin:0;padding:0;list-style:none;display:grid;gap:7px}
+.steps li{display:flex;gap:9px;align-items:flex-start;font-size:12.5px;font-weight:600}
+.steps li b{flex:0 0 22px;height:22px;border-radius:7px;background:var(--ink);color:#fff;display:grid;place-items:center;font-size:12px}
+
+/* family */
+.fam{display:flex;align-items:center;gap:10px;background:#fff;border:1px solid #ECE5D8;border-radius:15px;padding:7px 10px}
+.fam .av{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;font-weight:800;color:#fff;flex:0 0 36px;position:relative}
+.fam .av i{position:absolute;right:-2px;bottom:-2px;width:15px;height:15px;border-radius:50%;border:2px solid #fff;display:grid;place-items:center;font-style:normal;font-size:8px}
+.fam b{display:block;font-size:13px}.fam small{font-size:10.5px;color:var(--ink-2);display:flex;align-items:center;gap:4px;white-space:nowrap}
+.fam .fcall{margin-left:auto;width:32px;height:32px;border-radius:50%;background:var(--navy);color:#fff;display:grid;place-items:center;flex:0 0 32px}
+.fam .r{margin-left:auto;text-align:right;font-size:10px;color:var(--ink-2);white-space:nowrap}
+
+/* after */
+.calm-top{background:linear-gradient(180deg,#CDEBD6,#F8F5EF);margin:-36px 0 0;padding:46px 16px 8px;text-align:left}
+.ck{display:flex;gap:9px;align-items:flex-start;font-size:12.5px;padding:6px 0;border-bottom:1px solid #EDE6DA}
+.ck .bx{flex:0 0 19px;height:19px;border-radius:6px;border:2px solid #CFC6B6;display:grid;place-items:center;color:#fff;margin-top:1px}
+.ck .bx.on{background:var(--tranquilo);border-color:var(--tranquilo)}
+.ck.done span:last-child{color:var(--muted);text-decoration:line-through}
+.pills3{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.pills3 span{background:#fff;border:1.5px solid #E2D9CA;border-radius:11px;padding:7px 4px;text-align:center;font-weight:700;font-size:11.5px}
+.prog{height:8px;border-radius:4px;background:#E7E1D6;overflow:hidden}
+.prog i{display:block;height:100%;background:var(--tranquilo);border-radius:4px}
+
+footer{margin-top:50px;padding:30px 0 60px;border-top:2px dashed var(--paper-2);color:var(--ink-2);font-size:14px}
+</style>
+</head>
+<body>
+<div class="flag" aria-hidden="true"></div>
+<header class="top"><div class="wrap">
+  <a class="logo display" href="index.html"><span data-logo></span>Aguaje</a>
+  <nav><a href="index.html">Mapa en vivo</a><a class="cur" href="flujo.html">Pantallas de la app</a></nav>
+</div></header>
+
+<section class="hero"><div class="wrap">
+  <h1 class="display">Un día de lluvia <span class="u">con Aguaje</span></h1>
+  <p>Así se vería la app, pantalla por pantalla. Sin palabras técnicas: solo lo que necesitas saber y qué hacer, a tiempo.</p>
+  <div class="journey">
+    <a href="#c1"><b>1</b>Empiezas</a><a href="#c2"><b>2</b>Cada mañana</a><a href="#c3"><b>3</b>Viene la lluvia</a><a href="#c4"><b>4</b>Si se pone feo</a><a href="#c5"><b>5</b>Después</a>
+  </div>
+
+  <div class="lang">
+    <div>
+      <h2 class="display">Una gota que se llena</h2>
+      <p>Así entiende cualquiera el riesgo de su barrio: cuatro palabras de todos los días y una gota. Más agua en la gota, más riesgo.</p>
+    </div>
+    <div class="levels">
+      <div class="lv"><span data-drop="tranquilo" data-size="58" data-dark></span><div class="w">Tranquilo</div><div class="d">No se espera agua en la calle</div></div>
+      <div class="lv"><span data-drop="ojo" data-size="58" data-dark></span><div class="w">Ojo</div><div class="d">Puede llover fuerte</div></div>
+      <div class="lv"><span data-drop="cuidado" data-size="58" data-dark></span><div class="w">Cuidado</div><div class="d">Agua en calles bajas</div></div>
+      <div class="lv"><span data-drop="peligro" data-size="58" data-dark></span><div class="w">Peligro</div><div class="d">Riesgo de inundación</div></div>
+    </div>
+  </div>
+  <div class="rules">
+    <div class="rule"><b>Horas, no números raros</b><span>Decimos cuándo, en palabras.</span><br><span class="ex">«De 3 a 5 pm» <s>8,4 mm/h</s></span></div>
+    <div class="rule"><b>Siempre una acción</b><span>Cada aviso termina con qué hacer.</span><br><span class="ex">«Sal antes de las 2 pm»</span></div>
+    <div class="rule"><b>Lo urgente, grande</b><span>En peligro, la app muestra solo lo esencial.</span><br><span class="ex">Llamar al 911 · Estoy bien</span></div>
+  </div>
+</div></section>
+
+<!-- 1 -->
+<section class="chap" id="c1"><div class="wrap">
+  <div class="chap-h"><div class="chap-n">01</div><div>
+    <h2 class="display">Empiezas en un minuto</h2>
+    <p>Sin formularios largos. Tamy solo necesita saber qué lugares te importan y cómo avisarte.</p>
+    <span class="note"><span data-i="check"></span>También funciona solo por WhatsApp, sin descargar nada.</span>
+  </div></div>
+  <div class="phones">
+    <figure class="ph"><div class="phone"><div class="scr" style="background:#E6F4FB">
+      <div class="sb"><span>9:41</span><span class="isl"></span><span>5G ▮</span></div>
+      <div data-art="gye" style="margin-top:-36px"></div>
+      <div class="body" style="padding-bottom:16px;background:#F8F5EF;border-radius:26px 26px 0 0;margin-top:-22px;padding-top:16px;position:relative">
+        <h3 class="t">Hola, soy Tamy.</h3>
+        <p class="soft" style="font-size:13.5px">Te aviso <b>antes</b> de que llueva fuerte en tu barrio, y te digo qué hacer.</p>
+        <p class="soft" style="font-size:11.5px;color:var(--muted)">Mi nombre viene de <i>tamya</i>: lluvia en kichwa.</p>
+        <div style="flex:1"></div>
+        <div class="btn-a">Empezar</div>
+        <div class="btn-wa"><span data-i="wa"></span>Prefiero usar WhatsApp</div>
+        <p class="fine">Gratis. No reemplaza al INAMHI ni a la SNGR.</p>
+      </div>
+    </div></div><figcaption><b>Abres la app.</b> Tamy se presenta en una frase.</figcaption></figure>
+
+    <div class="arrow" aria-hidden="true"><span data-arrow></span><span class="hand">toca<br>«Empezar»</span></div>
+
+    <figure class="ph"><div class="phone"><div class="scr">
+      <div class="sb"><span>9:41</span><span class="isl"></span><span>5G ▮</span></div>
+      <div class="body">
+        <span class="step">Paso 1 de 2</span>
+        <h3 class="t">¿Qué lugares te importan?</h3>
+        <p class="soft">Te aviso por cada uno.</p>
+        <div class="place"><span class="pi" data-i="home"></span><div><b>Casa</b><small>Alborada</small></div><span class="ok" data-i="check" data-s="13"></span></div>
+        <div class="place"><span class="pi" data-i="work"></span><div><b>Trabajo</b><small>Centro</small></div><span class="ok" data-i="check" data-s="13"></span></div>
+        <div class="place"><span class="pi" data-i="school"></span><div><b>Colegio de los chicos</b><small>Urdesa</small></div><span class="ok" data-i="check" data-s="13"></span></div>
+        <div class="place add">+ Agregar otro lugar</div>
+        <div data-art="minimap"></div>
+        <div class="btn-a">Seguir</div>
+      </div>
+    </div></div><figcaption><b>Marcas tus lugares:</b> casa, trabajo, el colegio de los chicos.</figcaption></figure>
+
+    <div class="arrow" aria-hidden="true"><span data-arrow></span><span class="hand">«Seguir»</span></div>
+
+    <figure class="ph"><div class="phone"><div class="scr">
+      <div class="sb"><span>9:42</span><span class="isl"></span><span>5G ▮</span></div>
+      <div class="body" style="gap:4px">
+        <span class="step">Paso 2 de 2</span>
+        <h3 class="t">¿Cómo te aviso?</h3>
+        <div class="tg"><span data-i="wa" style="color:#128C4A"></span><div><b>Por WhatsApp</b><small>Recomendado: llega aunque no abras la app</small></div><span class="sw on"></span></div>
+        <div class="tg"><span data-i="bell"></span><div><b>En el celular</b><small>Notificación con sonido</small></div><span class="sw on"></span></div>
+        <div class="tg"><span data-i="moon"></span><div><b>No me despiertes</b><small>De 11 pm a 6 am, salvo peligro</small></div><span class="sw on"></span></div>
+        <div class="tg"><span data-i="drop"></span><div><b>Solo lo importante</b><small>Avísame desde «Cuidado»</small></div><span class="sw"></span></div>
+        <div style="margin-top:8px"><b style="font-size:13px">Avisar también a mi familia</b>
+          <div class="avs" style="margin-top:6px"><span style="background:#E8746A">M</span><span style="background:#5BB6E4">P</span><span style="background:#9A7BD6">H</span><span style="background:#fff;color:var(--cel-deep);border:1.5px dashed var(--cel)">+</span><small class="soft" style="margin-left:4px">Mamá, Papá, Hija</small></div></div>
+        <div style="flex:1"></div>
+        <div class="btn-a">Listo</div>
+      </div>
+    </div></div><figcaption><b>Eliges cómo te avisa.</b> WhatsApp viene marcado y la familia se suma con un toque.</figcaption></figure>
+  </div>
+</div></section>
+
+<!-- 2 -->
+<section class="chap" id="c2"><div class="wrap">
+  <div class="chap-h"><div class="chap-n">02</div><div>
+    <h2 class="display">Cada mañana, tu día en una mirada</h2>
+    <p>La pantalla principal no es un mapa: es una respuesta. ¿Llueve hoy? ¿A qué hora? ¿Cuándo salgo? Y antes de salir, la ruta segura te dice por dónde ir para no quedarte atrapado.</p>
+  </div></div>
+  <div class="phones">
+    <figure class="ph"><div class="phone"><div class="scr">
+      <div class="sb"><span>7:30</span><span class="isl"></span><span>5G ▮</span></div>
+      <div class="body" style="gap:9px">
+        <div class="app-top"><span class="brand"><span data-logo="20"></span>Hoy</span><span class="chip"><span data-i="pin" data-s="12"></span>Casa · Alborada ▾</span></div>
+        <div class="lvl ojo">
+          <div class="row"><span data-drop="ojo" data-size="46"></span><div><div class="lab">Tu casa hoy</div><div class="word display">Ojo</div></div></div>
+          <div class="head">Esta tarde puede llover fuerte.</div>
+          <div class="sub">De 3 a 5 pm. A las 6 pm el río está alto y el agua de la calle se va más lento.</div>
+        </div>
+        <div class="day">
+          <div class="ttl">Tu día <span>barra alta = lluvia fuerte</span></div>
+          <div class="bars" data-bars="0,1,0,0,0,1,3,4,3,2,1,1,0,0,0"></div>
+          <div class="brk"><span class="g" style="grid-column:4/span 2">sal</span><span class="o" style="grid-column:7/span 2">evita</span></div>
+          <div class="hrs"><span>9 am</span><span>12 pm</span><span>3 pm</span><span>6 pm</span><span>9 pm</span></div>
+        </div>
+        <div class="tip"><span data-avatar="30"></span><div><b>Tamy:</b> sal del trabajo antes de las 2 pm. Si no alcanzas, espera hasta las 7.<br><span class="mini">⏰ Recuérdame a la 1:30</span></div></div>
+        <div class="mplaces">
+          <div class="mp"><span data-drop="ojo" data-size="24"></span><div><b>Trabajo</b><small>Centro · Ojo</small></div></div>
+          <div class="mp"><span data-drop="tranquilo" data-size="24"></span><div><b>Colegio</b><small>Urdesa · Tranquilo</small></div></div>
+        </div>
+      </div>
+      <div data-tabbar="hoy"></div>
+    </div></div><figcaption><b>Cada mañana ves tu día:</b> si llueve, a qué hora y cuándo te conviene salir.</figcaption></figure>
+
+    <div class="arrow" aria-hidden="true"><span data-arrow></span><span class="hand">toca<br>«Mapa»</span></div>
+
+    <figure class="ph"><div class="phone"><div class="scr">
+      <div data-art="map" class="mapart"></div>
+      <div class="sb"><span>7:31</span><span class="isl"></span><span>5G ▮</span></div>
+      <div class="float" style="top:46px;left:12px"><span data-i="cloud" data-s="16"></span>Nubes cargadas: llegan en ~40 min</div>
+      <div class="sheet">
+        <div class="grab"></div>
+        <div style="display:flex;align-items:center;gap:9px"><span data-drop="ojo" data-size="36"></span><div><b style="font-size:14px">Alborada · Ojo</b><div class="soft">3 vecinos reportan agua en la calle hoy.</div></div></div>
+        <div class="legend4"><span><span data-drop="tranquilo" data-size="20"></span>Tranquilo</span><span><span data-drop="ojo" data-size="20"></span>Ojo</span><span><span data-drop="cuidado" data-size="20"></span>Cuidado</span><span><span data-drop="peligro" data-size="20"></span>Peligro</span></div>
+      </div>
+      <div data-tabbar="mapa"></div>
+    </div></div><figcaption><b>En el mapa</b> ves las nubes que vienen, cada barrio con su gota y lo que reportan tus vecinos.</figcaption></figure>
+
+    <div class="arrow" aria-hidden="true"><span data-arrow></span><span class="hand">«¿por dónde<br>me voy?»</span></div>
+
+    <figure class="ph"><div class="phone"><div class="scr">
+      <div class="sb"><span>12:40</span><span class="isl"></span><span>5G ▮</span></div>
+      <div class="body" style="gap:8px">
+        <div class="app-top"><span class="brand">Ruta segura</span><span class="chip">✕</span></div>
+        <div class="card-a" style="padding:8px 10px;display:grid;gap:6px">
+          <div style="display:flex;align-items:center;gap:8px;font-size:12.5px"><span class="rab" style="background:#fff;border:2px solid var(--ink)">A</span><b>Trabajo</b><span class="soft">· Centro</span></div>
+          <div style="display:flex;align-items:center;gap:8px;font-size:12.5px"><span class="rab" style="background:var(--cel);color:#fff">B</span><b>Casa</b><span class="soft">· Alborada</span></div>
+        </div>
+        <div class="segm"><span>Ahora</span><span>En 1 h</span><span class="on">Mejor hora</span></div>
+        <div data-art="route" style="border-radius:14px;overflow:hidden;height:150px"></div>
+        <div class="tip" style="padding:8px 10px"><span data-avatar="26"></span><div>Sal a la <b>1:30 pm</b>: llegas antes de la lluvia fuerte.</div></div>
+        <div class="rc best"><div class="rt"><span class="rl" style="background:var(--tranquilo)"></span>Más segura<span class="rm">22 min</span></div><small>Por la avenida principal · sin agua reportada</small></div>
+        <div class="rc"><div class="rt"><span class="rl" style="background:#9AA19D"></span>Más corta<span class="rm">17 min</span></div><small>Por dentro del barrio · <b style="color:#A64A14">agua hasta la rodilla en 2 puntos</b></small></div>
+      </div>
+      <div data-tabbar="mapa"></div>
+    </div></div><figcaption><b>Antes de salir</b> eliges a dónde vas: la app te da el camino con menos agua, otras opciones y la mejor hora.</figcaption></figure>
+  </div>
+</div></section>
+
+<!-- 3 -->
+<section class="chap" id="c3"><div class="wrap">
+  <div class="chap-h"><div class="chap-n">03</div><div>
+    <h2 class="display">Cuando viene la lluvia</h2>
+    <p>Tamy avisa antes, entiende audios y usa lo que reportan tus vecinos. Tú también ayudas: una foto de tu calle sirve a toda la cuadra.</p>
+  </div></div>
+  <div class="phones">
+    <figure class="ph"><div class="phone"><div class="scr lock">
+      <div class="sb light"><span>Claro</span><span class="isl"></span><span>5G ▮</span></div>
+      <div class="clock"><div class="d">lunes, 26 de octubre</div><div class="h">2:10</div></div>
+      <div class="notif">
+        <div class="hd"><span data-logo="16"></span>AGUAJE<span class="ago">ahora</span></div>
+        <div class="tt"><span data-drop="cuidado" data-size="20"></span>Cuidado en Alborada</div>
+        <p>Lluvia muy fuerte en unos 30 minutos. Si vas a salir, sal ya o espera hasta las 5 pm.</p>
+        <div class="acts"><span>¿Qué hago?</span><span>Estoy bien</span></div>
+      </div>
+      <div class="notif" style="padding:8px 11px">
+        <div class="hd"><span data-logo="16"></span>AGUAJE · FAMILIA<span class="ago">hace 2 min</span></div>
+        <p style="margin-top:3px"><b>Mamá</b> marcó «Estoy bien» ✓</p>
+      </div>
+      <div class="lockbtns"><span data-i="bolt"></span><span data-i="camera"></span></div>
+    </div></div><figcaption><b>Media hora antes</b> te llega el aviso, con lo que tienes que hacer.</figcaption></figure>
+
+    <div class="arrow" aria-hidden="true"><span data-arrow></span><span class="hand">le mandas<br>un audio</span></div>
+
+    <figure class="ph"><div class="phone"><div class="scr">
+      <div class="sb"><span>2:12</span><span class="isl"></span><span>5G ▮</span></div>
+      <div class="chat-h"><span>‹</span><span data-avatar="32"></span><div><b>Tamy</b><small>● en línea</small></div></div>
+      <div class="chat-b">
+        <div class="bub me"><div class="voice"><span class="pl">▶</span><span class="wv"></span><span style="font-size:10px;color:var(--ink-2)">0:05</span></div><div class="tr">“¿Y si salgo a las 3 a Durán?”</div></div>
+        <div class="bub g">A las 3 es lo peor de la lluvia en tu camino. Mira:
+          <div class="route">
+            <div><span class="dot" style="background:var(--cuidado)"></span><span><b>Si sales a las 3:</b> lluvia muy fuerte todo el camino.</span></div>
+            <div><span class="dot" style="background:var(--tranquilo)"></span><span><b>Si sales ahora:</b> llegas antes de que empiece.</span></div>
+          </div>
+        </div>
+        <div class="bub g">¿Te aviso cuando pase lo peor?</div>
+        <div class="qr"><span>Sí, avísame</span><span>Salgo ahora</span></div>
+      </div>
+      <div class="inbar"><div>Escríbele a Tamy…</div><span data-i="mic"></span></div>
+    </div></div><figcaption><b>Le mandas un audio a Tamy</b> y te responde con tu camino, en palabras simples.</figcaption></figure>
+
+    <div class="arrow" aria-hidden="true"><span data-arrow></span><span class="hand">ves agua<br>en tu calle</span></div>
+
+    <figure class="ph"><div class="phone"><div class="scr">
+      <div class="sb"><span>4:05</span><span class="isl"></span><span>5G ▮</span></div>
+      <div class="body" style="gap:9px;padding-bottom:16px">
+        <div class="app-top"><span class="brand">Reportar mi calle</span><span class="chip">✕</span></div>
+        <div class="photo"><div data-art="flood"></div><span class="tag"><span data-i="pin" data-s="11"></span>Alborada · ahora</span></div>
+        <b style="font-size:14px">¿Hasta dónde llega el agua?</b>
+        <div class="depths">
+          <div class="depth"><span data-person="0.12"></span><br>Tobillo</div>
+          <div class="depth on"><span data-person="0.34"></span><br>Rodilla</div>
+          <div class="depth"><span data-person="0.55"></span><br>Cintura</div>
+        </div>
+        <div style="flex:1"></div>
+        <div class="btn-a">Enviar reporte</div>
+        <p class="fine">Tamy revisa la foto y avisa a tus vecinos. Tu nombre no se muestra.</p>
+      </div>
+    </div></div><figcaption><b>Reportas con una foto.</b> Eliges hasta dónde llega el agua. Ayudas a tu cuadra.</figcaption></figure>
+  </div>
+</div></section>
+
+<!-- 4 -->
+<section class="chap" id="c4"><div class="wrap">
+  <div class="chap-h"><div class="chap-n">04</div><div>
+    <h2 class="display">Si se pone feo</h2>
+    <p>En peligro, menos es más. La app cambia de color, muestra botones grandes y solo tres pasos. Y ves en el mapa dónde está tu familia y si está bien, sin llamar a todos.</p>
+  </div></div>
+  <div class="phones">
+    <figure class="ph"><div class="phone"><div class="scr">
+      <div class="sb light"><span>4:20</span><span class="isl"></span><span>5G ▮</span></div>
+      <div class="danger-top">
+        <div style="display:flex;align-items:center;gap:10px"><span data-drop="peligro" data-size="54" data-dark data-fill="#fff"></span><div><div style="font-size:11px;font-weight:800;letter-spacing:.08em;opacity:.9">TU CASA · ALBORADA</div><div class="word">Peligro</div></div></div>
+        <p>El agua puede entrar a las casas de tu cuadra en la próxima hora.</p>
+      </div>
+      <div class="body" style="padding-top:12px;gap:8px">
+        <div class="bigbtn call"><span data-i="phone"></span>Llamar al 911</div>
+        <div class="bigbtn ok"><span data-i="check" style="color:var(--tranquilo)"></span>Avisar: «Estoy bien»</div>
+        <b style="font-size:13px;margin-top:4px">Haz esto ahora</b>
+        <ol class="steps">
+          <li><b>1</b>Corta la luz, si llegas sin pisar agua.</li>
+          <li><b>2</b>Sube papeles y medicinas a lo alto.</li>
+          <li><b>3</b>No cruces calles con agua que corre.</li>
+        </ol>
+        <div class="card-a" style="display:flex;gap:8px;align-items:center;margin-top:2px"><span data-i="pin" style="color:var(--peligro)"></span><div><b style="font-size:12.5px">Lugar seguro más cerca</b><div class="soft">Escuela del barrio · a 600 m</div></div></div>
+      </div>
+    </div></div><figcaption><b>Si hay peligro, la app cambia:</b> rojo, botones grandes y tres pasos claros.</figcaption></figure>
+
+    <div class="arrow" aria-hidden="true"><span data-arrow></span><span class="hand">«Estoy bien»</span></div>
+
+    <figure class="ph"><div class="phone"><div class="scr">
+      <div class="sb"><span>4:24</span><span class="isl"></span><span>5G ▮</span></div>
+      <div class="body" style="gap:7px">
+        <div class="app-top"><span class="brand">Tu familia</span><span class="chip" style="background:#FFF3D3;border-color:#F1CF74">2 de 3 bien</span></div>
+        <div data-art="family" style="border-radius:14px;overflow:hidden;height:122px"></div>
+        <div class="fam"><span class="av" style="background:#E8746A">M<i style="background:var(--tranquilo);color:#fff">✓</i></span><div><b>Mamá · está bien</b><small><span data-drop="tranquilo" data-size="13"></span>Urdesa · hace 5 min</small></div></div>
+        <div class="fam"><span class="av" style="background:#9A7BD6">H<i style="background:var(--tranquilo);color:#fff">✓</i></span><div><b>Hija · está bien</b><small><span data-drop="tranquilo" data-size="13"></span>En el colegio · Urdesa</small></div></div>
+        <div class="fam" style="border-color:#F1CF74;background:#FFFBEF"><span class="av" style="background:#3E8FC9">P<i style="background:#B9B2A5;color:#fff">?</i></span><div><b>Papá · sin responder</b><small>🚗 Hacia Durán · 🔋 18 %</small><small style="color:#A64A14;font-weight:700">⚠ Cerca de agua reportada</small></div><span class="fcall" data-i="phone" data-s="15"></span></div>
+        <div class="fam" style="border-color:#EFA2A2;background:#FFF5F5"><span class="av" style="background:var(--navy)">Tú</span><div><b>Tú · avisaste que estás bien</b><small><span data-drop="peligro" data-size="13"></span>Alborada · ahora</small></div></div>
+        <p class="fine">Compartes tu ubicación solo con tu familia. Puedes pausarla cuando quieras.</p>
+      </div>
+      <div data-tabbar="familia"></div>
+    </div></div><figcaption><b>Ves dónde está tu familia, en tiempo real,</b> y si está bien. Si alguien no responde, Tamy le escribe por ti.</figcaption></figure>
+  </div>
+</div></section>
+
+<!-- 5 -->
+<section class="chap" id="c5"><div class="wrap">
+  <div class="chap-h"><div class="chap-n">05</div><div>
+    <h2 class="display">Después, y toda la temporada</h2>
+    <p>El Niño dura meses. Tamy te acompaña después de cada lluvia y, cada semana, te ayuda a preparar tu casa para la siguiente.</p>
+  </div></div>
+  <div class="phones">
+    <figure class="ph"><div class="phone"><div class="scr">
+      <div class="sb"><span>7:15</span><span class="isl"></span><span>5G ▮</span></div>
+      <div class="calm-top">
+        <div style="display:flex;align-items:center;gap:10px"><span style="width:44px;height:44px;border-radius:50%;background:var(--tranquilo);color:#fff;display:grid;place-items:center" data-i="check" data-s="24"></span><div><div class="lab" style="font-size:10.5px;font-weight:800;color:#1D6B3B;letter-spacing:.06em">ALBORADA</div><h3 class="t" style="margin:0">Ya pasó lo peor</h3></div></div>
+        <p class="soft" style="margin-top:8px">La lluvia paró y el río está bajando. El agua de la calle se irá más rápido.</p>
+      </div>
+      <div class="body" style="gap:6px;padding-top:6px">
+        <b style="font-size:13px">Ahora, haz esto</b>
+        <div class="ck done"><span class="bx on" data-i="check" data-s="12"></span><span>Toma fotos de los daños antes de limpiar.</span></div>
+        <div class="ck"><span class="bx"></span><span>No toques cables ni enchufes mojados.</span></div>
+        <div class="ck"><span class="bx"></span><span>Bota el agua que quedó en baldes y llantas: así evitas el dengue.</span></div>
+        <div class="ck" style="border:0"><span class="bx"></span><span>Lava con cloro lo que tocó el agua.</span></div>
+        <b style="font-size:13px;margin-top:4px">¿Cómo quedó tu calle?</b>
+        <div class="pills3"><span>Seca</span><span>Con agua</span><span>Con daños</span></div>
+        <div class="card-a" style="display:flex;align-items:center;gap:8px;padding:9px 10px"><span data-i="doc" style="color:var(--cel-deep)"></span><div style="flex:1"><b style="font-size:12.5px">Ayudas y trámites</b><div class="soft" style="font-size:11px">Cómo reportar daños y pedir ayuda</div></div>›</div>
+      </div>
+      <div data-tabbar="hoy"></div>
+    </div></div><figcaption><b>Cuando pasa la lluvia,</b> te dice qué hacer después: fotos, limpieza y dengue.</figcaption></figure>
+
+    <div class="arrow" aria-hidden="true"><span data-arrow></span><span class="hand">cada<br>lunes</span></div>
+
+    <figure class="ph"><div class="phone"><div class="scr">
+      <div class="sb"><span>8:00</span><span class="isl"></span><span>5G ▮</span></div>
+      <div class="body" style="gap:8px">
+        <div class="app-top"><span class="brand">Así va el invierno</span><span class="chip">El Niño</span></div>
+        <div class="card-a" style="display:flex;gap:10px;align-items:center;background:#EEF8FD;border-color:#CBE7F6">
+          <span data-art="bucket"></span>
+          <div><b style="font-size:14px;line-height:1.25;display:block">Ya llovió 2 de cada 3 partes de un invierno normal.</b><span class="soft">Y el invierno recién empieza.</span></div>
+        </div>
+        <div class="tip" style="background:#FFF3D3;color:var(--ink)"><span data-avatar="28"></span><div>Se esperan lluvias fuertes <b style="color:var(--ink)">hasta abril</b>. Prepara tu casa con calma, una tarea por semana.</div></div>
+        <div style="display:flex;justify-content:space-between;align-items:baseline"><b style="font-size:13px">Prepárate esta semana</b><small class="soft">2 de 5</small></div>
+        <div class="prog"><i style="width:40%"></i></div>
+        <div class="ck done"><span class="bx on" data-i="check" data-s="12"></span><span>Arma tu mochila de emergencia.</span></div>
+        <div class="ck done"><span class="bx on" data-i="check" data-s="12"></span><span>Guarda tus papeles en una funda.</span></div>
+        <div class="ck"><span class="bx"></span><span>Limpia el canal del techo.</span></div>
+        <div class="ck"><span class="bx"></span><span>Revisa la alcantarilla de tu cuadra.</span></div>
+        <div class="ck" style="border:0"><span class="bx"></span><span>Acuerda un punto de encuentro con tu familia.</span></div>
+      </div>
+      <div data-tabbar="hoy"></div>
+    </div></div><figcaption><b>Cada semana,</b> cómo va El Niño en palabras simples y qué preparar.</figcaption></figure>
+  </div>
+</div></section>
+
+<footer><div class="wrap">
+  <b style="color:var(--ink)">Prototipo de diseño.</b> Los datos de estas pantallas son de ejemplo. Aguaje no es una fuente oficial: sigue al INAMHI y a la SNGR, y en una emergencia llama al 911.
+  <br><a href="index.html">← Ver el mapa con datos en vivo</a>
+</div></footer>
+
+<script>
+const LV = {tranquilo:{c:'#2E9E5B',f:.24}, ojo:{c:'#F2B01E',f:.46}, cuidado:{c:'#EE7A3A',f:.7}, peligro:{c:'#D43C3C',f:.92}};
+let uid = 0;
+const DROP = 'M20 2C20 2 4 19 4 30a16 16 0 0 0 32 0C36 19 20 2 20 2Z';
+function drop(key, size, dark, fill){
+  const l = LV[key], id = 'd'+(++uid), y = 46 - 44*l.f;
+  return `<svg width="${Math.round(size*40/48)}" height="${size}" viewBox="0 0 40 48" role="img" aria-label="${key}"><defs><clipPath id="${id}"><path d="${DROP}"/></clipPath></defs>
+    <path d="${DROP}" fill="${dark?'rgba(255,255,255,.12)':'#fff'}"/>
+    <g clip-path="url(#${id})"><path d="M-2 ${y} q5.5 -3.5 11 0 t11 0 t11 0 t11 0 V50 H-2Z" fill="${fill||l.c}"/></g>
+    <path d="${DROP}" fill="none" stroke="${dark?'#fff':l.c}" stroke-width="2.6"/></svg>`;
+}
+const I = {
+  home:'<path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/>',
+  work:'<rect x="3" y="7" width="18" height="13" rx="2"/><path d="M9 7V5h6v2M3 12h18"/>',
+  school:'<path d="M7 9a5 5 0 0 1 10 0v11H7z"/><path d="M9.5 14h5M12 4V2"/>',
+  check:'<path d="M5 12.5l4.5 4.5L19 7.5"/>',
+  bell:'<path d="M6 16v-5a6 6 0 0 1 12 0v5l2 2H4zM10 20.5a2 2 0 0 0 4 0"/>',
+  moon:'<path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/>',
+  drop:'<path d="M12 3s-6 6.5-6 11a6 6 0 0 0 12 0c0-4.5-6-11-6-11z"/>',
+  pin:'<path d="M12 21s-7-6.2-7-11a7 7 0 0 1 14 0c0 4.8-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/>',
+  map:'<path d="M9 4L3 6v14l6-2 6 2 6-2V4l-6 2-6-2zM9 4v14M15 6v14"/>',
+  camera:'<path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/>',
+  people:'<circle cx="9" cy="8" r="3"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><circle cx="17" cy="9" r="2.5"/><path d="M15.5 14.2c3 .2 5.5 2.6 5.5 5.8"/>',
+  phone:'<path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/>',
+  mic:'<rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21"/>',
+  bolt:'<path d="M13 2L4 14h7l-1 8 9-12h-7z"/>',
+  cloud:'<path d="M7 18a4.5 4.5 0 0 1-.5-9A6 6 0 0 1 18 8.5a4.8 4.8 0 0 1-.5 9.5z"/><path d="M9 21l1-2M13 21l1-2"/>',
+  doc:'<path d="M6 3h8l4 4v14H6z"/><path d="M14 3v4h4M9 12h6M9 16h6"/>',
+  wa:'<path d="M4 20l1.3-4A8 8 0 1 1 8 18.7z"/><path d="M9 9.5c.3 2.2 2.3 4.2 4.5 4.5l1-1.2 1.8.8c-.2 1-1 1.6-2 1.6A6 6 0 0 1 8.4 9.3c0-1 .6-1.8 1.6-2l.8 1.8z" fill="currentColor" stroke="none"/>'
+};
+const icon = (n, s=20) => `<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${I[n]}</svg>`;
+
+function avatar(size){
+  const g = 'tg'+(++uid);
+  return `<svg width="${size}" height="${size}" viewBox="0 0 64 64" role="img" aria-label="Tamy"><defs><linearGradient id="${g}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#3BA7DE"/><stop offset="1" stop-color="#0E3550"/></linearGradient></defs>
+  <circle cx="32" cy="32" r="32" fill="url(#${g})"/>
+  <path d="M13 17l-2 5M53 15l-2 5M50 47l-2 5M12 46l-2 5" stroke="#fff" stroke-opacity=".45" stroke-width="2" stroke-linecap="round"/>
+  <path d="M32 11C32 11 17 28 17 38.5a15 15 0 0 0 30 0C47 28 32 11 32 11z" fill="#fff"/>
+  <path d="M23.5 29c1.5-3.5 3.5-6 5.5-8" stroke="#CFEAF8" stroke-width="2.6" fill="none" stroke-linecap="round"/>
+  <circle cx="27" cy="38" r="2.3" fill="#0E3550"/><circle cx="37" cy="38" r="2.3" fill="#0E3550"/>
+  <circle cx="23.5" cy="43" r="2.3" fill="#F6A6A0" opacity=".75"/><circle cx="40.5" cy="43" r="2.3" fill="#F6A6A0" opacity=".75"/>
+  <path d="M28 44q4 3.4 8 0" stroke="#0E3550" stroke-width="2" fill="none" stroke-linecap="round"/></svg>`;
+}
+function logo(s=28){
+  return `<svg width="${s}" height="${s}" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="9" fill="#0E3550"/><path d="M16 5c3.6 4.4 6 7.7 6 10.6a6 6 0 0 1-12 0C10 12.7 12.4 9.4 16 5z" fill="#3BA7DE"/><path d="M5 24c2.2-1.6 4.4-1.6 6.6 0s4.4 1.6 6.6 0 4.4-1.6 6.6 0" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round"/></svg>`;
+}
+function arrow(){
+  return `<svg width="84" height="38" viewBox="0 0 84 38" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 26C18 6 44 4 70 18"/><path d="M60 10l11 8.5-12.5 4"/></svg>`;
+}
+function person(level){
+  // level = share of the body under water (0..1), measured from the feet
+  const id = 'p'+(++uid), y = 62 - 58*level;
+  return `<svg width="44" height="62" viewBox="0 0 44 62" aria-hidden="true"><defs><clipPath id="${id}"><rect x="0" y="${y}" width="44" height="62"/></clipPath></defs>
+  <g fill="#10283A"><circle cx="22" cy="9" r="6"/><rect x="14" y="17" width="16" height="22" rx="6"/><rect x="15" y="34" width="6" height="26" rx="3"/><rect x="23" y="34" width="6" height="26" rx="3"/></g>
+  <rect x="0" y="${y}" width="44" height="${62-y}" fill="#3BA7DE" opacity=".55"/><path d="M0 ${y} q5.5 -3 11 0 t11 0 t11 0 t11 0" stroke="#1F86C0" stroke-width="2" fill="none"/></svg>`;
+}
+const ART = {
+  gye: `<svg width="264" height="250" viewBox="0 0 264 250" role="img" aria-label="Cerro Santa Ana, el río Guayas y Tamy, una gota de lluvia que saluda">
+    <defs><linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7CC6EC"/><stop offset="1" stop-color="#E6F4FB"/></linearGradient></defs>
+    <rect width="264" height="250" fill="url(#sky)"/>
+    <g fill="#fff"><ellipse cx="176" cy="70" rx="40" ry="22"/><ellipse cx="146" cy="78" rx="27" ry="17"/><ellipse cx="208" cy="80" rx="28" ry="15"/></g>
+    <ellipse cx="178" cy="90" rx="60" ry="7" fill="#D3E7F2"/>
+    <g stroke="#1F86C0" stroke-width="2.6" stroke-linecap="round"><path d="M140 102l-5 13M156 100l-5 13M172 104l-5 13M188 100l-5 13M204 103l-5 13M220 99l-5 13M148 120l-4 10M180 121l-4 10M212 120l-4 10"/></g>
+    <path d="M0 196C24 150 62 118 102 112c28-4 50 22 74 66v40H0z" fill="#BFDDB4"/>
+    <g stroke="#10283A" stroke-width="1.2">
+      <rect x="16" y="178" width="17" height="15" fill="#F6C343"/><rect x="36" y="164" width="16" height="15" fill="#E8746A"/><rect x="54" y="150" width="17" height="15" fill="#5BB6E4"/>
+      <rect x="72" y="136" width="16" height="15" fill="#F29C5A"/><rect x="118" y="134" width="17" height="15" fill="#9AD18B"/><rect x="137" y="148" width="16" height="15" fill="#F6C343"/><rect x="154" y="163" width="16" height="15" fill="#E8746A"/>
+      <path d="M14 178l10.5-8 10.5 8M34 164l10-8 10 8M52 150l10.5-8 10.5 8M70 136l10-8 10 8M116 134l10.5-8 10.5 8M135 148l10-8 10 8M152 163l10-8 10 8" fill="#C4553F"/>
+      <rect x="96" y="76" width="12" height="38" fill="#fff"/><path d="M93 76h18l-3-8h-12z" fill="#1F86C0"/><rect x="99" y="64" width="6" height="4" fill="#F6C343"/>
+      <path d="M96 90h12M96 102h12" stroke="#3BA7DE" stroke-width="2.5"/>
+    </g>
+    <rect y="206" width="264" height="44" fill="#3BA7DE"/>
+    <g stroke="#9BD5F2" stroke-width="2" fill="none" stroke-linecap="round"><path d="M8 220c8-4 16-4 24 0s16 4 24 0M80 232c8-4 16-4 24 0s16 4 24 0M150 218c8-4 16-4 24 0M20 242c8-4 16-4 24 0"/></g>
+    <g transform="translate(176 128) scale(1.35)">
+      <ellipse cx="26" cy="64" rx="18" ry="4" fill="#1F86C0" opacity=".35"/>
+      <path d="M26 2C26 2 6 24 6 38a20 20 0 0 0 40 0C46 24 26 2 26 2z" fill="#fff" stroke="#10283A" stroke-width="1.6"/>
+      <path d="M15 26c2-4.5 4.5-8 7-10.5" stroke="#BFE3F5" stroke-width="3" fill="none" stroke-linecap="round"/>
+      <circle cx="19.5" cy="38" r="2.6" fill="#10283A"/><circle cx="32.5" cy="38" r="2.6" fill="#10283A"/>
+      <circle cx="15" cy="44" r="2.8" fill="#F6A6A0" opacity=".8"/><circle cx="37" cy="44" r="2.8" fill="#F6A6A0" opacity=".8"/>
+      <path d="M21 45q5 4.2 10 0" stroke="#10283A" stroke-width="2" fill="none" stroke-linecap="round"/>
+      <path d="M45 30c5-3 7-8 6-12" stroke="#10283A" stroke-width="2" fill="none" stroke-linecap="round"/>
+    </g>
+  </svg>`,
+  minimap: `<svg width="236" height="92" viewBox="0 0 236 92" role="img" aria-label="Mapa con tus tres lugares" style="display:block;border-radius:14px;background:#EFE9DD">
+    <path d="M190 0c-8 30 6 52-4 92h50V0z" fill="#BFE3F5"/><path d="M0 70c30-6 50 10 80 4s40 6 50 18H0z" fill="#CFE9F5"/>
+    <g stroke="#fff" stroke-width="3"><path d="M10 30h170M60 0v92M120 0v80M10 60h160"/></g>
+    <g font-family="Onest" font-size="9" font-weight="700" fill="#10283A">
+      <circle cx="122" cy="22" r="9" fill="#0E3550"/><text x="136" y="25">Casa</text>
+      <circle cx="160" cy="62" r="9" fill="#3BA7DE"/><text x="128" y="80">Trabajo</text>
+      <circle cx="74" cy="46" r="9" fill="#9A7BD6"/><text x="86" y="49">Colegio</text>
+    </g></svg>`,
+  map: `<svg width="264" height="568" viewBox="0 0 264 568" role="img" aria-label="Mapa de Guayaquil con barrios coloreados por riesgo">
+    <rect width="264" height="568" fill="#ECE5D6"/>
+    <path d="M206 0c-10 70 14 120 0 200s-24 140 6 220 10 120 0 148h58V0z" fill="#B9DFF3"/>
+    <path d="M150 0c10 30 30 50 56 70" stroke="#B9DFF3" stroke-width="16" fill="none"/>
+    <path d="M0 330c30 10 40 40 70 46s40 30 34 70-30 60-20 122H0z" fill="#C9E6F4"/>
+    <g fill="none" stroke="#fff" stroke-width="2.5" opacity=".9"><path d="M20 120h170M30 210h160M40 300h150M70 40v460M140 30v480"/></g>
+    <g font-family="Onest" font-size="10.5" font-weight="800" fill="#10283A">
+      <ellipse cx="128" cy="110" rx="40" ry="26" fill="#EE7A3A" fill-opacity=".28"/><text x="104" y="103">Sauces</text>
+      <ellipse cx="124" cy="168" rx="42" ry="26" fill="#F2B01E" fill-opacity=".33"/><text x="96" y="160">Alborada</text>
+      <ellipse cx="96" cy="250" rx="38" ry="24" fill="#2E9E5B" fill-opacity=".25"/><text x="76" y="252">Urdesa</text>
+      <ellipse cx="160" cy="300" rx="36" ry="24" fill="#F2B01E" fill-opacity=".33"/><text x="140" y="304">Centro</text>
+      <ellipse cx="146" cy="420" rx="44" ry="28" fill="#EE7A3A" fill-opacity=".28"/><text x="124" y="424">Guasmo</text>
+      <ellipse cx="238" cy="150" rx="30" ry="22" fill="#F2B01E" fill-opacity=".33"/><text x="214" y="146">Sambo.</text>
+    </g>
+    <g opacity=".86"><ellipse cx="62" cy="96" rx="52" ry="34" fill="#fff"/><ellipse cx="34" cy="112" rx="34" ry="24" fill="#fff"/><ellipse cx="88" cy="112" rx="34" ry="22" fill="#F4F7F9"/><ellipse cx="62" cy="128" rx="50" ry="10" fill="#C9D6DE"/></g>
+    <path d="M96 136c10 6 14 12 16 20" stroke="#0E3550" stroke-width="2.4" fill="none" stroke-dasharray="4 4"/><path d="M106 152l6 6 1-8" stroke="#0E3550" stroke-width="2.4" fill="none"/>
+    <g><circle cx="132" cy="178" r="12" fill="#0E3550" stroke="#fff" stroke-width="3"/><path d="M127 179l5-4 5 4v4h-10z" fill="#fff"/></g>
+    <g><circle cx="168" cy="290" r="10" fill="#3BA7DE" stroke="#fff" stroke-width="3"/></g>
+    <g font-size="12"><circle cx="150" cy="190" r="9" fill="#fff" stroke="#EE7A3A" stroke-width="2"/><text x="144.5" y="194.5">🌊</text><circle cx="108" cy="176" r="9" fill="#fff" stroke="#EE7A3A" stroke-width="2"/><text x="102.5" y="180.5">🌊</text><circle cx="120" cy="128" r="9" fill="#fff" stroke="#EE7A3A" stroke-width="2"/><text x="114.5" y="132.5">🚧</text></g>
+  </svg>`,
+  flood: `<svg width="236" height="170" viewBox="0 0 236 170" aria-label="Foto de una calle con agua">
+    <rect width="236" height="170" fill="#9FB6C4"/>
+    <rect x="0" y="20" width="70" height="110" fill="#E9DCC3"/><rect x="74" y="40" width="60" height="90" fill="#F2C9A1"/><rect x="138" y="10" width="98" height="120" fill="#D9E2E7"/>
+    <g fill="#5F7A8A"><rect x="12" y="36" width="14" height="16"/><rect x="40" y="36" width="14" height="16"/><rect x="12" y="66" width="14" height="16"/><rect x="40" y="66" width="14" height="16"/><rect x="86" y="54" width="12" height="14"/><rect x="108" y="54" width="12" height="14"/><rect x="152" y="28" width="16" height="18"/><rect x="180" y="28" width="16" height="18"/><rect x="208" y="28" width="16" height="18"/><rect x="152" y="62" width="16" height="18"/><rect x="180" y="62" width="16" height="18"/></g>
+    <rect x="96" y="92" width="18" height="38" fill="#7A5A44"/>
+    <rect x="0" y="108" width="236" height="62" fill="#6E8C7A" opacity=".85"/>
+    <g stroke="#B9CDBF" stroke-width="2" fill="none" stroke-linecap="round"><path d="M10 124c10-4 20-4 30 0M70 140c10-4 20-4 30 0M140 122c10-4 20-4 30 0M180 150c10-4 20-4 30 0M30 158c10-4 20-4 30 0"/></g>
+    <rect x="150" y="96" width="60" height="18" rx="6" fill="#C0392B"/><rect x="160" y="88" width="38" height="12" rx="4" fill="#E06666"/>
+    <g stroke="#fff" stroke-opacity=".5" stroke-width="1.5"><path d="M20 0l-6 16M60 4l-6 16M120 0l-6 16M180 2l-6 16M220 0l-6 16"/></g>
+  </svg>`,
+  route: `<svg width="236" height="150" viewBox="0 0 236 150" role="img" aria-label="Mapa con la ruta segura en verde y la ruta corta con agua en gris">
+    <rect width="236" height="150" fill="#ECE5D6"/>
+    <path d="M196 0c-8 40 10 70 0 150h40V0z" fill="#B9DFF3"/>
+    <g stroke="#fff" stroke-width="3" fill="none"><path d="M0 40h196M0 104h196M60 0v150M130 0v150"/></g>
+    <path d="M44 128C70 120 92 112 110 96s22-44 46-62 26-12 30-16" stroke="#9AA19D" stroke-width="4" fill="none" stroke-dasharray="7 6" stroke-linecap="round"/>
+    <path d="M44 128C40 100 44 70 70 58s70 6 90-12 20-26 26-28" stroke="#0E3550" stroke-width="8" fill="none" stroke-linecap="round" opacity=".18"/>
+    <path d="M44 128C40 100 44 70 70 58s70 6 90-12 20-26 26-28" stroke="#2E9E5B" stroke-width="5" fill="none" stroke-linecap="round"/>
+    <g font-size="11"><circle cx="112" cy="94" r="10" fill="#fff" stroke="#EE7A3A" stroke-width="2"/><text x="105.5" y="98">🌊</text><circle cx="146" cy="44" r="10" fill="#fff" stroke="#EE7A3A" stroke-width="2"/><text x="139.5" y="48">🌊</text></g>
+    <g font-family="Onest" font-weight="800" font-size="11"><circle cx="44" cy="128" r="10" fill="#fff" stroke="#10283A" stroke-width="2"/><text x="40" y="132" fill="#10283A">A</text><circle cx="186" cy="18" r="10" fill="#3BA7DE"/><text x="182.5" y="22" fill="#fff">B</text></g>
+  </svg>`,
+  family: `<svg width="236" height="122" viewBox="0 0 236 122" role="img" aria-label="Mapa con tu familia: Mamá y tu hija en Urdesa, Papá en camino a Durán y tú en la Alborada">
+    <rect width="236" height="122" fill="#ECE5D6"/>
+    <path d="M150 0c-10 40 12 70 0 122h34c8-50-12-80-2-122z" fill="#B9DFF3"/>
+    <g stroke="#fff" stroke-width="3" fill="none"><path d="M0 34h150M0 88h150M50 0v122M110 0v122M184 60h52"/></g>
+    <path d="M118 104C140 98 150 84 170 74s28-8 40-14" stroke="#3E8FC9" stroke-width="3" fill="none" stroke-dasharray="5 5" stroke-linecap="round"/>
+    <g font-size="11"><circle cx="196" cy="48" r="9" fill="#fff" stroke="#EE7A3A" stroke-width="2"/><text x="190" y="52">🌊</text></g>
+    <g font-family="Onest" font-weight="800" font-size="11" fill="#fff">
+      <circle cx="40" cy="70" r="12" fill="#E8746A" stroke="#2E9E5B" stroke-width="3"/><text x="36" y="74">M</text>
+      <circle cx="72" cy="58" r="12" fill="#9A7BD6" stroke="#2E9E5B" stroke-width="3"/><text x="68.5" y="62">H</text>
+      <circle cx="176" cy="70" r="12" fill="#3E8FC9" stroke="#F2B01E" stroke-width="3"/><text x="172.5" y="74">P</text>
+      <circle cx="96" cy="22" r="12" fill="#0E3550" stroke="#D43C3C" stroke-width="3"/><text x="88.5" y="26" font-size="10">Tú</text>
+    </g>
+    <text x="186" y="92" font-family="Onest" font-size="9" font-weight="700" fill="#10283A">🚗 en vivo</text>
+  </svg>`,
+  bucket: `<svg width="70" height="84" viewBox="0 0 70 84" role="img" aria-label="Balde lleno en dos tercios">
+    <defs><clipPath id="bk"><path d="M8 14h54l-6 64H14z"/></clipPath></defs>
+    <path d="M8 14h54l-6 64H14z" fill="#fff"/>
+    <g clip-path="url(#bk)"><path d="M0 36q8.75 -5 17.5 0t17.5 0t17.5 0t17.5 0V84H0z" fill="#3BA7DE"/></g>
+    <path d="M8 14h54l-6 64H14z" fill="none" stroke="#0E3550" stroke-width="3" stroke-linejoin="round"/>
+    <path d="M12 14C14 2 56 2 58 14" fill="none" stroke="#0E3550" stroke-width="2.5"/>
+    <text x="35" y="62" text-anchor="middle" font-family="Bricolage Grotesque" font-weight="800" font-size="15" fill="#fff">65%</text>
+  </svg>`
+};
+const TABS = [['hoy','home','Hoy'],['mapa','map','Mapa'],['tamy','','Tamy'],['reportar','camera','Reportar'],['familia','people','Familia']];
+function tabbar(on){
+  return `<div class="tabbar">${TABS.map(([k,i,l])=> k==='tamy'
+    ? `<div class="tab g"><span class="av">${avatar(48)}</span>${l}</div>`
+    : `<div class="tab${k===on?' on':''}">${icon(i,21)}${l}</div>`).join('')}</div>`;
+}
+
+document.querySelectorAll('[data-drop]').forEach(e=> e.innerHTML = drop(e.dataset.drop, +(e.dataset.size||30), e.hasAttribute('data-dark'), e.dataset.fill));
+document.querySelectorAll('[data-i]').forEach(e=> e.innerHTML = icon(e.dataset.i, +(e.dataset.s||18)));
+document.querySelectorAll('[data-avatar]').forEach(e=> e.innerHTML = avatar(+e.dataset.avatar));
+document.querySelectorAll('[data-logo]').forEach(e=> e.innerHTML = logo(+(e.dataset.logo||28)));
+document.querySelectorAll('[data-arrow]').forEach(e=> e.innerHTML = arrow());
+document.querySelectorAll('[data-person]').forEach(e=> e.innerHTML = person(+e.dataset.person));
+document.querySelectorAll('[data-art]').forEach(e=> e.innerHTML = ART[e.dataset.art]);
+document.querySelectorAll('[data-tabbar]').forEach(e=> e.outerHTML = tabbar(e.dataset.tabbar));
+document.querySelectorAll('[data-bars]').forEach(e=>{
+  const H = [8,28,52,76,100];
+  e.innerHTML = e.dataset.bars.split(',').map(n=>`<i class="${n==='0'?'z':''}" style="height:${H[+n]}%" title="${['sin lluvia','llovizna','lluvia moderada','lluvia fuerte','lluvia muy fuerte'][+n]}"></i>`).join('');
+});
+</script>
+</body>
+</html>
