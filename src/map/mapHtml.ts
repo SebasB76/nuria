@@ -146,7 +146,7 @@ send({type:'ready'});
 
 // user-scalable=no is on purpose: Leaflet owns pinch-zoom on this canvas, and page zoom would fight it
 export const MAP_HTML = `<!doctype html><html><head><meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <style>
 html,body,#map{margin:0;height:100%;background:#1b2229;font-family:-apple-system,system-ui,Roboto,sans-serif}

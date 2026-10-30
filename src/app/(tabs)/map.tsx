@@ -15,6 +15,7 @@ import { Drop, Icon } from '@/ui/icons';
 import { Chip } from '@/ui/kit';
 import { C, F } from '@/ui/theme';
 import { PressableScale } from '@/ui/PressableScale';
+import { useLightStatusBar } from '@/ui/statusBar';
 
 type Layer = 'clouds' | 'sectors' | 'reports';
 const LAYER_LABEL: Record<Layer, string> = { clouds: '☁️ Nubes', sectors: '💧 Barrios', reports: '📣 Reportes' };
@@ -22,6 +23,7 @@ const LAYER_LABEL: Record<Layer, string> = { clouds: '☁️ Nubes', sectors: '�
 export default function MapScreen() {
   const app = useApp();
   const insets = useSafeAreaInsets();
+  useLightStatusBar();
   const [layers, setLayers] = useState<Record<Layer, boolean>>({ clouds: true, sectors: true, reports: true });
   const reduced = useReducedMotion();
   // with reduced motion the clouds start still; the person can still play them
